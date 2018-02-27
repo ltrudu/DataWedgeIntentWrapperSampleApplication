@@ -42,7 +42,50 @@ public class DataWedgeConstants {
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_ENABLE = "ENABLE_PLUGIN";
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_DISABLE = "DISABLE_PLUGIN";
 
+    //  6.2 API and up Actions sent to DataWedge
+    public static final String ACTION_DATAWEDGE_FROM_6_2 = "com.symbol.datawedge.api.ACTION";
+    //  6.2 API and up Extras sent to DataWedge
+    public static final String EXTRA_GET_ACTIVE_PROFILE = "com.symbol.datawedge.api.GET_ACTIVE_PROFILE";
+    public static final String EXTRA_GET_PROFILES_LIST = "com.symbol.datawedge.api.GET_PROFILES_LIST";
+    public static final String EXTRA_DELETE_PROFILE = "com.symbol.datawedge.api.DELETE_PROFILE";
+    public static final String EXTRA_CLONE_PROFILE = "com.symbol.datawedge.api.CLONE_PROFILE";
+    public static final String EXTRA_RENAME_PROFILE = "com.symbol.datawedge.api.RENAME_PROFILE";
+    public static final String EXTRA_ENABLE_DATAWEDGE = "com.symbol.datawedge.api.ENABLE_DATAWEDGE";
+    public static final String EXTRA_EMPTY = "";
+    //  6.2 API and up Actions received from DataWedge
+    public static final String ACTION_RESULT_DATAWEDGE_FROM_6_2 = "com.symbol.datawedge.api.RESULT_ACTION";
+    //  6.2 API and up Extras received from DataWedge
+    public static final String EXTRA_RESULT_GET_ACTIVE_PROFILE = "com.symbol.datawedge.api.RESULT_GET_ACTIVE_PROFILE";
+    public static final String EXTRA_RESULT_GET_PROFILE_LIST = "com.symbol.datawedge.api.RESULT_GET_PROFILES_LIST";
 
 
+    //  6.3 API and up Extras sent to DataWedge
+    public static final String EXTRA_SOFTSCANTRIGGER_FROM_6_3 = "com.symbol.datawedge.api.SOFT_SCAN_TRIGGER";
+    public static final String EXTRA_SCANNERINPUTPLUGIN_FROM_6_3 = "com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN";
+    public static final String EXTRA_ENUMERATESCANNERS_FROM_6_3 = "com.symbol.datawedge.api.ENUMERATE_SCANNERS";
+    public static final String EXTRA_SETDEFAULTPROFILE_FROM_6_3 = "com.symbol.datawedge.api.SET_DEFAULT_PROFILE";
+    public static final String EXTRA_RESETDEFAULTPROFILE_FROM_6_3 = "com.symbol.datawedge.api.RESET_DEFAULT_PROFILE";
+    public static final String EXTRA_SWITCHTOPROFILE_FROM_6_3 = "com.symbol.datawedge.api.SWITCH_TO_PROFILE";
+    public static final String EXTRA_GET_VERSION_INFO = "com.symbol.datawedge.api.GET_VERSION_INFO";
+    public static final String EXTRA_REGISTER_NOTIFICATION = "com.symbol.datawedge.api.REGISTER_FOR_NOTIFICATION";
+    public static final String EXTRA_UNREGISTER_NOTIFICATION = "com.symbol.datawedge.api.UNREGISTER_FOR_NOTIFICATION";
+    public static final String EXTRA_CREATE_PROFILE = "com.symbol.datawedge.api.CREATE_PROFILE";
+    public static final String EXTRA_SET_CONFIG = "com.symbol.datawedge.api.SET_CONFIG";
+    public static final String EXTRA_RESTORE_CONFIG = "com.symbol.datawedge.api.RESTORE_CONFIG";
+    //  6.3 API and up Actions received from DataWedge
+    public static final String ACTION_RESULT_NOTIFICATION = "com.symbol.datawedge.api.NOTIFICATION_ACTION";
+    //  6.3 API and up Extras received from DataWedge
+    public static final String EXTRA_RESULT_GET_VERSION_INFO = "com.symbol.datawedge.api.RESULT_GET_VERSION_INFO";
+    public static final String EXTRA_RESULT_NOTIFICATION = "com.symbol.datawedge.api.NOTIFICATION";
+    public static final String EXTRA_RESULT_ENUMERATE_SCANNERS = "com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS";
+    //  6.3 API and up Parameter keys and values associated with extras received from DataWedge
+    public static final String EXTRA_KEY_APPLICATION_NAME = "com.symbol.datawedge.api.APPLICATION_NAME";
+    public static final String EXTRA_KEY_NOTIFICATION_TYPE = "com.symbol.datawedge.api.NOTIFICATION_TYPE";
+    public static final String EXTRA_RESULT_NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
+    public static final String EXTRA_KEY_VALUE_SCANNER_STATUS = "SCANNER_STATUS";
+    public static final String EXTRA_KEY_VALUE_PROFILE_SWITCH = "PROFILE_SWITCH";
+    public static final String EXTRA_KEY_VALUE_CONFIGURATION_UPDATE = "CONFIGURATION_UPDATE";
+    public static final String EXTRA_KEY_VALUE_NOTIFICATION_STATUS = "STATUS";
+    public static final String EXTRA_KEY_VALUE_NOTIFICATION_PROFILE_NAME = "PROFILE_NAME";
 
 }

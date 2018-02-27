@@ -58,15 +58,22 @@
             android:id="@+id/button_enable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.3"
             android:text="Enable Scan" />
 
         <Button
             android:id="@+id/button_disable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.3"
             android:text="Disable Scan" />
+
+        <Button
+            android:id="@+id/button_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="CreateP" />
 
     </LinearLayout>
 </RelativeLayout>

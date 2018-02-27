@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+    private static String mProfileName = "com.symbol.datacapturereceiver";
     private static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
     private static String mIntentCategory = "android.intent.category.DEFAULT";
     private EditText et_results;
@@ -75,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
      * Local Broadcast receiver
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            handleDecodeData(intent);
-        }
-    };
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    handleDecodeData(intent);
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +126,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SCANNERINPUTPLUGIN, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_PARAMETER_SCANNERINPUTPLUGIN_DISABLE);
+            }
+        });
+
+        Button btCreate = (Button) findViewById(R.id.button_create);
+        btCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createProfile();
             }
         });
 
@@ -249,6 +258,49 @@ public class MainActivity extends AppCompatActivity {
         dwIntent.setAction(action);
         dwIntent.putExtra(extraKey, extraValue);
         this.sendBroadcast(dwIntent);
+    }
+
+    private void sendDataWedgeIntentWithExtra(String action, String extraKey, Bundle extras)
+    {
+        Intent dwIntent = new Intent();
+        dwIntent.setAction(action);
+        dwIntent.putExtra(extraKey, extras);
+        this.sendBroadcast(dwIntent);
+    }
+
+    private void createProfile()
+    {
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_CREATE_PROFILE, mProfileName);
+
+        //  Now configure that created profile to apply to our application
+        Bundle profileConfig = new Bundle();
+        profileConfig.putString("PROFILE_NAME", mProfileName);
+        profileConfig.putString("PROFILE_ENABLED", "true"); //  Seems these are all strings
+        profileConfig.putString("CONFIG_MODE", "UPDATE");
+        Bundle barcodeConfig = new Bundle();
+        barcodeConfig.putString("PLUGIN_NAME", "BARCODE");
+        barcodeConfig.putString("RESET_CONFIG", "true"); //  This is the default but never hurts to specify
+        Bundle barcodeProps = new Bundle();
+        barcodeConfig.putBundle("PARAM_LIST", barcodeProps);
+        profileConfig.putBundle("PLUGIN_CONFIG", barcodeConfig);
+        Bundle appConfig = new Bundle();
+        appConfig.putString("PACKAGE_NAME", getPackageName());      //  Associate the profile with this app
+        appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+        profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SET_CONFIG, profileConfig);
+        //  You can only configure one plugin at a time, we have done the barcode input, now do the intent output
+        profileConfig.remove("PLUGIN_CONFIG");
+        Bundle intentConfig = new Bundle();
+        intentConfig.putString("PLUGIN_NAME", "INTENT");
+        intentConfig.putString("RESET_CONFIG", "true");
+        Bundle intentProps = new Bundle();
+        intentProps.putString("intent_output_enabled", "true");
+        intentProps.putString("intent_action", mIntentAction);
+        intentProps.putString("intent_category", mIntentCategory);
+        intentProps.putString("intent_delivery", "2");
+        intentConfig.putBundle("PARAM_LIST", intentProps);
+        profileConfig.putBundle("PLUGIN_CONFIG", intentConfig);
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SET_CONFIG, profileConfig);
     }
 
 }
