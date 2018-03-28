@@ -88,4 +88,24 @@ public class DataWedgeConstants {
     public static final String EXTRA_KEY_VALUE_NOTIFICATION_STATUS = "STATUS";
     public static final String EXTRA_KEY_VALUE_NOTIFICATION_PROFILE_NAME = "PROFILE_NAME";
 
+    //  6.4 API and up Extras sent to Datawedge
+    public static final String EXTRA_GET_DATAWEDGE_STATUS = "com.symbol.datawedge.api.GET_DATAWEDGE_STATUS";
+    //  6.4 API and up Parameter keys and values associated with extras received from Datawedge
+    public static final String EXTRA_RESULT_GET_DATAWEDGE_STATUS = "com.symbol.datawedge.api.RESULT_GET_DATAWEDGE_STATUS";
+
+    //  6.5 API and up Extras sent to Datawedge
+    public static final String EXTRA_SEND_RESULT = "SEND_RESULT";
+    public static final String EXTRA_COMMAND_IDENTIFIER = "COMMAND_IDENTIFIER";
+    public static final String EXTRA_GET_CONFIG = "com.symbol.datawedge.api.GET_CONFIG";
+    public static final String EXTRA_GET_DISABLED_APP_LIST = "com.symbol.datawedge.api.GET_DISABLED_APP_LIST";
+    public static final String EXTRA_SET_DISABLED_APP_LIST = "com.symbol.datawedge.api.SET_DISABLED_APP_LIST";
+    public static final String EXTRA_SWITCH_SCANNER = "com.symbol.datawedge.api.SWITCH_SCANNER";
+    public static final String EXTRA_SWITCH_SCANNER_PARAMS = "com.symbol.datawedge.api.SWITCH_SCANNER_PARAMS";
+    //  6.5 API and up Parameter keys and values associated with extras received from Datawedge
+    public static final String EXTRA_RESULT = "RESULT";
+    public static final String EXTRA_RESULT_INFO = "RESULT_INFO";
+    public static final String EXTRA_COMMAND = "COMMAND";
+    public static final String EXTRA_RESULT_GET_CONFIG = "com.symbol.datawedge.api.RESULT_GET_CONFIG";
+    public static final String EXTRA_RESULT_GET_DISABLED_APP_LIST = "com.symbol.datawedge.api.RESULT_GET_DISABLED_APP_LIST";
+
 }

@@ -6,9 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,12 +71,14 @@ public class MainActivity extends AppCompatActivity {
      *      Go to Barcode input -> Reader params -> Picklist -> Enabled
      */
 
-
+    private static String TAG = "DataCaptureReceiver";
     private static String mProfileName = "com.symbol.datacapturereceiver";
     private static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
     private static String mIntentCategory = "android.intent.category.DEFAULT";
     private EditText et_results;
     private String mResults = "";
+    private boolean mContinuous = true;
+    private Date mScanDate = null;
 
     /**
      * Local Broadcast receiver
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         btStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mScanDate  = new Date();
                 sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SOFTSCANTRIGGER, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_START_SCANNING);
             }
         });
@@ -133,7 +142,34 @@ public class MainActivity extends AppCompatActivity {
         btCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Intent profile creation
                 createProfile();
+            }
+        });
+
+        Button btImport = (Button) findViewById(R.id.button_import);
+        btImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //"database profile auto creation" import mode (filebased)
+                importProfile("dwprofile_com.symbol.datacapturereceiver");
+            }
+        });
+
+        Button btSwitch = (Button) findViewById(R.id.button_switch);
+        btSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchScannerParams();
+            }
+        });
+
+        Button btClear = (Button) findViewById(R.id.button_clear);
+        btClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mResults = "";
+                et_results.setText(mResults);
             }
         });
 
@@ -173,6 +209,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean handleDecodeData(Intent i) {
         // check the intent action is for us
         if ( i.getAction().contentEquals(mIntentAction) ) {
+
+            Date current = new Date();
+
+            long diff = 0;
+            if(mScanDate != null)
+                diff = current.getTime() - mScanDate.getTime();
+
             // define a string that will hold our output
             String out = "";
             // get the source of the data
@@ -207,14 +250,14 @@ public class MainActivity extends AppCompatActivity {
                         sLabelType = "Unknown";
                     }
                     // let's construct the beginning of our output string
-                    out = "Source: Scanner, " + "Symbology: " + sLabelType + ", Length: " + data_len.toString() + ", Data: ...\r\n";
+                    out = "Source: Scanner, " + "Symbology: " + sLabelType + ", Length: " + data_len.toString() + ", Data: ";
                 }
             }
 
             // check if the data has come from the MSR
             if (source.equalsIgnoreCase("msr")) {
                 // construct the beginning of our output string
-                out = "Source: MSR, Length: " + data_len.toString() + ", Data: ...\r\n";
+                out = "Source: MSR, Length: " + data_len.toString() + ", Data: ";
             }
 
             if(data != null)
@@ -224,6 +267,9 @@ public class MainActivity extends AppCompatActivity {
                 //if(sLabelType.equalsIgnoreCase("QRCODE"))
                 out = out + showSpecialChars(data);
             }
+
+            if(diff > 0) // Report 0 in continuous mode, only displayed if > to 0
+                out += "\nTimeDiff ms = "  + diff + "\n";
 
             mResults += out + "\n";
             et_results.setText(mResults);
@@ -268,6 +314,75 @@ public class MainActivity extends AppCompatActivity {
         this.sendBroadcast(dwIntent);
     }
 
+    private void importProfile(String progileFilenameWithoutDbExtension)
+    {
+        // Source : http://techdocs.zebra.com/datawedge/6-7/guide/settings/
+        //Export your profile using
+        //1. Open DataWedge
+        //2. Open Hamburger Menu -> Settings (Paramètres)
+        //3. Open "Export" list entry
+        //4. Select profile to export
+        //5. Retrieve exportes file in folder "\sdcard\Android\data\com.symbol.datawedge\files"
+
+        // Open the db as the input stream
+        InputStream fis = null;
+        FileOutputStream fos = null;
+        File outputFile = null;
+        File finalFile = null;
+
+        try {
+
+            String autoImportDir = "/enterprise/device/settings/datawedge/autoimport/";
+            String temporaryFileName = progileFilenameWithoutDbExtension + ".tmp";
+            String finalFileName = progileFilenameWithoutDbExtension + ".db";
+
+
+                fis = getAssets().open(finalFileName);
+
+
+            // create a File object for the parent directory
+            File outputDirectory = new File(autoImportDir);
+
+            // create a temporary File object for the output file
+            outputFile = new File(outputDirectory,temporaryFileName);
+            finalFile = new File(outputDirectory, finalFileName);
+
+            // attach the OutputStream to the file object
+            fos = new FileOutputStream(outputFile);
+
+            // transfer bytes from the input file to the output file
+            byte[] buffer = new byte[1024];
+            int length;
+            int tot = 0;
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+                tot+= length;
+            }
+            Log.d(TAG,tot+" bytes copied");
+
+            //flush the buffers
+            fos.flush();
+
+            //release resources
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            fos = null;
+            //set permission to the file to read, write and exec.
+            if(outputFile != null)
+            {
+                outputFile.setExecutable(true, false);
+                outputFile.setReadable(true, false);
+                outputFile.setWritable(true, false);
+                //rename the file
+                if(finalFile != null)
+                    outputFile.renameTo(finalFile);
+            }
+
+        }
+    }
+
     private void createProfile()
     {
         sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_CREATE_PROFILE, mProfileName);
@@ -281,6 +396,12 @@ public class MainActivity extends AppCompatActivity {
         barcodeConfig.putString("PLUGIN_NAME", "BARCODE");
         barcodeConfig.putString("RESET_CONFIG", "true"); //  This is the default but never hurts to specify
         Bundle barcodeProps = new Bundle();
+        barcodeProps.putString("aim_mode", "on");
+        barcodeProps.putString("lcd_mode", "3");
+
+        // Mode rafale => aim type "continuous read", pas de beam timer
+        barcodeProps.putString("aim_type", "5");
+
         barcodeConfig.putBundle("PARAM_LIST", barcodeProps);
         profileConfig.putBundle("PLUGIN_CONFIG", barcodeConfig);
         Bundle appConfig = new Bundle();
@@ -301,6 +422,27 @@ public class MainActivity extends AppCompatActivity {
         intentConfig.putBundle("PARAM_LIST", intentProps);
         profileConfig.putBundle("PLUGIN_CONFIG", intentConfig);
         sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SET_CONFIG, profileConfig);
+    }
+
+    private void switchScannerParams()
+    {
+        mContinuous = !mContinuous;
+        Bundle barcodeProps = new Bundle();
+        if(mContinuous)
+        {
+            barcodeProps.putString("aim_type", "5");
+            barcodeProps.putString("beam_timer", "0");
+        }
+        else
+        {
+            barcodeProps.putString("aim_type", "0");
+            barcodeProps.putString("beam_timer", "5000");
+        }
+        mResults = "";
+        mResults += (mContinuous ? "Switched to Continuous mode" : "Switched to normal mode") + "\n";
+        et_results.setText(mResults);
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SWITCH_SCANNER_PARAMS, barcodeProps);
+
     }
 
 }

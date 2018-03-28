@@ -30,50 +30,89 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Start Scan" />
+            android:text="Start Scan"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/button_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Stop Scan" />
+            android:text="Stop Scan"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/button_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Toggle Scan" />
+            android:text="Toggle Scan"
+            android:visibility="visible" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_plugin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/ll_profiles"
+        android:layout_alignParentBottom="false"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_enable"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Enable Scan" />
+            android:text="Enable" />
 
         <Button
             android:id="@+id/button_disable"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Disable Scan" />
+            android:text="Disable" />
+
+        <Button
+            android:id="@+id/button_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="Clear"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_profiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.3"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_create"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="CreateP" />
+            android:layout_weight="1"
+            android:text="Create\nProfile"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/button_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Import\nProfile" />
+
+        <Button
+            android:id="@+id/button_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Switch\nParams" />
 
     </LinearLayout>
+
 </RelativeLayout>
