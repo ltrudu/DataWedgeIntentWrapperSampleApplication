@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private static String mIntentCategory = "android.intent.category.DEFAULT";
     private EditText et_results;
     private String mResults = "";
-    private boolean mContinuous = true;
+    private boolean mContinuous = false;
     private Date mScanDate = null;
 
     /**
@@ -398,9 +398,6 @@ public class MainActivity extends AppCompatActivity {
         Bundle barcodeProps = new Bundle();
         barcodeProps.putString("aim_mode", "on");
         barcodeProps.putString("lcd_mode", "3");
-
-        // Mode rafale => aim type "continuous read", pas de beam timer
-        barcodeProps.putString("aim_type", "5");
 
         barcodeConfig.putBundle("PARAM_LIST", barcodeProps);
         profileConfig.putBundle("PLUGIN_CONFIG", barcodeConfig);
