@@ -218,13 +218,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         // Unregister internal broadcast receiver when we are going in background
         this.getApplicationContext().unregisterReceiver(mMessageReceiver);
-        super.onPause();
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
             mScrollDownRunnable = null;
             mScrollDownHandler = null;
         }
+        super.onPause();
     }
 
     // This one is necessary only if you choose to send the data by StartActivity
