@@ -101,11 +101,16 @@ public class DataWedgeConstants {
     public static final String EXTRA_SET_DISABLED_APP_LIST = "com.symbol.datawedge.api.SET_DISABLED_APP_LIST";
     public static final String EXTRA_SWITCH_SCANNER = "com.symbol.datawedge.api.SWITCH_SCANNER";
     public static final String EXTRA_SWITCH_SCANNER_PARAMS = "com.symbol.datawedge.api.SWITCH_SCANNER_PARAMS";
+    public static final String EXTRA_SWITCHSCANNERPARAMS_FROM_6_5 = "com.symbol.datawedge.api.SWITCH_SCANNER_PARAMS";
     //  6.5 API and up Parameter keys and values associated with extras received from Datawedge
     public static final String EXTRA_RESULT = "RESULT";
     public static final String EXTRA_RESULT_INFO = "RESULT_INFO";
     public static final String EXTRA_COMMAND = "COMMAND";
     public static final String EXTRA_RESULT_GET_CONFIG = "com.symbol.datawedge.api.RESULT_GET_CONFIG";
     public static final String EXTRA_RESULT_GET_DISABLED_APP_LIST = "com.symbol.datawedge.api.RESULT_GET_DISABLED_APP_LIST";
+
+    public static final String AIM_MODE_PARAM = "aim_type";
+    public static final String BEAM_TIMER_PARAM = "beam_timer";
+
 
 }

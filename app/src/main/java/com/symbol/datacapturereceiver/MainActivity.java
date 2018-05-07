@@ -4,12 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -75,10 +79,19 @@ public class MainActivity extends AppCompatActivity {
     private static String mProfileName = "com.symbol.datacapturereceiver";
     private static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
     private static String mIntentCategory = "android.intent.category.DEFAULT";
-    private EditText et_results;
+    private TextView et_results;
+    private ScrollView sv_results;
     private String mResults = "";
     private boolean mContinuous = false;
     private Date mScanDate = null;
+
+    private Date mProfileProcessingStartDate = null;
+
+    /*
+        Handler and runnable to scroll down textview
+     */
+    private Handler mScrollDownHandler = null;
+    private Runnable mScrollDownRunnable = null;
 
     /**
      * Local Broadcast receiver
@@ -95,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        et_results = (EditText)findViewById(R.id.et_results);
+        et_results = (TextView)findViewById(R.id.et_results);
+        sv_results = (ScrollView)findViewById(R.id.sv_results);
 
         Button btStart = (Button) findViewById(R.id.button_start);
         btStart.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +157,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Intent profile creation
-                createProfile();
+                //createProfile();
+                createProfileAsync();
             }
         });
 
@@ -153,6 +168,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //"database profile auto creation" import mode (filebased)
                 importProfile("dwprofile_com.symbol.datacapturereceiver");
+            }
+        });
+
+        Button btDelete = (Button) findViewById(R.id.button_delete);
+        btDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //"database profile auto creation" import mode (filebased)
+                deleteProfile();
             }
         });
 
@@ -187,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         myFilter.addAction(mIntentAction);
         myFilter.addCategory(mIntentCategory);
         this.getApplicationContext().registerReceiver(mMessageReceiver, myFilter);
+        mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -194,6 +219,12 @@ public class MainActivity extends AppCompatActivity {
         // Unregister internal broadcast receiver when we are going in background
         this.getApplicationContext().unregisterReceiver(mMessageReceiver);
         super.onPause();
+        if(mScrollDownRunnable != null)
+        {
+            mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
+            mScrollDownRunnable = null;
+            mScrollDownHandler = null;
+        }
     }
 
     // This one is necessary only if you choose to send the data by StartActivity
@@ -271,8 +302,7 @@ public class MainActivity extends AppCompatActivity {
             if(diff > 0) // Report 0 in continuous mode, only displayed if > to 0
                 out += "\nTimeDiff ms = "  + diff + "\n";
 
-            mResults += out + "\n";
-            et_results.setText(mResults);
+            addLineToResults(out);
 
             return true;
         }
@@ -399,6 +429,9 @@ public class MainActivity extends AppCompatActivity {
         barcodeProps.putString("aim_mode", "on");
         barcodeProps.putString("lcd_mode", "3");
 
+        // Mode rafale => aim type "continuous read", pas de beam timer
+        barcodeProps.putString("aim_type", "5");
+
         barcodeConfig.putBundle("PARAM_LIST", barcodeProps);
         profileConfig.putBundle("PLUGIN_CONFIG", barcodeConfig);
         Bundle appConfig = new Bundle();
@@ -424,22 +457,149 @@ public class MainActivity extends AppCompatActivity {
     private void switchScannerParams()
     {
         mContinuous = !mContinuous;
-        Bundle barcodeProps = new Bundle();
-        if(mContinuous)
+        addLineToResults(mContinuous ? "Switching to Continuous mode" : "Switching to normal mode");
+        mProfileProcessingStartDate = new Date();
+        DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, mProfileName, mContinuous, 30000);
+        switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    addLineToResults("Params switched to " + (mContinuous ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
+                    Date current = new Date();
+                    long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+                    addLineToResults("Total time: " + timeDiff + "ms");
+                }
+                else
+                {
+                    addLineToResults("Error switching params to " + (mContinuous ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void deleteProfile()
+    {
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mProfileName);
+    }
+
+    private void createProfileAsync()
+    {
+        mProfileProcessingStartDate = new Date();
+        DWProfileChecker checker = new DWProfileChecker(this, mProfileName, 30000);
+        checker.execute(new DWProfileChecker.onProfileExistResult() {
+            @Override
+            public void result(String profileName, boolean exists, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    if(exists)
+                    {
+                        addLineToResults("Profile " + profileName + " found in DW profiles list.\n Resetting profile to not continuous mode.");
+                        DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, false, 30000);
+                        switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                            @Override
+                            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                                if(TextUtils.isEmpty(error))
+                                {
+                                    addLineToResults("Params switched to not continuous on profile: " + profileName + " succeeded");
+                                    Date current = new Date();
+                                    long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+                                    addLineToResults("Total time: " + timeDiff + "ms");
+                                }
+                                else
+                                {
+                                    addLineToResults("Error switching params to not continuous on profile: " + profileName + "\n" + error);
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        addLineToResults("Profile " + profileName + " not found in DW profiles list. Creating profile.");
+                        DWProfileCreate profileCreate = new DWProfileCreate(MainActivity.this, profileName, 30000);
+                        profileCreate.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                            @Override
+                            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                                if(TextUtils.isEmpty(error))
+                                {
+                                    addLineToResults("Profile: " + profileName + " created with success.\nSetting config now.");
+                                    DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this, profileName, 30000);
+                                    profileSetConfig.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                                        @Override
+                                        public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                                            if(TextUtils.isEmpty(error))
+                                            {
+                                                addLineToResults("Set config on profile: " + profileName + " succeeded\n Resetting profile to not continuous mode.");
+                                                DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, false, 30000);
+                                                switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                                                    @Override
+                                                    public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                                                        if(TextUtils.isEmpty(error))
+                                                        {
+                                                            addLineToResults("Params switched to not continuous on profile: " + profileName + " succeeded");
+                                                            Date current = new Date();
+                                                            long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+                                                            addLineToResults("Total time: " + timeDiff + "ms");
+                                                        }
+                                                        else
+                                                        {
+                                                            addLineToResults("Error switching params to not continuous on profile: " + profileName + "\n" + error);
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                            else
+                                            {
+                                                addLineToResults("Error setting params on profile: " + profileName + "\n" + error);
+                                            }
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    addLineToResults("Error creating profile: " + profileName + "\n" + error);
+                                }
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    addLineToResults("Error checking if profile " + profileName + " exists: \n" + error);
+                }
+            }
+        });
+    }
+
+    private void addLineToResults(final String lineToAdd)
+    {
+        mResults += lineToAdd + "\n";
+        updateAndScrollDownTextView();
+    }
+
+    private void updateAndScrollDownTextView()
+    {
+        if(mScrollDownRunnable == null)
         {
-            barcodeProps.putString("aim_type", "5");
-            barcodeProps.putString("beam_timer", "0");
+            mScrollDownRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            et_results.setText(mResults);
+                            sv_results.fullScroll(ScrollView.FOCUS_DOWN);
+                        }
+                    });
+                }
+            };
         }
         else
         {
-            barcodeProps.putString("aim_type", "0");
-            barcodeProps.putString("beam_timer", "5000");
+            // A new line has been added while we were waiting to scroll down
+            // reset handler to repost it....
+            mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
         }
-        mResults = "";
-        mResults += (mContinuous ? "Switched to Continuous mode" : "Switched to normal mode") + "\n";
-        et_results.setText(mResults);
-        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SWITCH_SCANNER_PARAMS, barcodeProps);
-
+        mScrollDownHandler.postDelayed(mScrollDownRunnable, 200);
     }
-
 }
