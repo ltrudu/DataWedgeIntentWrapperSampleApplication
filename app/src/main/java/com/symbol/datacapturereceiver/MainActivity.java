@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mContinuous = false;
     private Date mScanDate = null;
 
-    private boolean mStartContinuous = true;
+    private boolean mStartContinuous = false;
 
     private Date mProfileProcessingStartDate = null;
 
