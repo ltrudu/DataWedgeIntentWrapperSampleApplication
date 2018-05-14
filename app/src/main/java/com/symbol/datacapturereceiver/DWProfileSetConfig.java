@@ -13,9 +13,11 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
     protected static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
     protected static String mIntentCategory = "android.intent.category.DEFAULT";
 
+    protected boolean mAggressiveContinuousMode = false;
 
-    public DWProfileSetConfig(Context aContext, String aProfile, long aTimeOut) {
+    public DWProfileSetConfig(boolean aggressiveContinuous, Context aContext, String aProfile, long aTimeOut) {
         super(aContext, aProfile, aTimeOut);
+        mAggressiveContinuousMode = aggressiveContinuous;
     }
 
 
@@ -51,6 +53,35 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
 
         // Configuration des différents plugins
         ArrayList<Bundle> pluginConfigs = new ArrayList<Bundle>();
+
+        // Configuration du plugin BARCODE
+        Bundle barcodePluginConfig = new Bundle();
+        barcodePluginConfig.putString("PLUGIN_NAME", "BARCODE");
+        barcodePluginConfig.putString("RESET_CONFIG", "true");
+
+        Bundle barcodeProps = new Bundle();
+        barcodeProps.putString("aim_mode", "on");
+        barcodeProps.putString("lcd_mode", "3");
+
+        barcodeProps.putString("scanner_selection_by_identifier","INTERNAL_IMAGER");
+        //barcodeProps.putString("scanner_selection", "auto");
+        if (mAggressiveContinuousMode) {
+            // Super aggressive continuous mode without beam timer and no timeouts
+            barcodeProps.putString("aim_type", "5");
+            barcodeProps.putInt("beam_timer", 0);
+            barcodeProps.putString("different_barcode_timeout", "0");
+            barcodeProps.putString("same_barcode_timeout", "0");
+
+        } else {
+            // Standard mode with beam timer and same/different timeout
+            barcodeProps.putString("aim_type", "3");
+            barcodeProps.putInt("beam_timer", 5000);
+            barcodeProps.putString("different_barcode_timeout", "500");
+            barcodeProps.putString("same_barcode_timeout", "500");
+        }
+        barcodePluginConfig.putBundle("PARAM_LIST", barcodeProps);
+        pluginConfigs.add(barcodePluginConfig);
+
 
         // Configuration du plugin KEYSTROKE
         Bundle keystrokePluginConfig = new Bundle();

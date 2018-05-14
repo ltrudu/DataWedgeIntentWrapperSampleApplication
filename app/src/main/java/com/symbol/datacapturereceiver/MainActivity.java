@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean mContinuous = false;
     private Date mScanDate = null;
 
+    private boolean mStartContinuous = true;
+
     private Date mProfileProcessingStartDate = null;
 
     /*
@@ -523,20 +525,20 @@ public class MainActivity extends AppCompatActivity {
                                 if(TextUtils.isEmpty(error))
                                 {
                                     addLineToResults("Profile: " + profileName + " created with success.\nSetting config now.");
-                                    DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this, profileName, 30000);
+                                    DWProfileSetConfig profileSetConfig = new DWProfileSetConfig( mStartContinuous,MainActivity.this, profileName, 30000);
                                     profileSetConfig.execute(new DWProfileCommandBase.onProfileCommandResult() {
                                         @Override
                                         public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                                             if(TextUtils.isEmpty(error))
                                             {
                                                 addLineToResults("Set config on profile: " + profileName + " succeeded\n Resetting profile to not continuous mode.");
-                                                DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, false, 30000);
+                                                DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, mStartContinuous, 30000);
                                                 switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
                                                     @Override
                                                     public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                                                         if(TextUtils.isEmpty(error))
                                                         {
-                                                            addLineToResults("Params switched to not continuous on profile: " + profileName + " succeeded");
+                                                            addLineToResults("Params switched to " + (mStartContinuous ? "" : "not") + " continuous on profile: " + profileName + " succeeded");
                                                             Date current = new Date();
                                                             long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
                                                             addLineToResults("Total time: " + timeDiff + "ms");
