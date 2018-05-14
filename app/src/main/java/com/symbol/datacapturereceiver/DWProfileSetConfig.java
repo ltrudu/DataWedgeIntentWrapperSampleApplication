@@ -63,8 +63,12 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         barcodeProps.putString("aim_mode", "on");
         barcodeProps.putString("lcd_mode", "3");
 
-        barcodeProps.putString("scanner_selection_by_identifier","INTERNAL_IMAGER");
+        // Use this for Datawedge < 6.7
         //barcodeProps.putString("scanner_selection", "auto");
+
+        // Use this for Datawedge >= 6.7
+        barcodeProps.putString("scanner_selection_by_identifier","INTERNAL_IMAGER");
+
         if (mAggressiveContinuousMode) {
             // Super aggressive continuous mode without beam timer and no timeouts
             barcodeProps.putString("aim_type", "5");
