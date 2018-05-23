@@ -1,9 +1,11 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import com.symbol.datacapturereceiver.DataWedgeConstants;
 
 import java.util.Arrays;
 
@@ -13,8 +15,8 @@ import java.util.Arrays;
 
 public class DWProfileChecker extends DWProfileBase {
 
-    public DWProfileChecker(Context aContext, String aProfile, long aTimeOut) {
-        super(aContext, aProfile, aTimeOut);
+    public DWProfileChecker(Context aContext) {
+        super(aContext);
         mBroadcastReceiver = new checkProfileReceiver();
     }
 
@@ -38,8 +40,13 @@ public class DWProfileChecker extends DWProfileBase {
      */
     private checkProfileReceiver mBroadcastReceiver = null;
 
-    public void execute(onProfileExistResult callback)
+    public void execute(DWProfileBaseSettings settings, onProfileExistResult callback)
     {
+        /*
+        Launch timeout mechanism
+         */
+        super.execute(settings);
+
         mProfileExistsCallback = callback;
 
         IntentFilter intentFilter = new IntentFilter();
@@ -56,10 +63,6 @@ public class DWProfileChecker extends DWProfileBase {
          */
         sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_GET_PROFILES_LIST, DataWedgeConstants.EXTRA_EMPTY);
 
-        /*
-        Launch timeout mechanism
-         */
-        super.execute();
     }
 
     private class checkProfileReceiver extends BroadcastReceiver
@@ -71,10 +74,10 @@ public class DWProfileChecker extends DWProfileBase {
                 //  6.2 API to GetProfileList
                 String[] profilesList = intent.getStringArrayExtra(DataWedgeConstants.EXTRA_RESULT_GET_PROFILE_LIST);
                 //  Profile list for 6.2 APIs
-                boolean exists = Arrays.asList(profilesList).contains(mProfileName);
+                boolean exists = Arrays.asList(profilesList).contains(mSettings.mProfileName);
                 if(mProfileExistsCallback != null)
                 {
-                    mProfileExistsCallback.result(mProfileName, exists, null);
+                    mProfileExistsCallback.result(mSettings.mProfileName, exists, null);
                     cleanAll();
                 }
             }
@@ -84,7 +87,7 @@ public class DWProfileChecker extends DWProfileBase {
     @Override
     protected void cleanAll()
     {
-        mProfileName = "";
+        mSettings.mProfileName = "";
         mProfileExistsCallback = null;
         mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
@@ -97,7 +100,7 @@ public class DWProfileChecker extends DWProfileBase {
     protected void onError(String error) {
         if(mProfileExistsCallback != null)
         {
-            mProfileExistsCallback.result(mProfileName, false, error);
+            mProfileExistsCallback.result(mSettings.mProfileName, false, error);
             cleanAll();
         }
     }

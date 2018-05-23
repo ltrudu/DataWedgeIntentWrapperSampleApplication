@@ -1,39 +1,38 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 import android.content.Context;
 import android.os.Bundle;
+
+import com.symbol.datacapturereceiver.DataWedgeConstants;
 
 /**
  * Created by laure on 16/04/2018.
  */
 
-public class DWProfileSwitchContinuousMode extends DWProfileCommandBase {
+public class DWProfileSwitchBarcodeParams extends DWProfileCommandBase {
 
-    private boolean mContinuousMode = false;
-
-    public DWProfileSwitchContinuousMode(Context aContext, String aProfile, boolean aContinuousMode, long aTimeOut) {
-        super(aContext, aProfile, aTimeOut);
-        mContinuousMode = aContinuousMode;
+    public DWProfileSwitchBarcodeParams(Context aContext) {
+        super(aContext);
     }
 
-    public void execute(onProfileCommandResult callbacks)
+    public void execute(DWProfileSwitchBarcodeParamsSettings settings, onProfileCommandResult callback)
     {
         /*
         Call base class execute to register command result
         broadcast receiver and launch timeout mechanism
          */
-        super.execute(callbacks);
+        super.execute(settings, callback);
 
         /*
         Create the profile
          */
-        switchToContinuousMode(mProfileName);
+        switchToContinuousMode(settings);
      }
 
-    private void switchToContinuousMode(String profileName)
+    private void switchToContinuousMode(DWProfileSwitchBarcodeParamsSettings settings)
     {
         Bundle barcodeProps = new Bundle();
-        if(mContinuousMode)
+        if(settings.mAggressiveContinuousMode)
         {
             barcodeProps.putString("aim_type", "5");
             barcodeProps.putString("beam_timer", "0");

@@ -15,6 +15,16 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.symbol.dwprofileasyncclasses.DWProfileChecker;
+import com.symbol.dwprofileasyncclasses.DWProfileCheckerSettings;
+import com.symbol.dwprofileasyncclasses.DWProfileCommandBase;
+import com.symbol.dwprofileasyncclasses.DWProfileCreate;
+import com.symbol.dwprofileasyncclasses.DWProfileCreateSettings;
+import com.symbol.dwprofileasyncclasses.DWProfileSetConfig;
+import com.symbol.dwprofileasyncclasses.DWProfileSetConfigSettings;
+import com.symbol.dwprofileasyncclasses.DWProfileSwitchBarcodeParams;
+import com.symbol.dwprofileasyncclasses.DWProfileSwitchBarcodeParamsSettings;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -76,17 +86,18 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private static String TAG = "DataCaptureReceiver";
-    private static String mProfileName = "com.symbol.datacapturereceiver";
-    private static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
-    private static String mIntentCategory = "android.intent.category.DEFAULT";
+    private static String mDemoProfileName = "com.symbol.datacapturereceiver";
+    private static String mDemoIntentAction = "com.symbol.datacapturereceiver.RECVR";
+    private static String mDemoIntentCategory = "android.intent.category.DEFAULT";
+    private static long mDemoTimeOutMS = 30000; //30s timeout...
+    private static boolean mStartInContinuousMode = false;
+
+
     private TextView et_results;
     private ScrollView sv_results;
     private String mResults = "";
-    private boolean mContinuous = false;
+    private boolean mContinuousModeSwitch = false;
     private Date mScanDate = null;
-
-    private boolean mStartContinuous = false;
-
     private Date mProfileProcessingStartDate = null;
 
     /*
@@ -186,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         btSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchScannerParams();
+                switchScannerParamsAsync();
             }
         });
 
@@ -210,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Register the internal broadcast receiver when we are alive
         IntentFilter myFilter = new IntentFilter();
-        myFilter.addAction(mIntentAction);
-        myFilter.addCategory(mIntentCategory);
+        myFilter.addAction(mDemoIntentAction);
+        myFilter.addCategory(mDemoIntentCategory);
         this.getApplicationContext().registerReceiver(mMessageReceiver, myFilter);
         mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
@@ -241,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     // formatting it and adding it to the end of the edit box
     private boolean handleDecodeData(Intent i) {
         // check the intent action is for us
-        if ( i.getAction().contentEquals(mIntentAction) ) {
+        if ( i.getAction().contentEquals(mDemoIntentAction) ) {
 
             Date current = new Date();
 
@@ -417,11 +428,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void createProfile()
     {
-        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_CREATE_PROFILE, mProfileName);
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_CREATE_PROFILE, mDemoProfileName);
 
         //  Now configure that created profile to apply to our application
         Bundle profileConfig = new Bundle();
-        profileConfig.putString("PROFILE_NAME", mProfileName);
+        profileConfig.putString("PROFILE_NAME", mDemoProfileName);
         profileConfig.putString("PROFILE_ENABLED", "true"); //  Seems these are all strings
         profileConfig.putString("CONFIG_MODE", "UPDATE");
         Bundle barcodeConfig = new Bundle();
@@ -448,33 +459,40 @@ public class MainActivity extends AppCompatActivity {
         intentConfig.putString("RESET_CONFIG", "true");
         Bundle intentProps = new Bundle();
         intentProps.putString("intent_output_enabled", "true");
-        intentProps.putString("intent_action", mIntentAction);
-        intentProps.putString("intent_category", mIntentCategory);
+        intentProps.putString("intent_action", mDemoIntentAction);
+        intentProps.putString("intent_category", mDemoIntentCategory);
         intentProps.putString("intent_delivery", "2");
         intentConfig.putBundle("PARAM_LIST", intentProps);
         profileConfig.putBundle("PLUGIN_CONFIG", intentConfig);
         sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SET_CONFIG, profileConfig);
     }
 
-    private void switchScannerParams()
+    private void switchScannerParamsAsync()
     {
-        mContinuous = !mContinuous;
-        addLineToResults(mContinuous ? "Switching to Continuous mode" : "Switching to normal mode");
+        mContinuousModeSwitch = !mContinuousModeSwitch;
+        addLineToResults(mContinuousModeSwitch ? "Switching to Continuous mode" : "Switching to normal mode");
         mProfileProcessingStartDate = new Date();
-        DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, mProfileName, mContinuous, 30000);
-        switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
+        DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
+        DWProfileSwitchBarcodeParamsSettings settings = new DWProfileSwitchBarcodeParamsSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+            mAggressiveContinuousMode = MainActivity.this.mContinuousModeSwitch;
+        }};
+
+        switchContinuousMode.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                 if(TextUtils.isEmpty(error))
                 {
-                    addLineToResults("Params switched to " + (mContinuous ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
+                    addLineToResults("Params switched to " + (mContinuousModeSwitch ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
                     Date current = new Date();
                     long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
                     addLineToResults("Total time: " + timeDiff + "ms");
                 }
                 else
                 {
-                    addLineToResults("Error switching params to " + (mContinuous ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error switching params to " + (mContinuousModeSwitch ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + error);
                 }
             }
         });
@@ -482,23 +500,51 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteProfile()
     {
-        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mProfileName);
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mDemoProfileName);
     }
 
     private void createProfileAsync()
     {
         mProfileProcessingStartDate = new Date();
-        DWProfileChecker checker = new DWProfileChecker(this, mProfileName, 30000);
-        checker.execute(new DWProfileChecker.onProfileExistResult() {
+        /*
+        The profile checker will check if the profile already exists
+         */
+        DWProfileChecker checker = new DWProfileChecker(this);
+
+        // Setup profile checker parameters
+        DWProfileCheckerSettings profileCheckerSettings = new DWProfileCheckerSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+        }};
+
+        // Execute the checker with the given parameters
+        checker.execute(profileCheckerSettings, new DWProfileChecker.onProfileExistResult() {
             @Override
             public void result(String profileName, boolean exists, String error) {
+                // empty error... means... I let you guess....
                 if(TextUtils.isEmpty(error))
                 {
+                    // exists == true means that the profile already... exists..
                     if(exists)
                     {
                         addLineToResults("Profile " + profileName + " found in DW profiles list.\n Resetting profile to not continuous mode.");
-                        DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, false, 30000);
-                        switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
+
+                        // Let's force the profile to mStartInContinuousMode
+                        DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
+
+                        // Create a parameters class instance to pass to the execute method of the DWProfileSwitchBarcodeParams class
+                        // Online initialization is a bit messy in java... it may be a better approach to use a constructor
+                        // Except if there are too many properties to initialize...
+                        DWProfileSwitchBarcodeParamsSettings switchBarcodeParamsSettings = new DWProfileSwitchBarcodeParamsSettings()
+                        {{
+                            mProfileName = MainActivity.mDemoProfileName;
+                            mTimeOutMS = MainActivity.mDemoTimeOutMS;
+                            mAggressiveContinuousMode = MainActivity.mStartInContinuousMode;
+                        }};
+
+                        // Execute the SwitchBarcodeParams profile with the given parameters
+                        switchContinuousMode.execute(switchBarcodeParamsSettings, new DWProfileCommandBase.onProfileCommandResult() {
                             @Override
                             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                                 if(TextUtils.isEmpty(error))
@@ -518,37 +564,36 @@ public class MainActivity extends AppCompatActivity {
                     else
                     {
                         addLineToResults("Profile " + profileName + " not found in DW profiles list. Creating profile.");
-                        DWProfileCreate profileCreate = new DWProfileCreate(MainActivity.this, profileName, 30000);
-                        profileCreate.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                        DWProfileCreate profileCreate = new DWProfileCreate(MainActivity.this);
+
+                        DWProfileCreateSettings profileCreateSettings = new DWProfileCreateSettings()
+                        {{
+                            mProfileName = MainActivity.this.mDemoProfileName;
+                            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+                        }};
+
+                        profileCreate.execute(profileCreateSettings, new DWProfileCommandBase.onProfileCommandResult() {
                             @Override
                             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                                 if(TextUtils.isEmpty(error))
                                 {
                                     addLineToResults("Profile: " + profileName + " created with success.\nSetting config now.");
-                                    DWProfileSetConfig profileSetConfig = new DWProfileSetConfig( mStartContinuous,MainActivity.this, profileName, 30000);
-                                    profileSetConfig.execute(new DWProfileCommandBase.onProfileCommandResult() {
+                                    DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this);
+                                    DWProfileSetConfigSettings setConfigSettings = new DWProfileSetConfigSettings()
+                                    {{
+                                        mProfileName = MainActivity.this.mDemoProfileName;
+                                        mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+                                        mStartInAggressiveContinuousMode = mStartInContinuousMode;
+                                    }};
+                                    profileSetConfig.execute(setConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
                                         @Override
                                         public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
                                             if(TextUtils.isEmpty(error))
                                             {
-                                                addLineToResults("Set config on profile: " + profileName + " succeeded\n Resetting profile to not continuous mode.");
-                                                DWProfileSwitchContinuousMode switchContinuousMode = new DWProfileSwitchContinuousMode(MainActivity.this, profileName, mStartContinuous, 30000);
-                                                switchContinuousMode.execute(new DWProfileCommandBase.onProfileCommandResult() {
-                                                    @Override
-                                                    public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                                                        if(TextUtils.isEmpty(error))
-                                                        {
-                                                            addLineToResults("Params switched to " + (mStartContinuous ? "" : "not") + " continuous on profile: " + profileName + " succeeded");
-                                                            Date current = new Date();
-                                                            long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
-                                                            addLineToResults("Total time: " + timeDiff + "ms");
-                                                        }
-                                                        else
-                                                        {
-                                                            addLineToResults("Error switching params to not continuous on profile: " + profileName + "\n" + error);
-                                                        }
-                                                    }
-                                                });
+                                                addLineToResults("Set config on profile: " + profileName + " succeeded.");
+                                                Date current = new Date();
+                                                long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+                                                addLineToResults("Total time: " + timeDiff + "ms");
                                             }
                                             else
                                             {

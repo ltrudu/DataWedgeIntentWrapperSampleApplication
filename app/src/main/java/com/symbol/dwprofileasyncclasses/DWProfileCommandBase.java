@@ -1,10 +1,12 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
+import com.symbol.datacapturereceiver.DataWedgeConstants;
 
 import java.util.Date;
 import java.util.Set;
@@ -20,8 +22,8 @@ public class DWProfileCommandBase extends DWProfileBase {
     */
     protected String mCommandIdentifier = "";
 
-    public DWProfileCommandBase(Context aContext, String aProfile, long aTimeOut) {
-        super(aContext, aProfile, aTimeOut);
+    public DWProfileCommandBase(Context aContext) {
+        super(aContext);
         mBroadcastReceiver = new dataWedgeActionResultReceiver();
     }
 
@@ -45,8 +47,14 @@ public class DWProfileCommandBase extends DWProfileBase {
      */
     private dataWedgeActionResultReceiver mBroadcastReceiver = null;
 
-    protected void execute(onProfileCommandResult callback)
+    protected void execute(DWProfileBaseSettings settings, onProfileCommandResult callback)
     {
+
+        /*
+        Launch timeout mechanism
+         */
+        super.execute(settings);
+
         mProfileCreateCallback = callback;
 
         IntentFilter intentFilter = new IntentFilter();
@@ -58,10 +66,6 @@ public class DWProfileCommandBase extends DWProfileBase {
          */
         mContext.getApplicationContext().registerReceiver(mBroadcastReceiver, intentFilter);
 
-        /*
-        Launch timeout mechanism
-         */
-        super.execute();
      }
 
     protected void sendDataWedgeIntentWithExtraRequestResult(String action, String extraKey, String extraValue)
@@ -70,7 +74,7 @@ public class DWProfileCommandBase extends DWProfileBase {
         dwIntent.setAction(action);
         dwIntent.putExtra(extraKey, extraValue);
         dwIntent.putExtra("SEND_RESULT","true");
-        mCommandIdentifier = mProfileName + new Date().getTime();
+        mCommandIdentifier = mSettings.mProfileName + new Date().getTime();
         dwIntent.putExtra("COMMAND_IDENTIFIER",mCommandIdentifier);
         mContext.sendBroadcast(dwIntent);
     }
@@ -81,7 +85,7 @@ public class DWProfileCommandBase extends DWProfileBase {
         dwIntent.setAction(action);
         dwIntent.putExtra(extraKey, extras);
         dwIntent.putExtra("SEND_RESULT","true");
-        mCommandIdentifier = mProfileName + new Date().getTime();
+        mCommandIdentifier = mSettings.mProfileName + new Date().getTime();
         dwIntent.putExtra("COMMAND_IDENTIFIER",mCommandIdentifier);
         mContext.sendBroadcast(dwIntent);
     }
@@ -120,7 +124,7 @@ public class DWProfileCommandBase extends DWProfileBase {
 
                     if(mProfileCreateCallback != null)
                     {
-                        mProfileCreateCallback.result(mProfileName, action, command, result, resultInfo, commandidentifier, null);
+                        mProfileCreateCallback.result(mSettings.mProfileName, action, command, result, resultInfo, commandidentifier, null);
                         cleanAll();
                     }
             }
@@ -130,7 +134,7 @@ public class DWProfileCommandBase extends DWProfileBase {
     @Override
     protected void cleanAll()
     {
-        mProfileName = "";
+        mSettings.mProfileName = "";
         mProfileCreateCallback = null;
         mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
@@ -143,7 +147,7 @@ public class DWProfileCommandBase extends DWProfileBase {
     protected void onError(String error) {
         if(mProfileCreateCallback != null)
         {
-            mProfileCreateCallback.result(mProfileName, null, null, null, null, null, error);
+            mProfileCreateCallback.result(mSettings.mProfileName, null, null, null, null, null, error);
             cleanAll();
         }
     }

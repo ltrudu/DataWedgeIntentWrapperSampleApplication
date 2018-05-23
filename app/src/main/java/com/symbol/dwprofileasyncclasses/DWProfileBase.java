@@ -1,11 +1,9 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-import java.util.Date;
 
 /**
  * Created by laure on 16/04/2018.
@@ -17,16 +15,7 @@ public abstract class DWProfileBase {
      */
     protected Context mContext = null;
 
-    /*
-    The profile we are working on
-     */
-    protected String mProfileName = "";
-
-    /*
-    A time out, in case we don't receive an answer
-    from DataWedge
-     */
-    protected long mTimeoutMS = 5000;
+    protected DWProfileBaseSettings mSettings = null;
 
     /*
     A handler that will be used by the derived
@@ -46,11 +35,9 @@ public abstract class DWProfileBase {
     };
 
 
-    public DWProfileBase(Context aContext, String aProfile, long aTimeOut)
+    public DWProfileBase(Context aContext)
     {
         mContext = aContext;
-        mProfileName = aProfile;
-        mTimeoutMS = aTimeOut;
     }
 
     protected void sendDataWedgeIntentWithExtra(String action, String extraKey, String extraValue)
@@ -69,13 +56,14 @@ public abstract class DWProfileBase {
         mContext.sendBroadcast(dwIntent);
     }
 
-    protected void execute()
+    protected void execute(DWProfileBaseSettings settings)
     {
+        mSettings = settings;
         /*
         Start time out mechanism
          */
         mTimeOutHandler.postDelayed(mTimeOutRunnable,
-                mTimeoutMS);
+                mSettings.mTimeOutMS);
     }
 
     protected abstract void onError(String error);

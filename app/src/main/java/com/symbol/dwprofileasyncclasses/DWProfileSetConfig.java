@@ -1,7 +1,9 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 import android.content.Context;
 import android.os.Bundle;
+
+import com.symbol.datacapturereceiver.DataWedgeConstants;
 
 import java.util.ArrayList;
 
@@ -13,35 +15,31 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
     protected static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
     protected static String mIntentCategory = "android.intent.category.DEFAULT";
 
-    protected boolean mAggressiveContinuousMode = false;
 
-    public DWProfileSetConfig(boolean aggressiveContinuous, Context aContext, String aProfile, long aTimeOut) {
-        super(aContext, aProfile, aTimeOut);
-        mAggressiveContinuousMode = aggressiveContinuous;
+    public DWProfileSetConfig(Context aContext) {
+        super(aContext);
     }
 
-
-    @Override
-    public void execute(onProfileCommandResult callback)
+    public void execute(DWProfileSetConfigSettings settings, onProfileCommandResult callback)
     {
         /*
         Call base class execute to register command result
         broadcast receiver and launch timeout mechanism
          */
-        super.execute(callback);
+        super.execute(settings, callback);
 
         /*
         Create the profile
          */
-        setProfileConfig(mProfileName);
+        setProfileConfig(settings);
      }
 
-    private void setProfileConfig(String profileName)
+    private void setProfileConfig(DWProfileSetConfigSettings settings)
     {
         // (Re)Configuration du profil via l'intent SET_PROFILE
         // NB : on peut envoyer cet intent sans soucis même si le profil est déjà configuré
         Bundle profileConfig = new Bundle();
-        profileConfig.putString("PROFILE_NAME", profileName);
+        profileConfig.putString("PROFILE_NAME", settings.mProfileName);
         profileConfig.putString("PROFILE_ENABLED", "true");
         profileConfig.putString("CONFIG_MODE", "UPDATE");
 
@@ -69,7 +67,7 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         // Use this for Datawedge >= 6.7
         barcodeProps.putString("scanner_selection_by_identifier","INTERNAL_IMAGER");
 
-        if (mAggressiveContinuousMode) {
+        if (settings.mStartInAggressiveContinuousMode) {
             // Super aggressive continuous mode without beam timer and no timeouts
             barcodeProps.putString("aim_type", "5");
             barcodeProps.putInt("beam_timer", 0);
