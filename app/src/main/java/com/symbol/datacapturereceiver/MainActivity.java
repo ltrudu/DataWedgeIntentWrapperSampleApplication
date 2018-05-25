@@ -616,6 +616,8 @@ public class MainActivity extends AppCompatActivity {
                                     DWProfileSetConfigSettings setConfigSettings = new DWProfileSetConfigSettings()
                                     {{
                                         mProfileName = MainActivity.mDemoProfileName;
+                                        mIntentAction = MainActivity.mDemoIntentAction;
+                                        mIntentCategory = MainActivity.mDemoIntentCategory;
                                         mTimeOutMS = MainActivity.mDemoTimeOutMS;
                                         mStartInAggressiveContinuousMode = mStartInContinuousMode;
                                     }};

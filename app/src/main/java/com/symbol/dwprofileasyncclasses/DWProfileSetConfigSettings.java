@@ -6,6 +6,16 @@ Add more initialisation parameters here
 public class DWProfileSetConfigSettings extends DWProfileBaseSettings
 {
     /*
+    The action associated with the broadcasted intent
+     */
+    public String mIntentAction = "";
+
+    /*
+    The category associated with the broadcast intent
+     */
+    public String mIntentCategory = "";
+
+    /*
     Set to true for a supper aggressive scanning mode
      */
     public boolean mStartInAggressiveContinuousMode = false;

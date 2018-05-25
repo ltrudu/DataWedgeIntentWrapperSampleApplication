@@ -12,10 +12,6 @@ import java.util.ArrayList;
  */
 
 public class DWProfileSetConfig extends DWProfileCommandBase {
-    protected static String mIntentAction = "com.symbol.datacapturereceiver.RECVR";
-    protected static String mIntentCategory = "android.intent.category.DEFAULT";
-
-
     public DWProfileSetConfig(Context aContext) {
         super(aContext);
     }
@@ -100,8 +96,8 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         intentPluginConfig.putString("RESET_CONFIG", "true");
         Bundle intentProps = new Bundle();
         intentProps.putString("intent_output_enabled", "true");
-        intentProps.putString("intent_action", mIntentAction);
-        intentProps.putString("intent_category", mIntentCategory);
+        intentProps.putString("intent_action", settings.mIntentAction);
+        intentProps.putString("intent_category", settings.mIntentCategory);
         intentProps.putString("intent_delivery", "2");
         intentPluginConfig.putBundle("PARAM_LIST", intentProps);
         pluginConfigs.add(intentPluginConfig);
