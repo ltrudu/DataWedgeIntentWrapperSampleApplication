@@ -40,7 +40,7 @@ public class DWProfileChecker extends DWProfileBase {
      */
     private checkProfileReceiver mBroadcastReceiver = null;
 
-    public void execute(DWProfileBaseSettings settings, onProfileExistResult callback)
+    public void execute(DWProfileCheckerSettings settings, onProfileExistResult callback)
     {
         /*
         Launch timeout mechanism

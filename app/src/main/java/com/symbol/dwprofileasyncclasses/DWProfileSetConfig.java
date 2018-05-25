@@ -45,8 +45,8 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
 
         // Configuration des applications du profil
         Bundle appConfig = new Bundle();
-        appConfig.putString("PACKAGE_NAME", mContext.getPackageName());
-        appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+        appConfig.putString("PACKAGE_NAME", settings.mPackageName.isEmpty() ? mContext.getPackageName() : settings.mPackageName);
+        appConfig.putStringArray("ACTIVITY_LIST", ((settings.mActivityList != null && settings.mActivityList.length > 0) ? settings.mActivityList : new String[]{"*"}));
         profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
 
         // Configuration des différents plugins

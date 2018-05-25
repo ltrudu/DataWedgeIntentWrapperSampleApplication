@@ -20,6 +20,8 @@ import com.symbol.dwprofileasyncclasses.DWProfileCheckerSettings;
 import com.symbol.dwprofileasyncclasses.DWProfileCommandBase;
 import com.symbol.dwprofileasyncclasses.DWProfileCreate;
 import com.symbol.dwprofileasyncclasses.DWProfileCreateSettings;
+import com.symbol.dwprofileasyncclasses.DWProfileDelete;
+import com.symbol.dwprofileasyncclasses.DWProfileDeleteSettings;
 import com.symbol.dwprofileasyncclasses.DWProfileSetConfig;
 import com.symbol.dwprofileasyncclasses.DWProfileSetConfigSettings;
 import com.symbol.dwprofileasyncclasses.DWProfileSwitchBarcodeParams;
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //"database profile auto creation" import mode (filebased)
-                deleteProfile();
+                deleteProfileAsync();
             }
         });
 
@@ -498,9 +500,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteProfile()
+    private void deleteProfileAsync()
     {
-        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mDemoProfileName);
+        //sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mDemoProfileName);
+        addLineToResults("Deleting profile " + MainActivity.mDemoProfileName);
+
+        mProfileProcessingStartDate = new Date();
+        /*
+        The profile delete will delete a profile if it exists
+         */
+        DWProfileDelete deleteProfile = new DWProfileDelete(this);
+
+        // Setup profile checker parameters
+        DWProfileDeleteSettings profileDeleteSettings = new DWProfileDeleteSettings()
+        {{
+            mProfileName = MainActivity.mDemoProfileName;
+            mTimeOutMS = MainActivity.mDemoTimeOutMS;
+        }};
+
+        deleteProfile.execute(profileDeleteSettings, new DWProfileDelete.onProfileCommandResult(){
+                @Override
+                public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                    if(TextUtils.isEmpty(error))
+                    {
+                        addLineToResults("Profile: " + profileName + " delete succeeded");
+                        Date current = new Date();
+                        long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+                        addLineToResults("Total time: " + timeDiff + "ms");
+                    }
+                    else
+                    {
+                        addLineToResults("Error while trying to delete profile: " + profileName + "\n" + error);
+                    }
+                }
+            }
+        );
     }
 
     private void createProfileAsync()
@@ -514,8 +548,8 @@ public class MainActivity extends AppCompatActivity {
         // Setup profile checker parameters
         DWProfileCheckerSettings profileCheckerSettings = new DWProfileCheckerSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
-            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+            mProfileName = MainActivity.mDemoProfileName;
+            mTimeOutMS = MainActivity.mDemoTimeOutMS;
         }};
 
         // Execute the checker with the given parameters
@@ -568,8 +602,8 @@ public class MainActivity extends AppCompatActivity {
 
                         DWProfileCreateSettings profileCreateSettings = new DWProfileCreateSettings()
                         {{
-                            mProfileName = MainActivity.this.mDemoProfileName;
-                            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+                            mProfileName = MainActivity.mDemoProfileName;
+                            mTimeOutMS = MainActivity.mDemoTimeOutMS;
                         }};
 
                         profileCreate.execute(profileCreateSettings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -581,8 +615,8 @@ public class MainActivity extends AppCompatActivity {
                                     DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this);
                                     DWProfileSetConfigSettings setConfigSettings = new DWProfileSetConfigSettings()
                                     {{
-                                        mProfileName = MainActivity.this.mDemoProfileName;
-                                        mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
+                                        mProfileName = MainActivity.mDemoProfileName;
+                                        mTimeOutMS = MainActivity.mDemoTimeOutMS;
                                         mStartInAggressiveContinuousMode = mStartInContinuousMode;
                                     }};
                                     profileSetConfig.execute(setConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
