@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import com.symbol.datacapturereceiver.DataWedgeConstants;
-
 import java.util.Date;
 import java.util.Set;
 

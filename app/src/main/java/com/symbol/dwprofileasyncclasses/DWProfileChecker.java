@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.symbol.datacapturereceiver.DataWedgeConstants;
-
 import java.util.Arrays;
 
 /**

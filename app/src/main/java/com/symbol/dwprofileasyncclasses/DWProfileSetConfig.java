@@ -3,8 +3,6 @@ package com.symbol.dwprofileasyncclasses;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.symbol.datacapturereceiver.DataWedgeConstants;
-
 import java.util.ArrayList;
 
 /**

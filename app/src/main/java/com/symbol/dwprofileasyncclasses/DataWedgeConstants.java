@@ -1,4 +1,4 @@
-package com.symbol.datacapturereceiver;
+package com.symbol.dwprofileasyncclasses;
 
 /**
  * Created by Trudu Laurent on 22/11/2016.
@@ -41,6 +41,17 @@ public class DataWedgeConstants {
     public static final String DWAPI_ACTION_SCANNERINPUTPLUGIN = "com.symbol.datawedge.api.ACTION_SCANNERINPUTPLUGIN";
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_ENABLE = "ENABLE_PLUGIN";
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_DISABLE = "DISABLE_PLUGIN";
+
+    public static final String ACTION = "com.symbol.datawedge.api.ACTION";
+    public static final String NOTIFICATION_ACTION = "com.symbol.datawedge.api.NOTIFICATION_ACTION";
+
+    public static final String NOTIFICATION_TYPE_SCANNER_STATUS = "SCANNER_STATUS";
+    public static final String SCAN_STATUS_WAITING = "WAITING";
+    public static final String NOTIFICATION_TYPE_PROFILE_SWITCH = "PROFILE_SWITCH";
+
+    public static final String ACTION_EXTRA_REGISTER_FOR_NOTIFICATION = "com.symbol.datawedge.api.REGISTER_FOR_NOTIFICATION";
+    public static final String ACTION_EXTRA_UNREGISTER_FOR_NOTIFICATION = "com.symbol.datawedge.api.UNREGISTER_FOR_NOTIFICATION";
+
 
     //  6.2 API and up Actions sent to DataWedge
     public static final String ACTION_DATAWEDGE_FROM_6_2 = "com.symbol.datawedge.api.ACTION";
