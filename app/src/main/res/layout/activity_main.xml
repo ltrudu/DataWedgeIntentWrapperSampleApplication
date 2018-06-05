@@ -13,7 +13,7 @@
         android:id="@+id/sv_results"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/ll_scan"
+        android:layout_above="@+id/ll_datawedge"
         android:layout_alignParentStart="true">
 
         <TextView
@@ -23,6 +23,31 @@
             android:layout_above="@+id/ll_scan"
             android:inputType="textMultiLine" />
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_datawedge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_scan"
+        android:layout_alignParentBottom="false"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_enabledw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="Enable\nDW"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/button_disabledw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="Disable\nDW"
+            android:visibility="visible" />
+    </LinearLayout>
 
 
     <LinearLayout
@@ -72,21 +97,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Enable" />
+            android:text="Enable\nPlugin" />
 
         <Button
             android:id="@+id/button_disable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Disable" />
+            android:text="Disable\nPlugin" />
 
         <Button
             android:id="@+id/button_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Clear"
+            android:text="Clear\nView"
             android:visibility="visible" />
 
     </LinearLayout>

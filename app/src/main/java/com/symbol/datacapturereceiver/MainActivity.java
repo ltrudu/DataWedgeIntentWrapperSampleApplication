@@ -127,6 +127,22 @@ public class MainActivity extends AppCompatActivity {
         et_results = (TextView)findViewById(R.id.et_results);
         sv_results = (ScrollView)findViewById(R.id.sv_results);
 
+        Button btEnableDW = (Button) findViewById(R.id.button_enabledw);
+        btEnableDW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_ENABLE_DATAWEDGE, true);
+            }
+        });
+
+        Button btDisableDW = (Button) findViewById(R.id.button_disabledw);
+        btDisableDW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_ENABLE_DATAWEDGE, false);
+            }
+        });
+
         Button btStart = (Button) findViewById(R.id.button_start);
         btStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,6 +361,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendDataWedgeIntentWithExtra(String action, String extraKey, String extraValue)
+    {
+        Intent dwIntent = new Intent();
+        dwIntent.setAction(action);
+        dwIntent.putExtra(extraKey, extraValue);
+        this.sendBroadcast(dwIntent);
+    }
+
+    private void sendDataWedgeIntentWithExtra(String action, String extraKey, boolean extraValue)
     {
         Intent dwIntent = new Intent();
         dwIntent.setAction(action);

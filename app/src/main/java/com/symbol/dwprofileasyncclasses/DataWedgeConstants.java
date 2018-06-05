@@ -42,7 +42,6 @@ public class DataWedgeConstants {
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_ENABLE = "ENABLE_PLUGIN";
     public static final String DWAPI_PARAMETER_SCANNERINPUTPLUGIN_DISABLE = "DISABLE_PLUGIN";
 
-    public static final String ACTION = "com.symbol.datawedge.api.ACTION";
     public static final String NOTIFICATION_ACTION = "com.symbol.datawedge.api.NOTIFICATION_ACTION";
 
     public static final String NOTIFICATION_TYPE_SCANNER_STATUS = "SCANNER_STATUS";
