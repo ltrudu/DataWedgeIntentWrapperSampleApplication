@@ -38,7 +38,7 @@ public class DWProfileCommandBase extends DWProfileBase {
     A store to keep the callback to be fired when we will get the
     result of the intent
      */
-    private onProfileCommandResult mProfileCreateCallback = null;
+    private onProfileCommandResult mProfileCommandCallback = null;
 
     /*
     The receiver that we will register to retrieve DataWedge answer
@@ -47,13 +47,12 @@ public class DWProfileCommandBase extends DWProfileBase {
 
     protected void execute(DWProfileBaseSettings settings, onProfileCommandResult callback)
     {
-
         /*
         Launch timeout mechanism
          */
         super.execute(settings);
 
-        mProfileCreateCallback = callback;
+        mProfileCommandCallback = callback;
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DataWedgeConstants.ACTION_RESULT_DATAWEDGE_FROM_6_2);
@@ -67,6 +66,17 @@ public class DWProfileCommandBase extends DWProfileBase {
      }
 
     protected void sendDataWedgeIntentWithExtraRequestResult(String action, String extraKey, String extraValue)
+    {
+        Intent dwIntent = new Intent();
+        dwIntent.setAction(action);
+        dwIntent.putExtra(extraKey, extraValue);
+        dwIntent.putExtra("SEND_RESULT","true");
+        mCommandIdentifier = mSettings.mProfileName + new Date().getTime();
+        dwIntent.putExtra("COMMAND_IDENTIFIER",mCommandIdentifier);
+        mContext.sendBroadcast(dwIntent);
+    }
+
+    protected void sendDataWedgeIntentWithExtraRequestResult(String action, String extraKey, boolean extraValue)
     {
         Intent dwIntent = new Intent();
         dwIntent.setAction(action);
@@ -120,9 +130,9 @@ public class DWProfileCommandBase extends DWProfileBase {
                             "Result Info: " + resultInfo + "\n" +
                             "CID:" + commandidentifier;
 
-                    if(mProfileCreateCallback != null)
+                    if(mProfileCommandCallback != null)
                     {
-                        mProfileCreateCallback.result(mSettings.mProfileName, action, command, result, resultInfo, commandidentifier, null);
+                        mProfileCommandCallback.result(mSettings.mProfileName, action, command, result, resultInfo, commandidentifier, null);
                         cleanAll();
                     }
             }
@@ -133,7 +143,7 @@ public class DWProfileCommandBase extends DWProfileBase {
     protected void cleanAll()
     {
         mSettings.mProfileName = "";
-        mProfileCreateCallback = null;
+        mProfileCommandCallback = null;
         mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
     }
@@ -143,9 +153,9 @@ public class DWProfileCommandBase extends DWProfileBase {
      */
     @Override
     protected void onError(String error) {
-        if(mProfileCreateCallback != null)
+        if(mProfileCommandCallback != null)
         {
-            mProfileCreateCallback.result(mSettings.mProfileName, null, null, null, null, null, error);
+            mProfileCommandCallback.result(mSettings.mProfileName, null, null, null, null, null, error);
             cleanAll();
         }
     }

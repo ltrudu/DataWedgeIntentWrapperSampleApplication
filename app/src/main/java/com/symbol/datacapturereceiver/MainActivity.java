@@ -15,18 +15,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.symbol.dwprofileasyncclasses.DWProfileChecker;
-import com.symbol.dwprofileasyncclasses.DWProfileCheckerSettings;
-import com.symbol.dwprofileasyncclasses.DWProfileCommandBase;
-import com.symbol.dwprofileasyncclasses.DWProfileCreate;
-import com.symbol.dwprofileasyncclasses.DWProfileCreateSettings;
-import com.symbol.dwprofileasyncclasses.DWProfileDelete;
-import com.symbol.dwprofileasyncclasses.DWProfileDeleteSettings;
-import com.symbol.dwprofileasyncclasses.DWProfileSetConfig;
-import com.symbol.dwprofileasyncclasses.DWProfileSetConfigSettings;
-import com.symbol.dwprofileasyncclasses.DWProfileSwitchBarcodeParams;
-import com.symbol.dwprofileasyncclasses.DWProfileSwitchBarcodeParamsSettings;
-import com.symbol.dwprofileasyncclasses.DataWedgeConstants;
+import com.symbol.dwprofileasyncclasses.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -104,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
     private Date mProfileProcessingStartDate = null;
 
     /*
+    Scanner status checker
+     */
+    DWStatusScanner mScannerStatusChecker = null;
+
+    /*
         Handler and runnable to scroll down textview
      */
     private Handler mScrollDownHandler = null;
@@ -130,33 +124,26 @@ public class MainActivity extends AppCompatActivity {
         Button btEnableDW = (Button) findViewById(R.id.button_enabledw);
         btEnableDW.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_ENABLE_DATAWEDGE, true);
-            }
+            public void onClick(View v) {  datawedgeEnableWithErrorChecking();  }
         });
 
         Button btDisableDW = (Button) findViewById(R.id.button_disabledw);
         btDisableDW.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_ENABLE_DATAWEDGE, false);
-            }
+            public void onClick(View v) { datawedgeDisableWithErrorChecking(); }
         });
 
         Button btStart = (Button) findViewById(R.id.button_start);
         btStart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                mScanDate  = new Date();
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SOFTSCANTRIGGER, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_START_SCANNING);
-            }
+            public void onClick(View v) { mScanDate  = new Date(); startScanWithErrorChecking(); }
         });
 
         Button btStop = (Button) findViewById(R.id.button_stop);
         btStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SOFTSCANTRIGGER, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_STOP_SCANNING);
+                stopScanWithErrorChecking();
             }
         });
 
@@ -164,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         btToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SOFTSCANTRIGGER, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_TOGGLE_SCANNING);
+                toggleScanWithErrorChecking();
             }
         });
 
@@ -172,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         btEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SCANNERINPUTPLUGIN, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_PARAMETER_SCANNERINPUTPLUGIN_ENABLE);
+                pluginEnableWithErrorChecking();
             }
         });
 
@@ -180,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         btDisable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataWedgeIntentWithExtra(DataWedgeConstants.DWAPI_ACTION_SCANNERINPUTPLUGIN, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_PARAMETER_SCANNERINPUTPLUGIN_DISABLE);
+                pluginDisableWithErrorChecking();
             }
         });
 
@@ -188,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         btCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Intent profile creation
                 setupProfileAsync();
             }
         });
@@ -206,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
         btDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //"database profile auto creation" import mode (filebased)
                 deleteProfileAsync();
             }
         });
@@ -244,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         myFilter.addCategory(mDemoIntentCategory);
         this.getApplicationContext().registerReceiver(mMessageReceiver, myFilter);
         mScrollDownHandler = new Handler(Looper.getMainLooper());
+        setupScannerStatusChecker();
     }
 
     @Override
@@ -256,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
             mScrollDownRunnable = null;
             mScrollDownHandler = null;
         }
+        stopScannerStatusChecker();
         super.onPause();
     }
 
@@ -332,7 +319,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(diff > 0) // Report 0 in continuous mode, only displayed if > to 0
-                out += "\nTimeDiff ms = "  + diff + "\n";
+            {
+                out += "\nSoftware scan took " + diff + "ms";
+                mScanDate = null;
+            }
+
 
             addLineToResults(out);
 
@@ -445,10 +436,186 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void startScanWithErrorChecking()
+    {
+        addLineToResults("Start Software Scan");
+        DWScannerStartScan dwstartscan = new DWScannerStartScan(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwstartscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Start Scan on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Starting Scanner on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void stopScanWithErrorChecking()
+    {
+        addLineToResults("Stop Software Scan");
+        DWScannerStopScan dwstopscan = new DWScannerStopScan(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwstopscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Stop Scan on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Stoping Scanner on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void toggleScanWithErrorChecking()
+    {
+        addLineToResults("Toggle Software Scan");
+        DWScannerToggleScan dwtogglescan = new DWScannerToggleScan(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwtogglescan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Toggle Scan on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Toggleing Scanner on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void pluginEnableWithErrorChecking()
+    {
+        addLineToResults("Enabling DataWedge Plugin");
+        DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Enabling plugin on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Enabline plugin on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+    
+    private void pluginDisableWithErrorChecking()
+    {
+        addLineToResults("Disabling DataWedge Plugin");
+        DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Disabling plugin on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Disabling plugin on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void datawedgeEnableWithErrorChecking()
+    {
+        addLineToResults("Enabling DataWedge Plugin");
+        DWDataWedgeEnable dwdatawedgeenable = new DWDataWedgeEnable(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwdatawedgeenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Enabling datawedge on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Enabline datawedge on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+
+    private void datawedgeDisableWithErrorChecking()
+    {
+        addLineToResults("Disabling DataWedge Plugin");
+        DWDataWedgeDisable dwdatawedgedisable = new DWDataWedgeDisable(MainActivity.this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = MainActivity.this.mDemoProfileName;
+        }};
+
+        dwdatawedgedisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
+                if(TextUtils.isEmpty(error))
+                {
+                    // We will never see this one.... only errors are reported, no success callback
+                    addLineToResults("Disabling datawedge on profile: " + profileName + " succeeded");
+                }
+                else
+                {
+                    addLineToResults("Error Disabling datawedge on profile: " + profileName + "\n" + error);
+                }
+            }
+        });
+    }
+    
     private void switchScannerParamsAsync(final boolean continuousMode)
     {
         addLineToResults(continuousMode ? "Switching to Continuous mode" : "Switching to normal mode");
-        mProfileProcessingStartDate = new Date();
+        if(mProfileProcessingStartDate == null)
+            mProfileProcessingStartDate = new Date();
         DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
         DWProfileSwitchBarcodeParamsSettings settings = new DWProfileSwitchBarcodeParamsSettings()
         {{
@@ -463,14 +630,12 @@ public class MainActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(error))
                 {
                     addLineToResults("Params switched to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
-                    Date current = new Date();
-                    long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
-                    addLineToResults("Total time: " + timeDiff + "ms");
                 }
                 else
                 {
                     addLineToResults("Error switching params to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + error);
                 }
+                addTotalTimeToResults();
             }
         });
     }
@@ -499,14 +664,12 @@ public class MainActivity extends AppCompatActivity {
                     if(TextUtils.isEmpty(error))
                     {
                         addLineToResults("Profile: " + profileName + " delete succeeded");
-                        Date current = new Date();
-                        long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
-                        addLineToResults("Total time: " + timeDiff + "ms");
                     }
                     else
                     {
                         addLineToResults("Error while trying to delete profile: " + profileName + "\n" + error);
                     }
+                    addTotalTimeToResults();
                 }
             }
         );
@@ -533,9 +696,52 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     addLineToResults("Error creating profile: " + profileName + "\n" + error);
+                    addTotalTimeToResults();
                 }
             }
         });
+    }
+
+    private void setupScannerStatusChecker()
+    {
+        DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
+        {{
+            mPackageName = getPackageName();
+
+            mScannerCallback = new DWStatusScannerCallback() {
+                @Override
+                public void result(String status) {
+                    switch(status)
+                    {
+                        case DataWedgeConstants.SCAN_STATUS_CONNECTED:
+                            addLineToResults("Scanner is connected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISABLED:
+                            addLineToResults("Scanner is disabled.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISCONNECTED:
+                            addLineToResults("Scanner is disconnected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_SCANNING:
+                            addLineToResults("Scanner is scanning.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_WAITING:
+                            addLineToResults("Scanner is waiting.");
+                            break;
+                    }
+                }
+            };
+        }};
+
+        addLineToResults("Setting up scanner status checking on package : " + profileStatusSettings.mPackageName + ".");
+
+        mScannerStatusChecker = new DWStatusScanner(MainActivity.this, profileStatusSettings);
+        mScannerStatusChecker.start();
+    }
+
+    private void stopScannerStatusChecker()
+    {
+        mScannerStatusChecker.stop();
     }
 
     private void setProfileConfigAsync()
@@ -555,14 +761,13 @@ public class MainActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(error))
                 {
                     addLineToResults("Set config on profile: " + profileName + " succeeded.");
-                    Date current = new Date();
-                    long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
-                    addLineToResults("Total time: " + timeDiff + "ms");
+
                 }
                 else
                 {
                     addLineToResults("Error setting params on profile: " + profileName + "\n" + error);
                 }
+                addTotalTimeToResults();
             }
         });
     }
@@ -609,6 +814,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void addTotalTimeToResults()
+    {
+        Date current = new Date();
+        long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+        addLineToResults("Total time: " + timeDiff + "ms");
+        mProfileProcessingStartDate = null;
+    }
+
     private void addLineToResults(final String lineToAdd)
     {
         mResults += lineToAdd + "\n";
@@ -626,7 +839,12 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             et_results.setText(mResults);
-                            sv_results.fullScroll(ScrollView.FOCUS_DOWN);
+                            sv_results.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sv_results.fullScroll(ScrollView.FOCUS_DOWN);
+                                }
+                            });
                         }
                     });
                 }

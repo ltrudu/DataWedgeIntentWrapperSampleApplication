@@ -61,9 +61,12 @@ public abstract class DWProfileBase {
         mSettings = settings;
         /*
         Start time out mechanism
+        Enabled by default in DWProfileBaseSettings
          */
-        mTimeOutHandler.postDelayed(mTimeOutRunnable,
-                mSettings.mTimeOutMS);
+        if(settings.mEnableTimeOutMechanism) {
+            mTimeOutHandler.postDelayed(mTimeOutRunnable,
+                    mSettings.mTimeOutMS);
+        }
     }
 
     protected abstract void onError(String error);
