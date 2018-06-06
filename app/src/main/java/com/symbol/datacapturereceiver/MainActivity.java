@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.symbol.dwprofileasyncclasses.*;
+import com.zebra.datawedgeprofileintents.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -349,22 +349,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return returnString;
-    }
-
-    private void sendDataWedgeIntentWithExtra(String action, String extraKey, String extraValue)
-    {
-        Intent dwIntent = new Intent();
-        dwIntent.setAction(action);
-        dwIntent.putExtra(extraKey, extraValue);
-        this.sendBroadcast(dwIntent);
-    }
-
-    private void sendDataWedgeIntentWithExtra(String action, String extraKey, boolean extraValue)
-    {
-        Intent dwIntent = new Intent();
-        dwIntent.setAction(action);
-        dwIntent.putExtra(extraKey, extraValue);
-        this.sendBroadcast(dwIntent);
     }
 
     private void importProfile(String progileFilenameWithoutDbExtension)
@@ -707,7 +691,6 @@ public class MainActivity extends AppCompatActivity {
         DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
         {{
             mPackageName = getPackageName();
-
             mScannerCallback = new DWStatusScannerCallback() {
                 @Override
                 public void result(String status) {
@@ -751,6 +734,7 @@ public class MainActivity extends AppCompatActivity {
         {{
             mProfileName = MainActivity.mDemoProfileName;
             mTimeOutMS = MainActivity.mDemoTimeOutMS;
+            mPackageName = getPackageName();
             mIntentAction = MainActivity.mDemoIntentAction;
             mIntentCategory = MainActivity.mDemoIntentCategory;
             mStartInAggressiveContinuousMode = mStartInContinuousMode;
