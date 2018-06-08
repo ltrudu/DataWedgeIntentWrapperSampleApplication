@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
@@ -32,3 +30,34 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+def jarName = 'datawedgeprofileintents.jar'
+
+task clearJarRelease(type: Delete) {
+    delete "${project.buildDir}/outputs/jar/release/" + jarName
+}
+
+task clearJarDebug(type: Delete) {
+    delete "${project.buildDir}/outputs/jar/debug/" + jarName
+}
+
+task makeJarRelease(type: Copy) {
+    from("${project.buildDir}/intermediates/intermediate-jars/release/")
+    into("${project.buildDir}/outputs/jar/release")
+    include('classes.jar')
+    rename('classes.jar', jarName)
+}
+
+task makeJarDebug(type: Copy) {
+    from("${project.buildDir}/intermediates/intermediate-jars/debug/")
+    into("${project.buildDir}/outputs/jar/debug")
+    include('classes.jar')
+    rename('classes.jar', jarName)
+}
+
+task makeAllJar(type: Copy) {}
+
+makeJarRelease.dependsOn(clearJarRelease, build)
+makeJarDebug.dependsOn(clearJarDebug, build)
+
+makeAllJar.dependsOn(makeJarDebug,makeJarRelease)
