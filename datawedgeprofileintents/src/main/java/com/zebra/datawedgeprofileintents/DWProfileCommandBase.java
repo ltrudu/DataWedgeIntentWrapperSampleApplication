@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Set;
@@ -31,7 +32,8 @@ public class DWProfileCommandBase extends DWProfileBase {
          */
     public interface onProfileCommandResult
     {
-        void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error);
+        void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier);
+        void timeout(String profileName);
     }
 
     /*
@@ -114,18 +116,24 @@ public class DWProfileCommandBase extends DWProfileBase {
                     if(commandidentifier == null)
                         return;
 
-                    if(commandidentifier.equalsIgnoreCase(mCommandIdentifier) == false)
-                        return;
-
                     Bundle bundle = new Bundle();
                     String resultInfo = "";
                     if (intent.hasExtra("RESULT_INFO")) {
                         bundle = intent.getBundleExtra("RESULT_INFO");
                         Set<String> keys = bundle.keySet();
                         for (String key : keys) {
-                            resultInfo += key + ": " + bundle.getString(key) + "\n";
+                            String value = bundle.getString(key);
+                            if(resultInfo.length() > 0 && value != null)
+                                resultInfo += "\n";
+                            if(value != null)
+                                resultInfo += key + ": " + value;
+                            if(key.equalsIgnoreCase("PROFILE_NAME") == true && value.equalsIgnoreCase(mSettings.mProfileName) == false)
+                            {
+                                resultInfo += "\n-> active profile differs from expected profile " + mSettings.mProfileName;
+                            }
                         }
                     }
+
 
                     String text = "Action: " + action + "\n" +
                             "Command: " + command + "\n" +
@@ -133,9 +141,14 @@ public class DWProfileCommandBase extends DWProfileBase {
                             "Result Info: " + resultInfo + "\n" +
                             "CID:" + commandidentifier;
 
+                    Log.d(TAG, text);
+
+                    if(commandidentifier.equalsIgnoreCase(mCommandIdentifier) == false)
+                        return;
+
                     if(mProfileCommandCallback != null)
                     {
-                        mProfileCommandCallback.result(mSettings.mProfileName, action, command, result, resultInfo, commandidentifier, null);
+                        mProfileCommandCallback.result(mSettings.mProfileName, action, command, result, resultInfo, commandidentifier);
                         cleanAll();
                     }
             }
@@ -155,10 +168,10 @@ public class DWProfileCommandBase extends DWProfileBase {
     This is what will happen if Datawedge does not answer before the timeout
      */
     @Override
-    protected void onError(String error) {
+    protected void onTimeOut() {
         if(mProfileCommandCallback != null)
         {
-            mProfileCommandCallback.result(mSettings.mProfileName, null, null, null, null, null, error);
+            mProfileCommandCallback.timeout(mSettings.mProfileName);
             cleanAll();
         }
     }

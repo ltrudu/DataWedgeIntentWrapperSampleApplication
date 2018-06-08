@@ -14,10 +14,6 @@ public class DWScannerStopScan extends DWProfileCommandBase {
 
     public void execute(DWProfileBaseSettings settings, onProfileCommandResult callback)
     {
-        // This command does not need a timeout
-        // Ensure that the mechanism is disabled
-        settings.mEnableTimeOutMechanism = false;
-
         /*
         Call base class execute to register command result
         broadcast receiver and launch timeout mechanism
@@ -27,6 +23,7 @@ public class DWScannerStopScan extends DWProfileCommandBase {
         /*
         Stop Scan
          */
-        sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.DWAPI_ACTION_SOFTSCANTRIGGER, DataWedgeConstants.EXTRA_PARAMETER, DataWedgeConstants.DWAPI_STOP_SCANNING);
+        sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2,
+                DataWedgeConstants.EXTRA_SOFTSCANTRIGGER_FROM_6_3, DataWedgeConstants.DWAPI_STOP_SCANNING);
      }
 }

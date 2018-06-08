@@ -11,6 +11,11 @@ import android.os.Handler;
 
 public abstract class DWProfileBase {
     /*
+    A TAG if we want to log something
+     */
+    protected static String TAG = "DWINTENTSAPI";
+
+    /*
     A context to work with intents
      */
     protected Context mContext = null;
@@ -30,7 +35,7 @@ public abstract class DWProfileBase {
     protected Runnable mTimeOutRunnable = new Runnable() {
         @Override
         public void run() {
-            onError("TimeOut Reached");
+            onTimeOut();
         }
     };
 
@@ -69,7 +74,7 @@ public abstract class DWProfileBase {
         }
     }
 
-    protected abstract void onError(String error);
+    protected abstract void onTimeOut();
 
     protected void cleanAll()
     {

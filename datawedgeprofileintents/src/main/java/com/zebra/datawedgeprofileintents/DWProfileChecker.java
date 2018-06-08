@@ -24,7 +24,8 @@ public class DWProfileChecker extends DWProfileBase {
          */
     public interface onProfileExistResult
     {
-        void result(String profileName, boolean exists, String error);
+        void result(String profileName, boolean exists);
+        void timeOut(String profileName);
     }
 
     /*
@@ -75,7 +76,7 @@ public class DWProfileChecker extends DWProfileBase {
                 boolean exists = Arrays.asList(profilesList).contains(mSettings.mProfileName);
                 if(mProfileExistsCallback != null)
                 {
-                    mProfileExistsCallback.result(mSettings.mProfileName, exists, null);
+                    mProfileExistsCallback.result(mSettings.mProfileName, exists);
                     cleanAll();
                 }
             }
@@ -95,10 +96,10 @@ public class DWProfileChecker extends DWProfileBase {
     This is what will happen if Datawedge does not answer before the timeout
      */
     @Override
-    protected void onError(String error) {
+    protected void onTimeOut() {
         if(mProfileExistsCallback != null)
         {
-            mProfileExistsCallback.result(mSettings.mProfileName, false, error);
+            mProfileExistsCallback.timeOut(mSettings.mProfileName);
             cleanAll();
         }
     }

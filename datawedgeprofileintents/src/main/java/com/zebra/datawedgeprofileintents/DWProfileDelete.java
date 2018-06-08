@@ -23,10 +23,10 @@ public class DWProfileDelete extends DWProfileCommandBase {
         /*
         Create the profile
          */
-        createProfile(settings);
+        deleteProfile(settings);
      }
 
-    private void createProfile(DWProfileDeleteSettings settings)
+    private void deleteProfile(DWProfileDeleteSettings settings)
     {
         // Delete profile using intent DELETE_PROFILE
         sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2,

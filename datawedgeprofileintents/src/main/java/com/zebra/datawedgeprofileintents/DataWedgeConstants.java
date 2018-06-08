@@ -126,5 +126,8 @@ public class DataWedgeConstants {
     public static final String AIM_MODE_PARAM = "aim_type";
     public static final String BEAM_TIMER_PARAM = "beam_timer";
 
+    public static final String COMMAND_RESULT_SUCCESS = "SUCCESS";
+    public static final String COMMAND_RESULT_FAILURE = "FAILURE";
+
 
 }

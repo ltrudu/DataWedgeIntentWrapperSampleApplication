@@ -431,16 +431,21 @@ public class MainActivity extends AppCompatActivity {
 
         dwstartscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Start Scan on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Starting Scanner on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Starting Scanner on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to start Scanner on profile: " + profileName);
             }
         });
     }
@@ -456,16 +461,21 @@ public class MainActivity extends AppCompatActivity {
 
         dwstopscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Stop Scan on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Stoping Scanner on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Stoping Scanner on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to stop scanner on profile: " + profileName);
             }
         });
     }
@@ -481,16 +491,20 @@ public class MainActivity extends AppCompatActivity {
 
         dwtogglescan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Toggle Scan on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Toggleing Scanner on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Toggleing Scanner on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to toggle scanner on profile: " + profileName);
             }
         });
     }
@@ -506,16 +520,20 @@ public class MainActivity extends AppCompatActivity {
 
         dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Enabling plugin on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Enabline plugin on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Enabline plugin on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to enable plugin on profile: " + profileName);
             }
         });
     }
@@ -531,16 +549,21 @@ public class MainActivity extends AppCompatActivity {
 
         dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Disabling plugin on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Disabling plugin on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Disabling plugin on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to disable plugin on profile: " + profileName);
             }
         });
     }
@@ -556,16 +579,20 @@ public class MainActivity extends AppCompatActivity {
 
         dwdatawedgeenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Enabling datawedge on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Enabline datawedge on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Enabline datawedge on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to enable datawedge on profile: " + profileName);
             }
         });
     }
@@ -581,16 +608,20 @@ public class MainActivity extends AppCompatActivity {
 
         dwdatawedgedisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Disabling datawedge on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error Disabling datawedge on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error Disabling datawedge on profile: " + profileName + "\n" + resultInfo);
                 }
+            }
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to disable datawedge on profile: " + profileName);
             }
         });
     }
@@ -610,16 +641,21 @@ public class MainActivity extends AppCompatActivity {
 
         switchContinuousMode.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     addLineToResults("Params switched to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error switching params to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error switching params to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + resultInfo);
                 }
                 addTotalTimeToResults();
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to switching params on profile: " + profileName);
             }
         });
     }
@@ -644,16 +680,22 @@ public class MainActivity extends AppCompatActivity {
 
         deleteProfile.execute(profileDeleteSettings, new DWProfileDelete.onProfileCommandResult(){
                 @Override
-                public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                    if(TextUtils.isEmpty(error))
+                public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                    if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                     {
                         addLineToResults("Profile: " + profileName + " delete succeeded");
                     }
                     else
                     {
-                        addLineToResults("Error while trying to delete profile: " + profileName + "\n" + error);
+                        addLineToResults("Error while trying to delete profile: " + profileName + "\n" + resultInfo);
                     }
                     addTotalTimeToResults();
+                }
+
+
+                @Override
+                public void timeout(String profileName) {
+                    addLineToResults("Timeout while trying to delete profile: " + profileName);
                 }
             }
         );
@@ -671,17 +713,22 @@ public class MainActivity extends AppCompatActivity {
 
         profileCreate.execute(profileCreateSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     addLineToResults("Profile: " + profileName + " created with success.\nSetting config now.");
                     setProfileConfigAsync();
                 }
                 else
                 {
-                    addLineToResults("Error creating profile: " + profileName + "\n" + error);
+                    addLineToResults("Error creating profile: " + profileName + "\n" + resultInfo);
                     addTotalTimeToResults();
                 }
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to create profile: " + profileName);
             }
         });
     }
@@ -741,17 +788,22 @@ public class MainActivity extends AppCompatActivity {
         }};
         profileSetConfig.execute(setConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier, String error) {
-                if(TextUtils.isEmpty(error))
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
                     addLineToResults("Set config on profile: " + profileName + " succeeded.");
 
                 }
                 else
                 {
-                    addLineToResults("Error setting params on profile: " + profileName + "\n" + error);
+                    addLineToResults("Error setting params on profile: " + profileName + "\n" + resultInfo);
                 }
                 addTotalTimeToResults();
+            }
+
+            @Override
+            public void timeout(String profileName) {
+                addLineToResults("Timeout while trying to set params on profile: " + profileName);
             }
         });
     }
@@ -774,10 +826,8 @@ public class MainActivity extends AppCompatActivity {
         // Execute the checker with the given parameters
         checker.execute(profileCheckerSettings, new DWProfileChecker.onProfileExistResult() {
             @Override
-            public void result(String profileName, boolean exists, String error) {
+            public void result(String profileName, boolean exists) {
                 // empty error... means... I let you guess....
-                if(TextUtils.isEmpty(error))
-                {
                     // exists == true means that the profile already... exists..
                     if(exists)
                     {
@@ -789,11 +839,12 @@ public class MainActivity extends AppCompatActivity {
                         addLineToResults("Profile " + profileName + " not found in DW profiles list. Creating profile.");
                         createProfileAsync();
                     }
-                }
-                else
-                {
-                    addLineToResults("Error checking if profile " + profileName + " exists: \n" + error);
-                }
+            }
+
+            @Override
+            public void timeOut(String profileName) {
+                addLineToResults("Timeout while trying to check if profile " + profileName + " exists.");
+
             }
         });
     }
