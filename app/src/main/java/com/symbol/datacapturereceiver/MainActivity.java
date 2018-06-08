@@ -891,6 +891,6 @@ public class MainActivity extends AppCompatActivity {
             // reset handler to repost it....
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
         }
-        mScrollDownHandler.postDelayed(mScrollDownRunnable, 200);
+        mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
     }
 }
