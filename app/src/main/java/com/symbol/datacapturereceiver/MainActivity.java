@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -781,10 +780,9 @@ public class MainActivity extends AppCompatActivity {
         {{
             mProfileName = MainActivity.mDemoProfileName;
             mTimeOutMS = MainActivity.mDemoTimeOutMS;
-            mPackageName = getPackageName();
-            mIntentAction = MainActivity.mDemoIntentAction;
-            mIntentCategory = MainActivity.mDemoIntentCategory;
-            mStartInAggressiveContinuousMode = mStartInContinuousMode;
+            mAPPL_PackageName = getPackageName();
+            mINT_IntentAction = MainActivity.mDemoIntentAction;
+            mINT_IntentCategory = MainActivity.mDemoIntentCategory;
         }};
         profileSetConfig.execute(setConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
