@@ -18,7 +18,7 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
     /*
     Set how the profile will be processed
      */
-    public MB_ConfigMode mMB_ConfigMode = MB_ConfigMode.CREATE_IF_NOT_EXIST;
+    public MB_E_CONFIG_MODE mMB_ConfigMode = MB_E_CONFIG_MODE.CREATE_IF_NOT_EXIST;
 
     /////////////////////////////////////////////////////////////////////////////////////////
     // APP LIST Bundle
@@ -91,13 +91,13 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
     Set the scanner you want to use for this profile
     Default is internal imager
      */
-    public SC_ScannerIdentifier mSC_ScannerIdentifier = SC_ScannerIdentifier.INTERNAL_IMAGER;
+    public SC_E_SCANNER_IDENTIFIER mSC_ScannerIdentifier = SC_E_SCANNER_IDENTIFIER.INTERNAL_IMAGER;
 
     /*
     Set the scanning mode
     Default is Single
      */
-    public SC_ScanningMode mSC_ScanningMode = SC_ScanningMode.SINGLE;
+    public SC_E_SCANNINGMODE mSC_ScanningMode = SC_E_SCANNINGMODE.SINGLE;
 
     /*
     Number of multibarcode to read
@@ -106,9 +106,9 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
     public int mSC_Multi_Barcode_Count = 5;
 
     /*
-    Unknown parameter that is not enabled until we know what it does
+    Unknown parameter, if someone ca explain what it does ???
      */
-    //public boolean mSC_Trigger_WakeUp = false;
+    public boolean mSC_Trigger_WakeUp = false;
 
     /*
     Enable or disable current scanner input module.
@@ -120,113 +120,117 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
     /****************************************/
     /*              Decoders                */
     /****************************************/
-    public boolean Decoder_Australian_Postal = false;
-    public boolean Decoder_Aztec = false;
-    public boolean Decoder_Canadian_Postal = false;
-    public boolean Decoder_Chinese_2of5 = false;
-    public boolean Decoder_Codabar = false;
-    public boolean Decoder_Codabar_Clsi_Editing = false;
-    public int Decoder_Codabar_Length1 = 6;
-    public int Decoder_Codabar_Length2 = 55;
-    public boolean Decoder_Codabar_Notis_Editing = false;
-    public boolean Decoder_Codabar_Redundancy = false;
-    public boolean Decoder_Code11 = false;
-    public int Decoder_Code11_Length1 = 4;
-    public int Decoder_Code11_Length2 = 55;
-    public boolean Decoder_Code11_Redundancy = false;
-    public boolean Decoder_Code11_Report_Check_Digit = false;
-    public int Decoder_Code11_Verify_Check_Digit = 1;
-    public boolean Decoder_Code128 = false;
-    public boolean Decoder_Code128_Check_Isbt_Table = false;
-    public boolean Decoder_Code128_Enable_Ean128 = false;
-    public boolean Decoder_Code128_Enable_Isbt128 = false;
-    public boolean Decoder_Code128_Enable_Plain = false;
-    public int Decoder_Code128_Isbt128_Concat_Mode = 0;
-    public int Decoder_Code128_Length1 = 0;
-    public int Decoder_Code128_Length2 = 55;
-    public boolean Decoder_Code128_Redundancy = false;
-    public int Decoder_Code128_Security_Level = 1;
-    public boolean Decoder_Code39 = false;
-    public boolean Decoder_Code39_Convert_To_Code32 = false;
-    public boolean Decoder_Code39_Full_Ascii = false;
-    public int Decoder_Code39_Length1 = 0;
-    public int Decoder_Code39_Length2 = 55;
-    public boolean Decoder_Code39_Redundancy = false;
-    public boolean Decoder_Code39_Report_Check_Digit = false;
-    public boolean Decoder_Code39_Report_Code32_Prefix = false;
-    public int Decoder_Code39_Security_Level = 1;
-    public boolean Decoder_Code39_Verify_Check_Digit = false;
-    public boolean Decoder_Code93 = false;
-    public int Decoder_Code93_Length1 = 0;
-    public int Decoder_Code93_Length2 = 55;
-    public boolean Decoder_Code93_Redundancy = false;
-    public boolean Decoder_Composite_Ab = false;
-    public int Decoder_Composite_Ab_Ucc_Link_Mode = 2;
-    public boolean Decoder_Composite_C = false;
-    public boolean Decoder_D2of5 = false;
-    public int Decoder_D2of5_Length1 = 0;
-    public int Decoder_D2of5_Length2 = 14;
-    public boolean Decoder_D2of5_Redundancy = false;
-    public boolean Decoder_Datamatrix = false;
-    public boolean Decoder_Dutch_Postal = false;
-    public boolean Decoder_Ean13 = false;
-    public boolean Decoder_Ean8 = false;
-    public boolean Decoder_Gs1_Databar = false;
-    public boolean Decoder_Gs1_Databar_Exp = false;
-    public boolean Decoder_Gs1_Databar_Lim = false;
-    public int Decoder_Gs1_Lim_Security_Level = 2;
-    public boolean Decoder_Hanxin = false;
-    public int Decoder_Hanxin_Inverse = 0;
-    public boolean Decoder_I2of5 = false;
-    public int Decoder_I2of5_Check_Digit = 0;
-    public int Decoder_I2of5_Length1 = 6;
-    public int Decoder_I2of5_Length2 = 55;
-    public boolean Decoder_I2of5_Redundancy = false;
-    public boolean Decoder_I2of5_Report_Check_Digit = false;
-    public int Decoder_I2of5_Security_Level = 1;
-    public boolean Decoder_Itf14_Convert_To_Ean13 = false;
-    public boolean Decoder_Japanese_Postal = false;
-    public boolean Decoder_Korean_3of5 = false;
-    public boolean Decoder_Mailmark = false;
-    public boolean Decoder_Matrix_2of5 = false;
-    public int Decoder_Matrix_2of5_Length1 = 10;
-    public int Decoder_Matrix_2of5_Length2 = 0;
-    public boolean Decoder_Matrix_2of5_Redundancy = false;
-    public boolean Decoder_Matrix_2of5_Report_Check_Digit = false;
-    public boolean Decoder_Matrix_2of5_Verify_Check_Digit = false;
-    public boolean Decoder_Maxicode = false;
-    public boolean Decoder_Micropdf = false;
-    public boolean Decoder_Microqr = false;
-    public boolean Decoder_Msi = false;
-    public int Decoder_Msi_Check_Digit = 0;
-    public int Decoder_Msi_Check_Digit_Scheme = 0;
-    public int Decoder_Msi_Length1 = 4;
-    public int Decoder_Msi_Length2 = 55;
-    public boolean Decoder_Msi_Redundancy = false;
-    public boolean Decoder_Msi_Report_Check_Digit = false;
-    public boolean Decoder_Pdf417 = false;
-    public boolean Decoder_Qrcode = false;
-    public boolean Decoder_Signature = false;
-    public boolean Decoder_Tlc39 = false;
-    public boolean Decoder_Trioptic39 = false;
-    public boolean Decoder_Uk_Postal = false;
-    public boolean Decoder_Uk_Postal_Report_Check_Digit = false;
-    public boolean Decoder_Upca = false;
-    public int Decoder_Upca_Preamble = 1;
-    public boolean Decoder_Upca_Report_Check_Digit = false;
-    public boolean Decoder_Upce0 = false;
-    public boolean Decoder_Upce0_Convert_To_Upca = false;
-    public int Decoder_Upce0_Preamble = 0;
-    public boolean Decoder_Upce0_Report_Check_Digit = false;
-    public boolean Decoder_Upce1 = false;
-    public boolean Decoder_Upce1_Convert_To_Upca = false;
-    public int Decoder_Upce1_Preamble = 0;
-    public boolean Decoder_Upce1_Report_Check_Digit = false;
-    public boolean Decoder_Us4state = false;
-    public boolean Decoder_Us4state_Fics = false;
-    public boolean Decoder_Usplanet = false;
-    public boolean Decoder_Usplanet_Report_Check_Digit = false;
-    public boolean Decoder_Uspostnet = false;
+    public boolean mSC_Decoder_Australian_Postal = false;
+    public boolean mSC_Decoder_Aztec = false;
+    public boolean mSC_Decoder_Canadian_Postal = false;
+    public boolean mSC_Decoder_Chinese_2of5 = false;
+    public boolean mSC_Decoder_Codabar = false;
+    public boolean mSC_Decoder_Codabar_Clsi_Editing = false;
+    public int mSC_Decoder_Codabar_Length1 = 6;
+    public int mSC_Decoder_Codabar_Length2 = 55;
+    public boolean mSC_Decoder_Codabar_Notis_Editing = false;
+    public boolean mSC_Decoder_Codabar_Redundancy = false;
+    public boolean mSC_Decoder_Code11 = false;
+    public int mSC_Decoder_Code11_Length1 = 4;
+    public int mSC_Decoder_Code11_Length2 = 55;
+    public boolean mSC_Decoder_Code11_Redundancy = false;
+    public boolean mSC_Decoder_Code11_Report_Check_Digit = false;
+    public SC_E_CODE11_VERIFY_CHECK_DIGIT mSC_Decoder_Code11_Verify_Check_Digit = SC_E_CODE11_VERIFY_CHECK_DIGIT.ONE_CHECK_DIGIT;
+    public boolean mSC_Decoder_Code128 = false;
+    public boolean mSC_Decoder_Code128_Check_Isbt_Table = false;
+    public boolean mSC_Decoder_Code128_Enable_Ean128 = false;
+    public boolean mSC_Decoder_Code128_Enable_Isbt128 = false;
+    public boolean mSC_Decoder_Code128_Enable_Plain = false;
+    public SC_E_CONCAT_MODE mSC_Decoder_Code128_Isbt128_Concat_Mode = SC_E_CONCAT_MODE.CONCAT_MODE_NEVER;
+    public int mSC_Decoder_Code128_Length1 = 0;
+    public int mSC_Decoder_Code128_Length2 = 55;
+    public boolean mSC_Decoder_Code128_Redundancy = false;
+    public SC_E_SECURITY_LEVEL mSC_Decoder_Code128_Security_Level = SC_E_SECURITY_LEVEL.SECURITY_LEVEL_1;
+    public boolean mSC_Decoder_Code39 = false;
+    public boolean mSC_Decoder_Code39_Convert_To_Code32 = false;
+    public boolean mSC_Decoder_Code39_Full_Ascii = false;
+    public int mSC_Decoder_Code39_Length1 = 0;
+    public int mSC_Decoder_Code39_Length2 = 55;
+    public boolean mSC_Decoder_Code39_Redundancy = false;
+    public boolean mSC_Decoder_Code39_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Code39_Report_Code32_Prefix = false;
+    public SC_E_SECURITY_LEVEL mSC_Decoder_Code39_Security_Level = SC_E_SECURITY_LEVEL.SECURITY_LEVEL_1;
+    public boolean mSC_Decoder_Code39_Verify_Check_Digit = false;
+    public boolean mSC_Decoder_Code93 = false;
+    public int mSC_Decoder_Code93_Length1 = 0;
+    public int mSC_Decoder_Code93_Length2 = 55;
+    public boolean mSC_Decoder_Code93_Redundancy = false;
+    public boolean mSC_Decoder_Composite_Ab = false;
+    public SC_E_LINK_MODE mSC_Decoder_Composite_Ab_Ucc_Link_Mode = SC_E_LINK_MODE.AUTO_DISCRIMINATE;
+    public boolean mSC_Decoder_Composite_C = false;
+    public boolean mSC_Decoder_D2of5 = false;
+    public int mSC_Decoder_D2of5_Length1 = 0;
+    public int mSC_Decoder_D2of5_Length2 = 14;
+    public boolean mSC_Decoder_D2of5_Redundancy = false;
+    public boolean mSC_Decoder_Datamatrix = false;
+    public boolean mSC_Decoder_Dutch_Postal = false;
+    public boolean mSC_Decoder_Ean13 = false;
+    public boolean mSC_Decoder_Ean8 = false;
+    public boolean mSC_Decoder_Gs1_Databar = false;
+    public boolean mSC_Decoder_Gs1_Databar_Exp = false;
+    public boolean mSC_Decoder_Gs1_Databar_Lim = false;
+    public SC_E_SECURITY_LEVEL mSC_Decoder_Gs1_Lim_Security_Level = SC_E_SECURITY_LEVEL.SECURITY_LEVEL_2;
+    public boolean mSC_Decoder_Hanxin = false;
+    public SC_E_INVERSE mSC_Decoder_Hanxin_Inverse = SC_E_INVERSE.DISABLE;
+    public boolean mSC_Decoder_I2of5 = false;
+    public SC_E_I2OF5_CHECK_DIGIT mSC_Decoder_I2of5_Check_Digit = SC_E_I2OF5_CHECK_DIGIT.NO_CHECK_DIGIT;
+    public int mSC_Decoder_I2of5_Length1 = 6;
+    public int mSC_Decoder_I2of5_Length2 = 55;
+    public boolean mSC_Decoder_I2of5_Redundancy = false;
+    public boolean mSC_Decoder_I2of5_Report_Check_Digit = false;
+    public SC_E_SECURITY_LEVEL mSC_Decoder_I2of5_Security_Level = SC_E_SECURITY_LEVEL.SECURITY_LEVEL_1;
+    public boolean mSC_Decoder_Itf14_Convert_To_Ean13 = false;
+    public boolean mSC_Decoder_Japanese_Postal = false;
+    public boolean mSC_Decoder_Korean_3of5 = false;
+    public boolean mSC_Decoder_Mailmark = false;
+    public boolean mSC_Decoder_Matrix_2of5 = false;
+    public int mSC_Decoder_Matrix_2of5_Length1 = 10;
+    public int mSC_Decoder_Matrix_2of5_Length2 = 0;
+    public boolean mSC_Decoder_Matrix_2of5_Redundancy = false;
+    public boolean mSC_Decoder_Matrix_2of5_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Matrix_2of5_Verify_Check_Digit = false;
+    public boolean mSC_Decoder_Maxicode = false;
+    public boolean mSC_Decoder_Micropdf = false;
+    public boolean mSC_Decoder_Microqr = false;
+    public boolean mSC_Decoder_Msi = false;
+    public SC_E_MSI_CHECK_DIGIT mSC_Decoder_Msi_Check_Digit = SC_E_MSI_CHECK_DIGIT.ONE_CHECK_DIGIT;
+    public SC_E_MSI_CHECK_DIGIT_SCHEME mSC_Decoder_Msi_Check_Digit_Scheme = SC_E_MSI_CHECK_DIGIT_SCHEME.MOD_11_10;
+    public int mSC_Decoder_Msi_Length1 = 4;
+    public int mSC_Decoder_Msi_Length2 = 55;
+    public boolean mSC_Decoder_Msi_Redundancy = false;
+    public boolean mSC_Decoder_Msi_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Pdf417 = false;
+    public boolean mSC_Decoder_Qrcode = false;
+    public boolean mSC_Decoder_Signature = false;
+    public boolean mSC_Decoder_Tlc39 = false;
+    public boolean mSC_Decoder_Trioptic39 = false;
+    public boolean mSC_Decoder_Uk_Postal = false;
+    public boolean mSC_Decoder_Uk_Postal_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Upca = false;
+    public SC_E_PREAMBLE mSC_Decoder_Upca_Preamble = SC_E_PREAMBLE.PREAMBLE_SYS_CHAR;
+    public boolean mSC_Decoder_Upca_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Upce0 = false;
+    public boolean mSC_Decoder_Upce0_Convert_To_Upca = false;
+    public SC_E_PREAMBLE mSC_Decoder_Upce0_Preamble = SC_E_PREAMBLE.PREAMBLE_NONE;
+    public boolean mSC_Decoder_Upce0_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Upce1 = false;
+    public boolean mSC_Decoder_Upce1_Convert_To_Upca = false;
+    public SC_E_PREAMBLE mSC_Decoder_Upce1_Preamble = SC_E_PREAMBLE.PREAMBLE_NONE;
+    public boolean mSC_Decoder_Upce1_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Us4state = false;
+    public boolean mSC_Decoder_Us4state_Fics = false;
+    public boolean mSC_Decoder_Usplanet = false;
+    public boolean mSC_Decoder_Usplanet_Report_Check_Digit = false;
+    public boolean mSC_Decoder_Uspostnet = false;
+
+    /****************************************/
+    /*              UPCEAN                  */
+    /****************************************/
 
 
 }

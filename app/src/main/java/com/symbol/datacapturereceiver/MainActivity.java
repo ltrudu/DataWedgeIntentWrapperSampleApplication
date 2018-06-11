@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private static String mDemoIntentCategory = "android.intent.category.DEFAULT";
     private static long mDemoTimeOutMS = 30000; //30s timeout...
     private static boolean mStartInContinuousMode = false;
+    private static boolean mOptmizeRefresh = true;
 
 
     private TextView et_results;
@@ -863,32 +864,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateAndScrollDownTextView()
     {
-        if(mScrollDownRunnable == null)
+        if(mOptmizeRefresh)
         {
-            mScrollDownRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            et_results.setText(mResults);
-                            sv_results.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sv_results.fullScroll(ScrollView.FOCUS_DOWN);
-                                }
-                            });
-                        }
-                    });
-                }
-            };
+            if(mScrollDownRunnable == null)
+            {
+                mScrollDownRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                et_results.setText(mResults);
+                                sv_results.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        sv_results.fullScroll(ScrollView.FOCUS_DOWN);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+            }
+            else
+            {
+                // A new line has been added while we were waiting to scroll down
+                // reset handler to repost it....
+                mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
+            }
+            mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
         }
         else
         {
-            // A new line has been added while we were waiting to scroll down
-            // reset handler to repost it....
-            mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    et_results.setText(mResults);
+                    sv_results.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
-        mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
+
     }
 }

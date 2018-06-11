@@ -4,7 +4,7 @@ package com.zebra.datawedgeprofileenums;
 Available scanners list
 Default is Internal Imager
  */
-public enum SC_ScannerIdentifier
+public enum SC_E_SCANNER_IDENTIFIER
 {
     AUTO, //Automatic scanner selection
     INTERNAL_IMAGER, //Built-in imager scanner
@@ -16,5 +16,11 @@ public enum SC_ScannerIdentifier
     BLUETOOTH_DS3678, //DS3678 Bluetooth scanner
     PLUGABLE_SSI, //Serial SSI scanner RS429 (for use with WT6000)
     PLUGABLE_SSI_RS5000, //Serial SSI scanner RS5000 (for use with WT6000)
-    USB_SSI_DS3608 //DS3608 pluggable USB scanner
+    USB_SSI_DS3608; //DS3608 pluggable USB scanner
+
+    @Override
+    public String toString()
+    {
+        return this.name();
+    }
 }
