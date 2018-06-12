@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private static long mDemoTimeOutMS = 30000; //30s timeout...
     private static boolean mStartInContinuousMode = false;
     private static boolean mOptmizeRefresh = true;
+    private static boolean mDisplaySpecialChars = true;
 
 
     private TextView et_results;
@@ -315,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //if(sLabelType.equalsIgnoreCase("CODE128"))
                 //if(sLabelType.equalsIgnoreCase("QRCODE"))
-                out = out + showSpecialChars(data);
+                out = out + (mDisplaySpecialChars ? showSpecialChars(data) : data);
             }
 
             if(diff > 0) // Report 0 in continuous mode, only displayed if > to 0
