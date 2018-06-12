@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
         char[] dataChar = data.toCharArray();
         for(char acar : dataChar)
         {
-            if(Character.isLetterOrDigit(acar))
+            if(!Character.isISOControl(acar))
             {
                 returnString += acar;
             }
@@ -710,6 +710,7 @@ public class MainActivity extends AppCompatActivity {
         {{
             mProfileName = MainActivity.mDemoProfileName;
             mTimeOutMS = MainActivity.mDemoTimeOutMS;
+
         }};
 
         profileCreate.execute(profileCreateSettings, new DWProfileCommandBase.onProfileCommandResult() {
