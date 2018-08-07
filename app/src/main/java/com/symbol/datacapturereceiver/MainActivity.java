@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
+import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
 import com.zebra.datawedgeprofileintents.*;
 
 import java.io.File;
@@ -77,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private static String TAG = "DataCaptureReceiver";
-    private static String mDemoProfileName = "com.symbol.datacapturereceiver";
-    private static String mDemoIntentAction = "com.symbol.datacapturereceiver.RECVR";
-    private static String mDemoIntentCategory = "android.intent.category.DEFAULT";
-    private static long mDemoTimeOutMS = 30000; //30s timeout...
     private static boolean mStartInContinuousMode = false;
     private static boolean mOptmizeRefresh = true;
     private static boolean mDisplaySpecialChars = true;
@@ -98,21 +96,17 @@ public class MainActivity extends AppCompatActivity {
      */
     DWStatusScanner mScannerStatusChecker = null;
 
+    /**
+     * Scanner data receiver
+     */
+    DWScanReceiver mScanReceiver;
+
     /*
         Handler and runnable to scroll down textview
      */
     private Handler mScrollDownHandler = null;
     private Runnable mScrollDownRunnable = null;
 
-    /**
-     * Local Broadcast receiver
-     */
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    handleDecodeData(intent);
-                }
-            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,28 +209,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // in case we have been launched by the DataWedge intent plug-in
-        // using the StartActivity method let's handle the intent
-        Intent i = getIntent();
-        handleDecodeData(i);
+        /**
+         * We initialize the settings class that will hold all the configurations
+         * we are going to use in this application
+         */
+        DataWedgeSettingsHolder.initSettings(this);
+
+        /**
+         * Initialize the scan receiver
+         */
+        mScanReceiver = new DWScanReceiver(this,
+                DataWedgeSettingsHolder.mDemoIntentAction,
+                DataWedgeSettingsHolder.mDemoIntentCategory);
+
+        /**
+         * Setup a callback
+         * ShowSpecialChar will display escape character inside brackets
+         */
+        mScanReceiver.setScannedDataCallback(
+                new DWScanReceiver.onScannedData() {
+                    @Override
+                    public void scannedData(String source, String data, String typology) {
+                        addLineToResults("Typology: " + typology+ ", Data: " + data);
+                    }
+                },
+        false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Register the internal broadcast receiver when we are alive
-        IntentFilter myFilter = new IntentFilter();
-        myFilter.addAction(mDemoIntentAction);
-        myFilter.addCategory(mDemoIntentCategory);
-        this.getApplicationContext().registerReceiver(mMessageReceiver, myFilter);
+        mScanReceiver.startReceive(this);
         mScrollDownHandler = new Handler(Looper.getMainLooper());
         setupScannerStatusChecker();
     }
 
     @Override
     protected void onPause() {
-        // Unregister internal broadcast receiver when we are going in background
-        this.getApplicationContext().unregisterReceiver(mMessageReceiver);
+        mScanReceiver.stopReceive(this);
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
@@ -245,111 +255,6 @@ public class MainActivity extends AppCompatActivity {
         }
         stopScannerStatusChecker();
         super.onPause();
-    }
-
-    // This one is necessary only if you choose to send the data by StartActivity
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if(handleDecodeData(intent))
-            return;
-        super.onNewIntent(intent);
-    }
-
-    // This method is responsible for getting the data from the intent
-    // formatting it and adding it to the end of the edit box
-    private boolean handleDecodeData(Intent i) {
-        // check the intent action is for us
-        if ( i.getAction().contentEquals(mDemoIntentAction) ) {
-
-            Date current = new Date();
-
-            long diff = 0;
-            if(mScanDate != null)
-                diff = current.getTime() - mScanDate.getTime();
-
-            // define a string that will hold our output
-            String out = "";
-            // get the source of the data
-            String source = i.getStringExtra(DataWedgeConstants.SOURCE_TAG);
-            // save it to use later
-            if (source == null) source = "scanner";
-            // get the data from the intent
-            String data = i.getStringExtra(DataWedgeConstants.DATA_STRING_TAG);
-
-            // let's define a variable for the data length
-            Integer data_len = 0;
-            // and set it to the length of the data
-            if (data != null)
-                data_len = data.length();
-
-            String sLabelType = null;
-
-            // check if the data has come from the barcode scanner
-            if (source.equalsIgnoreCase("scanner")) {
-                // check if there is anything in the data
-                if (data != null && data.length() > 0) {
-                    // we have some data, so let's get it's symbology
-                    sLabelType = i.getStringExtra(DataWedgeConstants.LABEL_TYPE_TAG);
-                    // check if the string is empty
-                    if (sLabelType != null && sLabelType.length() > 0) {
-                        // format of the label type string is LABEL-TYPE-SYMBOLOGY
-                        // so let's skip the LABEL-TYPE- portion to get just the symbology
-                        sLabelType = sLabelType.substring(11);
-                    }
-                    else {
-                        // the string was empty so let's set it to "Unknown"
-                        sLabelType = "Unknown";
-                    }
-                    // let's construct the beginning of our output string
-                    out = "Source: Scanner, " + "Symbology: " + sLabelType + ", Length: " + data_len.toString() + ", Data: ";
-                }
-            }
-
-            // check if the data has come from the MSR
-            if (source.equalsIgnoreCase("msr")) {
-                // construct the beginning of our output string
-                out = "Source: MSR, Length: " + data_len.toString() + ", Data: ";
-            }
-
-            if(data != null)
-            {
-
-                //if(sLabelType.equalsIgnoreCase("CODE128"))
-                //if(sLabelType.equalsIgnoreCase("QRCODE"))
-                out = out + (mDisplaySpecialChars ? showSpecialChars(data) : data);
-            }
-
-            if(diff > 0) // Report 0 in continuous mode, only displayed if > to 0
-            {
-                out += "\nSoftware scan took " + diff + "ms";
-                mScanDate = null;
-            }
-
-
-            addLineToResults(out);
-
-            return true;
-        }
-        return false;
-    }
-
-    private String showSpecialChars(String data)
-    {
-        String returnString="";
-        char[] dataChar = data.toCharArray();
-        for(char acar : dataChar)
-        {
-            if(!Character.isISOControl(acar))
-            {
-                returnString += acar;
-            }
-            else
-            {
-                returnString += "["+(int)acar+"]";
-            }
-        }
-
-        return returnString;
     }
 
     private void importProfile(String progileFilenameWithoutDbExtension)
@@ -427,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerStartScan dwstartscan = new DWScannerStartScan(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwstartscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -457,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerStopScan dwstopscan = new DWScannerStopScan(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwstopscan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -487,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerToggleScan dwtogglescan = new DWScannerToggleScan(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwtogglescan.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -500,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    addLineToResults("Error Toggleing Scanner on profile: " + profileName + "\n" + resultInfo);
+                    addLineToResults("Error Toggle-ing Scanner on profile: " + profileName + "\n" + resultInfo);
                 }
             }
             @Override
@@ -516,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -529,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    addLineToResults("Error Enabline plugin on profile: " + profileName + "\n" + resultInfo);
+                    addLineToResults("Error Enabling plugin on profile: " + profileName + "\n" + resultInfo);
                 }
             }
             @Override
@@ -545,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -575,7 +480,7 @@ public class MainActivity extends AppCompatActivity {
         DWDataWedgeEnable dwdatawedgeenable = new DWDataWedgeEnable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwdatawedgeenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -588,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    addLineToResults("Error Enabline datawedge on profile: " + profileName + "\n" + resultInfo);
+                    addLineToResults("Error Enabling datawedge on profile: " + profileName + "\n" + resultInfo);
                 }
             }
             @Override
@@ -604,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
         DWDataWedgeDisable dwdatawedgedisable = new DWDataWedgeDisable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = MainActivity.this.mDemoProfileName;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwdatawedgedisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -633,14 +538,28 @@ public class MainActivity extends AppCompatActivity {
         if(mProfileProcessingStartDate == null)
             mProfileProcessingStartDate = new Date();
         DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
-        DWProfileSwitchBarcodeParamsSettings settings = new DWProfileSwitchBarcodeParamsSettings()
-        {{
-            mProfileName = MainActivity.this.mDemoProfileName;
-            mTimeOutMS = MainActivity.this.mDemoTimeOutMS;
-            mAggressiveContinuousMode = continuousMode;
-        }};
 
-        switchContinuousMode.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+        /**
+         * The switch param class will only change the settings that differs between the targetSettings and the previousSettings
+         * In our case we hold the settings we used for profile creation in the member mNormalSettingsForSwitchParams
+         * And we hold the aggressive settings in the member mAggressiveSettingsForSwitchParams
+         * We will pass both settings to the switchBarcodeParams to allow comparison of both settings
+         * This will ensure that we don't pass the whole settings parameters to the Intent
+         */
+        DWProfileSwitchBarcodeParamsSettings targetSettings;
+        DWProfileSwitchBarcodeParamsSettings previousSettings;
+        if(continuousMode)
+        {
+            targetSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
+            previousSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+        }
+        else
+        {
+            targetSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+            previousSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
+        }
+
+        switchContinuousMode.execute(previousSettings, targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
@@ -664,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteProfileAsync()
     {
         //sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_DELETE_PROFILE, mDemoProfileName);
-        addLineToResults("Deleting profile " + MainActivity.mDemoProfileName);
+        addLineToResults("Deleting profile " + DataWedgeSettingsHolder.mDemoProfileName);
 
         mProfileProcessingStartDate = new Date();
         /*
@@ -675,8 +594,8 @@ public class MainActivity extends AppCompatActivity {
         // Setup profile checker parameters
         DWProfileDeleteSettings profileDeleteSettings = new DWProfileDeleteSettings()
         {{
-            mProfileName = MainActivity.mDemoProfileName;
-            mTimeOutMS = MainActivity.mDemoTimeOutMS;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+            mTimeOutMS = DataWedgeSettingsHolder.mDemoTimeOutMS;
         }};
 
         deleteProfile.execute(profileDeleteSettings, new DWProfileDelete.onProfileCommandResult(){
@@ -708,8 +627,8 @@ public class MainActivity extends AppCompatActivity {
 
         DWProfileCreateSettings profileCreateSettings = new DWProfileCreateSettings()
         {{
-            mProfileName = MainActivity.mDemoProfileName;
-            mTimeOutMS = MainActivity.mDemoTimeOutMS;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+            mTimeOutMS = DataWedgeSettingsHolder.mDemoTimeOutMS;
 
         }};
 
@@ -779,15 +698,8 @@ public class MainActivity extends AppCompatActivity {
     private void setProfileConfigAsync()
     {
         DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this);
-        DWProfileSetConfigSettings setConfigSettings = new DWProfileSetConfigSettings()
-        {{
-            mProfileName = MainActivity.mDemoProfileName;
-            mTimeOutMS = MainActivity.mDemoTimeOutMS;
-            mAPPL_PackageName = getPackageName();
-            mINT_IntentAction = MainActivity.mDemoIntentAction;
-            mINT_IntentCategory = MainActivity.mDemoIntentCategory;
-        }};
-        profileSetConfig.execute(setConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
+
+        profileSetConfig.execute(DataWedgeSettingsHolder.mSetConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
@@ -820,8 +732,8 @@ public class MainActivity extends AppCompatActivity {
         // Setup profile checker parameters
         DWProfileCheckerSettings profileCheckerSettings = new DWProfileCheckerSettings()
         {{
-            mProfileName = MainActivity.mDemoProfileName;
-            mTimeOutMS = MainActivity.mDemoTimeOutMS;
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+            mTimeOutMS = DataWedgeSettingsHolder.mDemoTimeOutMS;
         }};
 
         // Execute the checker with the given parameters
