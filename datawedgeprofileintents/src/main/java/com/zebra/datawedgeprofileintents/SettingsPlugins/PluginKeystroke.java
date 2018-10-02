@@ -13,7 +13,7 @@ public class PluginKeystroke
     /*
     Enable the keystroke to output something or not
      */
-    public boolean keystroke_output_enabled = false;
+    public boolean keystroke_output_enabled = true;
 
     /*
     Action to execute after keystroke

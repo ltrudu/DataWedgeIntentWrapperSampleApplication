@@ -234,6 +234,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 },
         false);
+
+        DWProfileSetConfigSettings testSettings = new DWProfileSetConfigSettings();
+        String json = DWProfileSetConfigSettings.toJson(testSettings);
+        DWProfileSetConfigSettings returnSettings = DWProfileSetConfigSettings.fromJson(json);
+        String profilName = returnSettings.mProfileName;
     }
 
     @Override
