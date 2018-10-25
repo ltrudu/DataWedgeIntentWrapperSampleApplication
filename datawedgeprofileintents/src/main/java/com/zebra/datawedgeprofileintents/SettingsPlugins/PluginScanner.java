@@ -241,8 +241,8 @@ public class PluginScanner
         public int aim_timer = 500; //0-60000
         public SC_E_AIM_TYPE aim_type = SC_E_AIM_TYPE.TRIGGER;
         public int beam_timer = 5000; //0-60000
-        public int different_barcode_timeout = 500; //0-5000
-        public int same_barcode_timeout = 500; //0-5000
+        public int different_barcode_timeout = 500; //0-5000 must be a multiple value of 500 (0 included)
+        public int same_barcode_timeout = 500; //0-5000 must be a multiple value of 500 (0 included)
         public SC_E_SCANNINGMODE scanning_mode = SC_E_SCANNINGMODE.SINGLE;
     }
     public ReaderParams ReaderParams = new ReaderParams();
@@ -535,14 +535,27 @@ public class PluginScanner
         if(mConfigToBeCompared == null || ReaderParams.beam_timer != mConfigToBeCompared.ReaderParams.beam_timer)
             barcodeProps.putString("beam_timer", Integer.toString(ReaderParams.beam_timer));
 
+        // This value must be a multiple of 500
         if(mConfigToBeCompared == null || ReaderParams.different_barcode_timeout != mConfigToBeCompared.ReaderParams.different_barcode_timeout)
-            barcodeProps.putString("different_barcode_timeout", Integer.toString(ReaderParams.different_barcode_timeout));
+        {
+            // Let's brute force the multiple of 500
+            int remainder = ReaderParams.different_barcode_timeout % 500;
+            int different_barcode_timeout = (ReaderParams.different_barcode_timeout / 500) * 500 + (remainder > 250 ? 500 : 0);
+            barcodeProps.putString("different_barcode_timeout", Integer.toString(different_barcode_timeout));
+        }
 
+        // This value must be a multiple of 500
         if(mConfigToBeCompared == null || ReaderParams.same_barcode_timeout != mConfigToBeCompared.ReaderParams.same_barcode_timeout)
-            barcodeProps.putString("same_barcode_timeout", Integer.toString(ReaderParams.same_barcode_timeout));
+        {
+            // Let's brute force the multiple of 500
+            int remainder = ReaderParams.same_barcode_timeout % 500;
+            int same_barcode_timeout = (ReaderParams.same_barcode_timeout / 500) * 500 + (remainder > 250 ? 500 : 0);
+            barcodeProps.putString("same_barcode_timeout", Integer.toString(same_barcode_timeout));
+        }
 
         if(mConfigToBeCompared == null || ReaderParams.scanning_mode != mConfigToBeCompared.ReaderParams.scanning_mode)
             barcodeProps.putString("scanning_mode", ReaderParams.scanning_mode.toString());
+
     }
 
     private void setupScanParams(Bundle barcodeProps)
@@ -590,10 +603,32 @@ public class PluginScanner
             barcodeProps.putBoolean("i20f5_enable_marginless_decode", MarginLess.i20f5_enable_marginless_decode);
     }
 
+    /**
+     * Use this method if you want to switch between two knowns parameters
+     * @param configToBeCompared
+     * @return
+     */
     public Bundle getBarcodePluginBundleForSwitchParams(PluginScanner configToBeCompared)
     {
         // Pass everything to the bundle
         mConfigToBeCompared = configToBeCompared;
+
+        Bundle barcodeProps = new Bundle();
+
+        // Setup Reader Params
+        setupReaderParams(barcodeProps, true);
+
+        return barcodeProps;
+    }
+
+    /**
+     * Use this method if you want to force all parameters to be switched
+     * @return
+     */
+    public Bundle getBarcodePluginBundleForSwitchParams()
+    {
+        // Pass everything to the bundle
+        mConfigToBeCompared = null;
 
         Bundle barcodeProps = new Bundle();
 

@@ -52,7 +52,10 @@ public class DataWedgeSettingsHolder {
         {{
             mProfileName =mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
-            ScannerPlugin.ReaderParams = mSetConfigSettings.ScannerPlugin.ReaderParams;
+            ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.TRIGGER;
+            ScannerPlugin.ReaderParams.beam_timer = 5000;
+            ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
+            ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()

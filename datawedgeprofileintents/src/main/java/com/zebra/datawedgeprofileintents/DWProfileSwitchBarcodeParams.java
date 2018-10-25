@@ -21,13 +21,22 @@ public class DWProfileSwitchBarcodeParams extends DWProfileCommandBase {
         super.execute(targetSettings, callback);
 
         /*
-        Create the profile
+        Execute the profile using only the difference between original and destination settings
          */
-        switchToContinuousMode(originalSettings, targetSettings);
-     }
-
-    private void switchToContinuousMode(DWProfileSwitchBarcodeParamsSettings originalSettings, DWProfileSwitchBarcodeParamsSettings targetSettings)
-    {
         sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SWITCH_SCANNER_PARAMS, targetSettings.ScannerPlugin.getBarcodePluginBundleForSwitchParams(originalSettings.ScannerPlugin));
+    }
+
+    public void execute(DWProfileSwitchBarcodeParamsSettings settings, onProfileCommandResult callback)
+    {
+        /*
+        Call base class execute to register command result
+        broadcast receiver and launch timeout mechanism
+         */
+        super.execute(settings, callback);
+
+        /*
+        Execute the profile using only the difference between original and destination settings
+         */
+        sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_SWITCH_SCANNER_PARAMS, settings.ScannerPlugin.getBarcodePluginBundleForSwitchParams());
     }
 }

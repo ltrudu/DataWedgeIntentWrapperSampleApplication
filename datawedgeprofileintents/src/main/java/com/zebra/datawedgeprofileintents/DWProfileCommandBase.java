@@ -122,7 +122,17 @@ public class DWProfileCommandBase extends DWProfileBase {
                         bundle = intent.getBundleExtra("RESULT_INFO");
                         Set<String> keys = bundle.keySet();
                         for (String key : keys) {
-                            String value = bundle.getString(key);
+                            String value ="";
+
+                            if(bundle.getString(key) != null)
+                            {
+                                value = bundle.getString(key);
+                            }
+                            else if(bundle.getStringArray(key) != null)
+                            {
+                                for(String innerString : bundle.getStringArray(key))
+                                    value += innerString + ";";
+                            }
                             if(resultInfo.length() > 0 && value != null)
                                 resultInfo += "\n";
                             if(value != null)
@@ -158,7 +168,6 @@ public class DWProfileCommandBase extends DWProfileBase {
     @Override
     protected void cleanAll()
     {
-        mSettings.mProfileName = "";
         mProfileCommandCallback = null;
         mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();

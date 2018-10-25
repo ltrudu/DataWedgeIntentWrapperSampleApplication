@@ -235,10 +235,13 @@ public class MainActivity extends AppCompatActivity {
                 },
         false);
 
+        /*
+        // Use this to check if the toJson and fromJson work correctly
         DWProfileSetConfigSettings testSettings = new DWProfileSetConfigSettings();
         String json = DWProfileSetConfigSettings.toJson(testSettings);
         DWProfileSetConfigSettings returnSettings = DWProfileSetConfigSettings.fromJson(json);
         String profilName = returnSettings.mProfileName;
+        */
     }
 
     @Override
@@ -564,7 +567,11 @@ public class MainActivity extends AppCompatActivity {
             previousSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
         }
 
-        switchContinuousMode.execute(previousSettings, targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
+        // You can now use two different modes to switch params
+        // The first mode use a single configuration object and switch all the settings (revert unset parameters to default)
+        switchContinuousMode.execute(targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
+        // The second mode use two different configuration previous->target to switch only the difference between the members of each settings
+        //switchContinuousMode.execute(previousSettings, targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
