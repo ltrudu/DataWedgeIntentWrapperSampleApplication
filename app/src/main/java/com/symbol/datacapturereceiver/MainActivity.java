@@ -222,19 +222,6 @@ public class MainActivity extends AppCompatActivity {
                 DataWedgeSettingsHolder.mDemoIntentAction,
                 DataWedgeSettingsHolder.mDemoIntentCategory);
 
-        /**
-         * Setup a callback
-         * ShowSpecialChar will display escape character inside brackets
-         */
-        mScanReceiver.setScannedDataCallback(
-                new DWScanReceiver.onScannedData() {
-                    @Override
-                    public void scannedData(String source, String data, String typology) {
-                        addLineToResults("Typology: " + typology+ ", Data: " + data);
-                    }
-                },
-        false);
-
         /*
         // Use this to check if the toJson and fromJson work correctly
         DWProfileSetConfigSettings testSettings = new DWProfileSetConfigSettings();
@@ -247,6 +234,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        /**
+         * Setup a callback
+         * ShowSpecialChar will display escape character inside brackets
+         */
+        mScanReceiver.setScannedDataCallback(
+                new DWScanReceiver.onScannedData() {
+                    @Override
+                    public void scannedData(String source, String data, String typology) {
+                        addLineToResults("Typology: " + typology+ ", Data: " + data);
+                    }
+                },
+                false);
+
         mScanReceiver.startReceive(this);
         mScrollDownHandler = new Handler(Looper.getMainLooper());
         setupScannerStatusChecker();
@@ -255,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         mScanReceiver.stopReceive(this);
+        mScanReceiver.setScannedDataCallback(null, false);
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
