@@ -11,6 +11,8 @@ public class DWScanReceiver {
     private String mIntentAction = "";
     private String mIntentCategory = "";
     private boolean mShowSpecialCharacters = false;
+    private IntentFilter mIntentFilter = null;
+    private Activity mActivity = null;
 
     /*
     An interface callback to receive the scanned data
@@ -27,10 +29,28 @@ public class DWScanReceiver {
      */
     private BroadcastReceiver mMessageReceiver = null;
 
-    public DWScanReceiver(Activity myActivity, String intentAction, String intentCategory)
+    /***
+     * Object that handle the scans associated with the defined intent action and category
+     * @param myActivity : a reference to the activity that will handle the scans
+     * @param intentAction : the action to listen to (defined in the DW intent plugin)
+     * @param intentCategory : the category to listen to (defined in the DW intent plugin)
+     * @param showSpecialChars : Will display any special character (CR, LR,...) inside brackets
+     * @param scannedDataCallback : The interface to implement to receive the scanned date
+     */
+    public DWScanReceiver(Activity myActivity, String intentAction, String intentCategory
+            , boolean showSpecialChars, onScannedData scannedDataCallback)
     {
         mIntentAction = intentAction;
         mIntentCategory = intentCategory;
+        mActivity = myActivity;
+
+        mOnScannedDataCallback = scannedDataCallback;
+        mShowSpecialCharacters = showSpecialChars;
+
+        // Create the intent filter for further usage
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mIntentAction);
+        mIntentFilter.addCategory(mIntentCategory);
 
         // Create the message receiver
         mMessageReceiver = new BroadcastReceiver() {
@@ -41,28 +61,16 @@ public class DWScanReceiver {
         };
     }
 
-    public void setScannedDataCallback(onScannedData scannedDataCallback, boolean showSpecialChars)
-    {
-        mOnScannedDataCallback = scannedDataCallback;
-        mShowSpecialCharacters = showSpecialChars;
-    }
-
-    public void startReceive(Activity myActivity)
+    public void startReceive()
     {
         // Register the internal broadcast receiver when we are alive
-        IntentFilter myFilter = new IntentFilter();
-        myFilter.addAction(mIntentAction);
-        myFilter.addCategory(mIntentCategory);
-        myActivity.getApplicationContext().registerReceiver(mMessageReceiver, myFilter);
+        mActivity.getApplicationContext().registerReceiver(mMessageReceiver, mIntentFilter);
     }
 
-    public void stopReceive(Activity myActivity)
+    public void stopReceive()
     {
-        mIntentAction = "";
-        mIntentCategory = "";
-        mOnScannedDataCallback = null;
         // Unregister internal broadcast receiver when we are going in background
-        myActivity.getApplicationContext().unregisterReceiver(mMessageReceiver);
+        mActivity.getApplicationContext().unregisterReceiver(mMessageReceiver);
     }
 
     // This method is responsible for getting the data from the intent

@@ -114,6 +114,13 @@
             android:layout_weight="0.3"
             android:text="Disable\nPlugin" />
 
+        <Button
+            android:id="@+id/button_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Switch\nParams" />
+
 
     </LinearLayout>
 
@@ -149,11 +156,12 @@
             android:text="Delete\nProfile" />
 
         <Button
-            android:id="@+id/button_switch"
+            android:id="@+id/button_openNewActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Switch\nParams" />
+            android:text="Open\nActivity"
+            android:visibility="visible" />
 
     </LinearLayout>
 

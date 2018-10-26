@@ -209,6 +209,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btOpenActivity = (Button)findViewById(R.id.button_openNewActivity);
+        btOpenActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+            }
+        });
+
         /**
          * We initialize the settings class that will hold all the configurations
          * we are going to use in this application
@@ -220,7 +229,18 @@ public class MainActivity extends AppCompatActivity {
          */
         mScanReceiver = new DWScanReceiver(this,
                 DataWedgeSettingsHolder.mDemoIntentAction,
-                DataWedgeSettingsHolder.mDemoIntentCategory);
+                DataWedgeSettingsHolder.mDemoIntentCategory,
+                false, // Displays special chars between brackets
+                // You can inline the code here (like in this exampleà, or make the current activity
+                // extends the interface DWScanReceiver.onScannedData then pass directly the
+                // "this" reference instead
+                new DWScanReceiver.onScannedData() {
+                    @Override
+                    public void scannedData(String source, String data, String typology) {
+                        addLineToResults("Typology: " + typology+ ", Data: " + data);
+                    }
+                }
+        );
 
         /*
         // Use this to check if the toJson and fromJson work correctly
@@ -234,29 +254,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        /**
-         * Setup a callback
-         * ShowSpecialChar will display escape character inside brackets
-         */
-        mScanReceiver.setScannedDataCallback(
-                new DWScanReceiver.onScannedData() {
-                    @Override
-                    public void scannedData(String source, String data, String typology) {
-                        addLineToResults("Typology: " + typology+ ", Data: " + data);
-                    }
-                },
-                false);
-
-        mScanReceiver.startReceive(this);
+        mScanReceiver.startReceive();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
         setupScannerStatusChecker();
     }
 
     @Override
     protected void onPause() {
-        mScanReceiver.stopReceive(this);
-        mScanReceiver.setScannedDataCallback(null, false);
+        mScanReceiver.stopReceive();
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
