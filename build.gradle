@@ -4,6 +4,9 @@ buildscript {
     repositories {
         jcenter()
         google()
+        maven {
+            url  "https://dl.bintray.com/ltrudu/Zebra_Open_Source_Tools_And_Libraries"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -17,6 +20,9 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven {
+            url  "https://dl.bintray.com/ltrudu/Zebra_Open_Source_Tools_And_Libraries"
+        }
     }
 }
 
