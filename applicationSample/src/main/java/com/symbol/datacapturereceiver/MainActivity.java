@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         btCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProfileProcessingStartDate = new Date();
                 setupProfileAsync();
             }
         });

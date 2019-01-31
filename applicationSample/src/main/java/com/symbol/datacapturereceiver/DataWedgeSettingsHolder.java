@@ -2,6 +2,7 @@ package com.symbol.datacapturereceiver;
 
 import android.app.Activity;
 
+import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
