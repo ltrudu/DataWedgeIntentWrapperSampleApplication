@@ -55,7 +55,7 @@ public class DWProfileChecker extends DWProfileBase {
         /*
         Register receiver for resutls
          */
-        mContext.getApplicationContext().registerReceiver(mBroadcastReceiver, intentFilter);
+        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
 
         /*
         Ask for DataWedge profile list
@@ -88,7 +88,7 @@ public class DWProfileChecker extends DWProfileBase {
     {
         mSettings.mProfileName = "";
         mProfileExistsCallback = null;
-        mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
+        mContext.unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
     }
 

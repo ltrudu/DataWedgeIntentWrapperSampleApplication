@@ -87,11 +87,11 @@ public class DWStatusScanner {
         //to register the broadcast receiver
         IntentFilter filter = new IntentFilter();
         filter.addAction(DataWedgeConstants.NOTIFICATION_ACTION);
-        mContext.getApplicationContext().registerReceiver(mStatusBroadcastReceiver, filter);//Android method
+        mContext.registerReceiver(mStatusBroadcastReceiver, filter);//Android method
     }
 
     void unRegisterNotificationReceiver() {
         //to unregister the broadcast receiver
-        mContext.getApplicationContext().unregisterReceiver(mStatusBroadcastReceiver); //Android method
+        mContext.unregisterReceiver(mStatusBroadcastReceiver); //Android method
     }
 }

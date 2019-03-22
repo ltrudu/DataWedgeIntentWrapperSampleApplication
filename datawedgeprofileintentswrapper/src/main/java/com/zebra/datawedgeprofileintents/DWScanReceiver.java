@@ -64,13 +64,13 @@ public class DWScanReceiver {
     public void startReceive()
     {
         // Register the internal broadcast receiver when we are alive
-        mActivity.getApplicationContext().registerReceiver(mMessageReceiver, mIntentFilter);
+        mActivity.registerReceiver(mMessageReceiver, mIntentFilter);
     }
 
     public void stopReceive()
     {
         // Unregister internal broadcast receiver when we are going in background
-        mActivity.getApplicationContext().unregisterReceiver(mMessageReceiver);
+        mActivity.unregisterReceiver(mMessageReceiver);
     }
 
     // This method is responsible for getting the data from the intent

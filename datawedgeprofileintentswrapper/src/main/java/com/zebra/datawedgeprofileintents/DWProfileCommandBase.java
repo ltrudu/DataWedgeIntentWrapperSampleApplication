@@ -63,7 +63,7 @@ public class DWProfileCommandBase extends DWProfileBase {
         /*
         Register receiver for resutls
          */
-        mContext.getApplicationContext().registerReceiver(mBroadcastReceiver, intentFilter);
+        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
 
      }
 
@@ -169,7 +169,7 @@ public class DWProfileCommandBase extends DWProfileBase {
     protected void cleanAll()
     {
         mProfileCommandCallback = null;
-        mContext.getApplicationContext().unregisterReceiver(mBroadcastReceiver);
+        mContext.unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
     }
 
