@@ -1,10 +1,12 @@
 package com.symbol.datacapturereceiver;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
+import com.zebra.datawedgeprofileenums.SC_E_I2OF5_CHECK_DIGIT;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
@@ -41,10 +43,11 @@ public class DataWedgeSettingsHolder {
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
             MainBundle.PACKAGE_NAME = myActivity.getPackageName();
-            MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.OVERWRITE;
+            MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.CREATE_IF_NOT_EXIST;
             IntentPlugin.intent_action = mDemoIntentAction;
             IntentPlugin.intent_category = mDemoIntentCategory;
             IntentPlugin.intent_output_enabled = true;
+            IntentPlugin.intent_delivery = INT_E_DELIVERY.BROADCAST;
             KeystrokePlugin.keystroke_output_enabled = false;
             ScannerPlugin.scanner_input_enabled = true;
             ScannerPlugin.Decoders.decoder_aztec = true;
@@ -52,6 +55,8 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_i2of5 = true;
             ScannerPlugin.Decoders.decoder_ean13 = true;
             ScannerPlugin.Decoders.decoder_japanese_postal = true;
+            ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
+            ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
         }};
 
         mNormalSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()

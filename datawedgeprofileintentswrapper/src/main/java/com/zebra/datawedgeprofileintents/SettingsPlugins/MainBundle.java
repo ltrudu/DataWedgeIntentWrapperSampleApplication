@@ -7,15 +7,15 @@ public class MainBundle
     /////////////////////////////////////////////////////////////////////////////////////////
     // MAIN Bundle
     /////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        Set if the profile should be enabled or not
-         */
-    public boolean PROFILE_ENABLED = true;
+    /*
+       Set if the profile should be enabled or not
+    */
+    public Boolean PROFILE_ENABLED = null;
 
     /*
     Set how the profile will be processed
      */
-    public MB_E_CONFIG_MODE CONFIG_MODE = MB_E_CONFIG_MODE.CREATE_IF_NOT_EXIST;
+    public MB_E_CONFIG_MODE CONFIG_MODE = null;
 
     /////////////////////////////////////////////////////////////////////////////////////////
     // APP LIST Bundle
@@ -23,7 +23,7 @@ public class MainBundle
         /*
         Set a specific package name if you want to create a profile for a different package than the current one
          */
-    public String PACKAGE_NAME = "";
+    public String PACKAGE_NAME = null;
 
     /*
     Define the activity that will receive the intents from DataWedge

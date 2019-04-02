@@ -36,9 +36,12 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
     private void setProfileConfig(DWProfileSetConfigSettings settings)
     {
         Bundle profileConfig = new Bundle();
-        profileConfig.putString("PROFILE_NAME", settings.mProfileName);
-        profileConfig.putString("PROFILE_ENABLED", settings.MainBundle.PROFILE_ENABLED ? "true" : "false");
-        profileConfig.putString("CONFIG_MODE", settings.MainBundle.CONFIG_MODE.toString());
+        if(settings.mProfileName != null)
+            profileConfig.putString("PROFILE_NAME", settings.mProfileName);
+        if(settings.MainBundle.PROFILE_ENABLED != null)
+            profileConfig.putString("PROFILE_ENABLED", settings.MainBundle.PROFILE_ENABLED ? "true" : "false");
+        if(settings.MainBundle.CONFIG_MODE != null)
+            profileConfig.putString("CONFIG_MODE", settings.MainBundle.CONFIG_MODE.toString());
 
         // We only add the app list if we are "not in update" mode.
         // Having an APP_LIST set when in update mode throws an APP_ALREADY_ASSOCIATED error.
@@ -46,7 +49,8 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         {
             // Setup associated application and activities
             Bundle appConfig = new Bundle();
-            appConfig.putString("PACKAGE_NAME", settings.MainBundle.PACKAGE_NAME);
+            if(settings.MainBundle.PACKAGE_NAME != null)
+                appConfig.putString("PACKAGE_NAME", settings.MainBundle.PACKAGE_NAME);
             appConfig.putStringArray("ACTIVITY_LIST", ((settings.MainBundle.ACTIVITY_LIST != null && settings.MainBundle.ACTIVITY_LIST.length > 0) ? settings.MainBundle.ACTIVITY_LIST : new String[]{"*"}));
             profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
         }
@@ -55,7 +59,7 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         ArrayList<Bundle> pluginConfigs = new ArrayList<Bundle>();
 
         // Add barcode plugin config
-        pluginConfigs.add(settings.ScannerPlugin.getBarcodePluginBundleForSetConfig(true, BaseSettings.mScannerBaseSettings));
+        pluginConfigs.add(settings.ScannerPlugin.getBarcodePluginBundleForSetConfig(true));
 
         // Add keystroke plugin config (disabled in this case)
         pluginConfigs.add(settings.KeystrokePlugin.getKeyStrokePluginBundle(true));
