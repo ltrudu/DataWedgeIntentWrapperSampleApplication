@@ -2,6 +2,7 @@ package com.zebra.datawedgeprofileintents.SettingsPlugins;
 
 import android.os.Bundle;
 
+import com.zebra.datawedgeprofileenums.BDF_E_OUTPUT_PLUGIN;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 
 public class PluginBasicDataFormatting
@@ -13,6 +14,12 @@ public class PluginBasicDataFormatting
         Enable or disable BDF
          */
     public boolean bdf_enabled  = false;
+
+    /*
+    Target output plugin
+    i.e. to what plugin this config is associated
+     */
+    public BDF_E_OUTPUT_PLUGIN bdf_output_plugin = BDF_E_OUTPUT_PLUGIN.KEYSTROKE;
 
     /*
     Prefix to acquired data
@@ -50,7 +57,7 @@ public class PluginBasicDataFormatting
         Bundle bdfPluginConfig = new Bundle();
         bdfPluginConfig.putString("PLUGIN_NAME","BDF");
         bdfPluginConfig.putString("RESET_CONFIG",resetConfig ? "true" : "false");
-        bdfPluginConfig.putString("OUTPUT_PLUGIN_NAME",outputPluginName);
+        bdfPluginConfig.putString("OUTPUT_PLUGIN_NAME",bdf_output_plugin.toString());
 
         // param_list bundle properties
         Bundle bParams = new Bundle();

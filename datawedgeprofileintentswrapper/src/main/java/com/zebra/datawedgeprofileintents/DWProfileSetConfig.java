@@ -39,15 +39,17 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         profileConfig.putString("PROFILE_NAME", settings.mProfileName);
         profileConfig.putString("PROFILE_ENABLED", settings.MainBundle.PROFILE_ENABLED ? "true" : "false");
         profileConfig.putString("CONFIG_MODE", settings.MainBundle.CONFIG_MODE.toString());
-        
-        // Setup associated application and activities
-        Bundle appConfig = new Bundle();
-        appConfig.putString("PACKAGE_NAME", settings.MainBundle.PACKAGE_NAME);
-        appConfig.putStringArray("ACTIVITY_LIST", ((settings.MainBundle.ACTIVITY_LIST != null && settings.MainBundle.ACTIVITY_LIST.length > 0) ? settings.MainBundle.ACTIVITY_LIST : new String[]{"*"}));
+
         // We only add the app list if we are "not in update" mode.
         // Having an APP_LIST set when in update mode throws an APP_ALREADY_ASSOCIATED error.
         if(settings.MainBundle.CONFIG_MODE != MB_E_CONFIG_MODE.UPDATE)
+        {
+            // Setup associated application and activities
+            Bundle appConfig = new Bundle();
+            appConfig.putString("PACKAGE_NAME", settings.MainBundle.PACKAGE_NAME);
+            appConfig.putStringArray("ACTIVITY_LIST", ((settings.MainBundle.ACTIVITY_LIST != null && settings.MainBundle.ACTIVITY_LIST.length > 0) ? settings.MainBundle.ACTIVITY_LIST : new String[]{"*"}));
             profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
+        }
 
         // Array that will hold all the DW plugins
         ArrayList<Bundle> pluginConfigs = new ArrayList<Bundle>();
@@ -66,6 +68,7 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
 
         // Send Plugin configuration intent
         profileConfig.putParcelableArrayList("PLUGIN_CONFIG", pluginConfigs);
+        //profileConfig.putBundle("PLUGIN_CONFIG", settings.ScannerPlugin.getBarcodePluginBundleForSetConfig(true, null));
 
         sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2,
                 DataWedgeConstants.EXTRA_SET_CONFIG,

@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mProfileProcessingStartDate = new Date();
+                //setProfileConfigAsync();
                 setupProfileAsync();
             }
         });
@@ -294,7 +295,6 @@ public class MainActivity extends AppCompatActivity {
             String autoImportDir = "/enterprise/device/settings/datawedge/autoimport/";
             String temporaryFileName = progileFilenameWithoutDbExtension + ".tmp";
             String finalFileName = progileFilenameWithoutDbExtension + ".db";
-
 
                 fis = getAssets().open(finalFileName);
 
@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+            mProfileName = getPackageName();
         }};
 
         dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -466,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+            mProfileName = getPackageName();
         }};
 
         dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -764,8 +764,36 @@ public class MainActivity extends AppCompatActivity {
                     // exists == true means that the profile already... exists..
                     if(exists)
                     {
-                        addLineToResults("Profile " + profileName + " found in DW profiles list.\n Resetting profile to" + (mStartInContinuousMode ? " " :" not ") + "continuous mode.");
-                        switchScannerParamsAsync(mStartInContinuousMode);
+                        addLineToResults("Profile " + profileName + " found in DW profiles list.\n Deleting profile before creating a new one.");
+                        // the profile exists, so we are going to delete it.
+                        // here is a sample on how you could directly inline the code (without using methods) and have the
+                        // whole workflow at the same place
+                        DWProfileDelete dwProfileDelete = new DWProfileDelete(MainActivity.this);
+                        DWProfileDeleteSettings dwProfileDeleteSettings = new DWProfileDeleteSettings()
+                        {{
+                           mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+                           mTimeOutMS = DataWedgeSettingsHolder.mDemoTimeOutMS;
+                        }};
+                        dwProfileDelete.execute(dwProfileDeleteSettings, new DWProfileCommandBase.onProfileCommandResult() {
+                            @Override
+                            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                                if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
+                                {
+                                    addLineToResults("Profile: " + profileName + " deleted with success.\nCreating new profile now.");
+                                    createProfileAsync();
+                                }
+                                else
+                                {
+                                    addLineToResults("Error deleting profile: " + profileName + "\n" + resultInfo);
+                                    addTotalTimeToResults();
+                                }
+                            }
+
+                            @Override
+                            public void timeout(String profileName) {
+                                addLineToResults("Timeout while trying to delete profile: " + profileName);
+                            }
+                        });
                     }
                     else
                     {

@@ -24,6 +24,6 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    //implementation project(path: ':datawedgeprofileintentswrapper')
-    api 'com.zebra.datawedgeprofileintentswrapper:datawedgeprofileintentswrapper:6.7'
+    implementation project(path: ':datawedgeprofileintentswrapper')
+    //api 'com.zebra.datawedgeprofileintentswrapper:datawedgeprofileintentswrapper:6.7'
 }

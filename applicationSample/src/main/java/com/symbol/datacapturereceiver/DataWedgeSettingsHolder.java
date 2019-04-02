@@ -2,8 +2,10 @@ package com.symbol.datacapturereceiver;
 
 import android.app.Activity;
 
+import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
+import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
@@ -39,6 +41,7 @@ public class DataWedgeSettingsHolder {
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
             MainBundle.PACKAGE_NAME = myActivity.getPackageName();
+            MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.OVERWRITE;
             IntentPlugin.intent_action = mDemoIntentAction;
             IntentPlugin.intent_category = mDemoIntentCategory;
             IntentPlugin.intent_output_enabled = true;
@@ -46,7 +49,9 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.scanner_input_enabled = true;
             ScannerPlugin.Decoders.decoder_aztec = true;
             ScannerPlugin.Decoders.decoder_code128 = true;
-            ScannerPlugin.ReaderParams.scanning_mode = SC_E_SCANNINGMODE.MULTIBARCODE;
+            ScannerPlugin.Decoders.decoder_i2of5 = true;
+            ScannerPlugin.Decoders.decoder_ean13 = true;
+            ScannerPlugin.Decoders.decoder_japanese_postal = true;
         }};
 
         mNormalSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
