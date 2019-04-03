@@ -2,8 +2,9 @@ package com.zebra.datawedgeprofileintents;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson285.Gson;
+import com.google.gson285.GsonBuilder;
+import com.google.gson285.reflect.TypeToken;
 import com.zebra.datawedgeprofileenums.*;
 
 import  com.zebra.datawedgeprofileintents.SettingsPlugins.*;
@@ -11,6 +12,7 @@ import  com.zebra.datawedgeprofileintents.SettingsPlugins.*;
 import org.json.JSONObject;
 
 import java.io.Reader;
+import java.lang.reflect.Type;
 
 /*
 Add more initialisation parameters here
@@ -51,7 +53,8 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
 
     public static String toJson(DWProfileSetConfigSettings mySettings) {
         Gson gson = new Gson();
-        String j = gson.toJson(mySettings);
+        Type settingsType = new TypeToken<DWProfileSetConfigSettings>(){}.getType();
+        String j = gson.toJson(mySettings, settingsType);
         return j;
     }
 }

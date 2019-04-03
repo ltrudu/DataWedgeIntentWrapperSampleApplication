@@ -248,7 +248,7 @@ public class PluginScanner
     {
         public SC_E_CODE_ID_TYPE code_id_type = null;
         public Boolean decode_haptic_feedback = null;
-        public String decode_audio_feedback_uri = "content://media/external/audio/media/null";
+        public String decode_audio_feedback_uri = null;
         public Boolean decoding_led_feedback = null;
         public Integer good_decode_led_timer = null; //0-1000
         public SC_E_VOLUME_SLIDER_TYPE volume_slider_type = null;

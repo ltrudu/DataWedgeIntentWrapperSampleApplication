@@ -1,11 +1,14 @@
 package com.zebra.datawedgeprofileintents;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson285.Gson;
+import com.google.gson285.GsonBuilder;
+import com.google.gson285.reflect.TypeToken;
 import com.zebra.datawedgeprofileintents.SettingsPlugins.PluginScanner;
 
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 
 /*
  Add your own parameters here to setup the barcode reader as you wish
@@ -37,7 +40,8 @@ public class DWProfileSwitchBarcodeParamsSettings extends DWProfileBaseSettings
 
     public static String toJson(DWProfileSwitchBarcodeParamsSettings mySettings) {
         Gson gson = new Gson();
-        String j = gson.toJson(mySettings);
+        Type settingsType = new TypeToken<DWProfileSwitchBarcodeParamsSettings>(){}.getType();
+        String j = gson.toJson(mySettings, settingsType);
         return j;
     }
 }
