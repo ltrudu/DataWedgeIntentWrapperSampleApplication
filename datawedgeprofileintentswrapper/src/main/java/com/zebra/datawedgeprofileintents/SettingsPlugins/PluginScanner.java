@@ -40,7 +40,7 @@ public class PluginScanner
     Useful to control when scan should be available in an application
     Default is true
      */
-    public Boolean scanner_input_enabled = null;
+    public Boolean scanner_input_enabled = true;
 
     /*
     Use it to force the scanner selection

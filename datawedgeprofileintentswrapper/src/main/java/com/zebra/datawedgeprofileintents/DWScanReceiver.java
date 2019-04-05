@@ -12,7 +12,7 @@ public class DWScanReceiver {
     private String mIntentCategory = "";
     private boolean mShowSpecialCharacters = false;
     private IntentFilter mIntentFilter = null;
-    private Activity mActivity = null;
+    private Context mContext = null;
 
     /*
     An interface callback to receive the scanned data
@@ -31,18 +31,18 @@ public class DWScanReceiver {
 
     /***
      * Object that handle the scans associated with the defined intent action and category
-     * @param myActivity : a reference to the activity that will handle the scans
+     * @param myContext : a reference to the Context that will handle the scans
      * @param intentAction : the action to listen to (defined in the DW intent plugin)
      * @param intentCategory : the category to listen to (defined in the DW intent plugin)
      * @param showSpecialChars : Will display any special character (CR, LR,...) inside brackets
      * @param scannedDataCallback : The interface to implement to receive the scanned date
      */
-    public DWScanReceiver(Activity myActivity, String intentAction, String intentCategory
+    public DWScanReceiver(Context myContext, String intentAction, String intentCategory
             , boolean showSpecialChars, onScannedData scannedDataCallback)
     {
         mIntentAction = intentAction;
         mIntentCategory = intentCategory;
-        mActivity = myActivity;
+        mContext = myContext;
 
         mOnScannedDataCallback = scannedDataCallback;
         mShowSpecialCharacters = showSpecialChars;
@@ -63,14 +63,28 @@ public class DWScanReceiver {
 
     public void startReceive()
     {
+        try
+        {
+            mContext.registerReceiver(mMessageReceiver, mIntentFilter);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         // Register the internal broadcast receiver when we are alive
-        mActivity.registerReceiver(mMessageReceiver, mIntentFilter);
     }
 
     public void stopReceive()
     {
-        // Unregister internal broadcast receiver when we are going in background
-        mActivity.unregisterReceiver(mMessageReceiver);
+        try
+        {
+            // Unregister internal broadcast receiver when we are going in background
+            mContext.unregisterReceiver(mMessageReceiver);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // This method is responsible for getting the data from the intent

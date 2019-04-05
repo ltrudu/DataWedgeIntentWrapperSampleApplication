@@ -57,4 +57,11 @@ public class DWProfileSetConfigSettings extends DWProfileBaseSettings
         String j = gson.toJson(mySettings, settingsType);
         return j;
     }
+
+    public static String toJsonWN(DWProfileSetConfigSettings mySettings) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        Type settingsType = new TypeToken<DWProfileSetConfigSettings>(){}.getType();
+        String j = gson.toJson(mySettings, settingsType);
+        return j;
+    }
 }

@@ -18,7 +18,7 @@ public class PluginKeystroke
     /*
     Action to execute after keystroke
      */
-    public KEY_E_ACTION_CHAR keystroke_action_character = KEY_E_ACTION_CHAR.ASCII_NO_VALUE;
+    public KEY_E_ACTION_CHAR keystroke_action_character = null;
 
     public Integer keystroke_delay_control_characters = null;
 

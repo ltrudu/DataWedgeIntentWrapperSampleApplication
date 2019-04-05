@@ -74,6 +74,8 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         profileConfig.putParcelableArrayList("PLUGIN_CONFIG", pluginConfigs);
         //profileConfig.putBundle("PLUGIN_CONFIG", settings.ScannerPlugin.getBarcodePluginBundleForSetConfig(true, null));
 
+        String jsonwn = DWProfileSetConfigSettings.toJsonWN(settings);
+
         sendDataWedgeIntentWithExtraRequestResult(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2,
                 DataWedgeConstants.EXTRA_SET_CONFIG,
                 profileConfig);
