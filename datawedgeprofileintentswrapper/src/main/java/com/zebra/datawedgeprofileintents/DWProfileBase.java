@@ -68,7 +68,7 @@ public abstract class DWProfileBase {
         Start time out mechanism
         Enabled by default in DWProfileBaseSettings
          */
-        if(settings.mEnableTimeOutMechanism) {
+        if(settings != null && settings.mEnableTimeOutMechanism) {
             mTimeOutHandler.postDelayed(mTimeOutRunnable,
                     mSettings.mTimeOutMS);
         }

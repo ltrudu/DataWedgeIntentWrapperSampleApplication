@@ -239,6 +239,9 @@ public class MainActivity extends AppCompatActivity {
                 new DWScanReceiver.onScannedData() {
                     @Override
                     public void scannedData(String source, String data, String typology) {
+                        // Source contains the source of the scan (scanner, camera, bluetoothscanner)
+                        // data contains the data that has been scanned
+                        // typology contains the typology of what has been scanned
                         addLineToResults("Typology: " + typology+ ", Data: " + data);
                     }
                 }
@@ -812,10 +815,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void addTotalTimeToResults()
     {
-        Date current = new Date();
-        long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
-        addLineToResults("Total time: " + timeDiff + "ms");
-        mProfileProcessingStartDate = null;
+        if(mProfileProcessingStartDate != null)
+        {
+            Date current = new Date();
+            long timeDiff = current.getTime() - mProfileProcessingStartDate.getTime();
+            addLineToResults("Total time: " + timeDiff + "ms");
+            mProfileProcessingStartDate = null;
+        }
     }
 
     private void addLineToResults(final String lineToAdd)

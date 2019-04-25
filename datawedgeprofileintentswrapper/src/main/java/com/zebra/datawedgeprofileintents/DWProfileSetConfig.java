@@ -2,11 +2,14 @@ package com.zebra.datawedgeprofileintents;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Pair;
 
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
 import com.zebra.datawedgeprofileintents.SettingsPlugins.BaseSettings;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by laure on 16/04/2018.
@@ -47,12 +50,37 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         // Having an APP_LIST set when in update mode throws an APP_ALREADY_ASSOCIATED error.
         if(settings.MainBundle.CONFIG_MODE != MB_E_CONFIG_MODE.UPDATE)
         {
-            // Setup associated application and activities
-            Bundle appConfig = new Bundle();
-            if(settings.MainBundle.PACKAGE_NAME != null)
-                appConfig.putString("PACKAGE_NAME", settings.MainBundle.PACKAGE_NAME);
-            appConfig.putStringArray("ACTIVITY_LIST", ((settings.MainBundle.ACTIVITY_LIST != null && settings.MainBundle.ACTIVITY_LIST.length > 0) ? settings.MainBundle.ACTIVITY_LIST : new String[]{"*"}));
-            profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
+            if(settings.MainBundle.APP_LIST == null || settings.MainBundle.APP_LIST.size() == 0)
+            {
+                // Setup app list for this package only
+                Bundle appConfig = new Bundle();
+                appConfig.putString("PACKAGE_NAME", mContext.getPackageName());
+                appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+                profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
+            }
+            else
+            {
+                Bundle[] appConfigs = new Bundle[settings.MainBundle.APP_LIST.size()];
+                int index = 0;
+                // Setup associated application and activities
+                for(Map.Entry<String, List<String>> packageDescription : settings.MainBundle.APP_LIST.entrySet())
+                {
+                    Bundle appConfig = new Bundle();
+                    appConfig.putString("PACKAGE_NAME", packageDescription.getKey());
+                    List<String> activityList = packageDescription.getValue();
+                    if(activityList == null || activityList.size() == 0)
+                    {
+                        appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+                    }
+                    else
+                    {
+                        appConfig.putStringArray("ACTIVITY_LIST", (String[])activityList.toArray());
+                    }
+                    appConfigs[index] = appConfig;
+                    index++;
+                }
+                profileConfig.putParcelableArray("APP_LIST", appConfigs);
+            }
         }
 
         // Array that will hold all the DW plugins

@@ -2,6 +2,7 @@ package com.symbol.datacapturereceiver;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.ArrayMap;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
@@ -9,8 +10,12 @@ import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_I2OF5_CHECK_DIGIT;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
+import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class DataWedgeSettingsHolder {
 
@@ -42,7 +47,9 @@ public class DataWedgeSettingsHolder {
         {{
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
-            MainBundle.PACKAGE_NAME = myActivity.getPackageName();
+            MainBundle.APP_LIST = new HashMap<>();
+            MainBundle.APP_LIST.put(myActivity.getPackageName(), null);
+            MainBundle.APP_LIST.put("com.google.com", null);
             MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.CREATE_IF_NOT_EXIST;
             IntentPlugin.intent_action = mDemoIntentAction;
             IntentPlugin.intent_category = mDemoIntentCategory;
@@ -57,7 +64,12 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_japanese_postal = true;
             ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
             ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
+            ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
         }};
+
+        // Settings classes can be exported to JSON format and initialized from JSON format
+        String jsonWithNullTest = DWProfileSetConfigSettings.toJsonWN(mSetConfigSettings);
+        DWProfileSetConfigSettings profileFromJSon = DWProfileSetConfigSettings.fromJson(jsonWithNullTest);
 
         mNormalSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
         {{
