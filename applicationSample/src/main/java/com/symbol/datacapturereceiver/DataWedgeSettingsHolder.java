@@ -6,16 +6,21 @@ import android.util.ArrayMap;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
+import com.zebra.datawedgeprofileenums.SC_E_1D_QUIET_ZONE_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_I2OF5_CHECK_DIGIT;
+import com.zebra.datawedgeprofileenums.SC_E_POOR_QUALITY_DECODE_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
+import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SECURITY_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
+import com.zebra.datawedgeprofileintents.SettingsPlugins.PluginScanner;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class DataWedgeSettingsHolder {
 
@@ -61,10 +66,14 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_code128 = true;
             ScannerPlugin.Decoders.decoder_i2of5 = true;
             ScannerPlugin.Decoders.decoder_ean13 = true;
-            ScannerPlugin.Decoders.decoder_japanese_postal = true;
+            ScannerPlugin.Decoders.decoder_ean8 = true;
             ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
             ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
-            ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
+            ScannerPlugin.UpcEan.upcean_retry_count = 2;
+            ScannerPlugin.UpcEan.upcean_security_level = SC_E_UPCEAN_SECURITY_LEVEL.SECURITY_LEVEL_2;
+            ScannerPlugin.ReaderParams.oneD_marginless_decode_effort_level = SC_E_1D_QUIET_ZONE_LEVEL.LEVEL_3;
+            ScannerPlugin.ReaderParams.poor_quality_bcdecode_effort_level = SC_E_POOR_QUALITY_DECODE_LEVEL.SECURITY_LEVEL_0;
+
         }};
 
         // Settings classes can be exported to JSON format and initialized from JSON format

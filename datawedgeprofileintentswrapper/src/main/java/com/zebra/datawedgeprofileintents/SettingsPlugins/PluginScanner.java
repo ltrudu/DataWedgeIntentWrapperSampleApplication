@@ -2,6 +2,7 @@ package com.zebra.datawedgeprofileintents.SettingsPlugins;
 
 import android.os.Bundle;
 
+import com.zebra.datawedgeprofileenums.SC_E_1D_QUIET_ZONE_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_CHARSET_NAME;
@@ -28,7 +29,6 @@ import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_COUPON_REPORT;
 import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SECURITY_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_VOLUME_SLIDER_TYPE;
-import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // BARCODE Plugin... THE BIG ONE !!!!
@@ -241,6 +241,7 @@ public class PluginScanner
         public Integer different_barcode_timeout = null; //0-5000 must be a multiple value of 500 (0 included)
         public Integer same_barcode_timeout = null; //0-5000 must be a multiple value of 500 (0 included)
         public SC_E_SCANNINGMODE scanning_mode = null;
+        public SC_E_1D_QUIET_ZONE_LEVEL oneD_marginless_decode_effort_level = null;
     }
     public ReaderParams ReaderParams = new ReaderParams();
 
@@ -547,6 +548,10 @@ public class PluginScanner
         if( ReaderParams.scanning_mode != null)
             barcodeProps.putString("scanning_mode", ReaderParams.scanning_mode.toString());
 
+        if( ReaderParams.oneD_marginless_decode_effort_level != null)
+        {
+            barcodeProps.putString("1d_marginless_decode_effort_level", ReaderParams.oneD_marginless_decode_effort_level.toString());
+        }
     }
 
     private void setupScanParams(Bundle barcodeProps)
