@@ -62,17 +62,18 @@ public class DataWedgeSettingsHolder {
             IntentPlugin.intent_delivery = INT_E_DELIVERY.BROADCAST;
             KeystrokePlugin.keystroke_output_enabled = false;
             ScannerPlugin.scanner_input_enabled = true;
-            ScannerPlugin.Decoders.decoder_aztec = true;
-            ScannerPlugin.Decoders.decoder_code128 = true;
-            ScannerPlugin.Decoders.decoder_i2of5 = true;
-            ScannerPlugin.Decoders.decoder_ean13 = true;
-            ScannerPlugin.Decoders.decoder_ean8 = true;
-            ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
-            ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
-            ScannerPlugin.UpcEan.upcean_retry_count = 2;
-            ScannerPlugin.UpcEan.upcean_security_level = SC_E_UPCEAN_SECURITY_LEVEL.SECURITY_LEVEL_2;
-            ScannerPlugin.ReaderParams.oneD_marginless_decode_effort_level = SC_E_1D_QUIET_ZONE_LEVEL.LEVEL_3;
-            ScannerPlugin.ReaderParams.poor_quality_bcdecode_effort_level = SC_E_POOR_QUALITY_DECODE_LEVEL.SECURITY_LEVEL_0;
+
+            //ScannerPlugin.Decoders.decoder_aztec = true;
+            //ScannerPlugin.Decoders.decoder_code128 = true;
+            //ScannerPlugin.Decoders.decoder_i2of5 = true;
+            //ScannerPlugin.Decoders.decoder_ean13 = true;
+            //ScannerPlugin.Decoders.decoder_ean8 = true;
+            //ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
+            //ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
+            //ScannerPlugin.UpcEan.upcean_retry_count = 2;
+            //ScannerPlugin.UpcEan.upcean_security_level = SC_E_UPCEAN_SECURITY_LEVEL.SECURITY_LEVEL_2;
+            //ScannerPlugin.ReaderParams.oneD_marginless_decode_effort_level = SC_E_1D_QUIET_ZONE_LEVEL.LEVEL_3;
+            //ScannerPlugin.ReaderParams.poor_quality_bcdecode_effort_level = SC_E_POOR_QUALITY_DECODE_LEVEL.SECURITY_LEVEL_0;
 
         }};
 

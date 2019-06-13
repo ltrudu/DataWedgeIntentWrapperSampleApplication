@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +18,18 @@ import android.widget.TextView;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
 import com.zebra.datawedgeprofileintents.*;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.DWProfileDAOHelpers;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.DWProfileDAOPlugin_Input_Scanner;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.DWProfileDAOScanner_Params;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.DbManager;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.Plugin_Input_Scanner;
+import com.zebra.datawedgeprofileintents.SQLiteDAO.Scanner_Params;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -181,7 +190,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //"database profile auto creation" import mode (filebased)
-                importProfile("dwprofile_com.symbol.datacapturereceiver");
+                //importProfile("dwprofile_com.symbol.datacapturereceiver.db");
+
+                // Let's use DAO classes to import a modified DW Profile
+                updateThenImportAssetDBProfile("dwprofile_com.symbol.datacapturereceiver.db");
             }
         });
 
@@ -277,7 +289,106 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void importProfile(String progileFilenameWithoutDbExtension)
+    private void updateThenImportAssetDBProfile(String profileFilename)
+    {
+        String destinationFolder = "/sdcard/";
+        DWProfileDAOHelpers.copyDataBaseFromAssetsToFolder(this, profileFilename, destinationFolder);
+        DbManager.setConfig(this);
+        DbManager.getsInstance().open(destinationFolder + profileFilename, 1);
+
+        ArrayList<Plugin_Input_Scanner> oned_marginless_decode_effort_level_records = DWProfileDAOPlugin_Input_Scanner.loadAllRecords("param_id = ? AND scanner_type = ?", new String[] { "1d_marginless_decode_effort_level", "INTERNAL_IMAGER" }, null, null, null);
+        Plugin_Input_Scanner oned_marginless_decode_effort_level = null;
+        if(oned_marginless_decode_effort_level_records != null && oned_marginless_decode_effort_level_records.size() > 0)
+        {
+            oned_marginless_decode_effort_level = oned_marginless_decode_effort_level_records.get(0);
+            oned_marginless_decode_effort_level.setparam_value("3");
+            DWProfileDAOPlugin_Input_Scanner.updateRecord(oned_marginless_decode_effort_level);
+        }
+        else
+        {
+            oned_marginless_decode_effort_level = new Plugin_Input_Scanner();
+            oned_marginless_decode_effort_level.setprofile_id(1);
+            oned_marginless_decode_effort_level.setdevice_id("1");
+            oned_marginless_decode_effort_level.setparam_id("1d_marginless_decode_effort_level");
+            oned_marginless_decode_effort_level.setparam_value("3");
+            oned_marginless_decode_effort_level.setscanner_type("INTERNAL_IMAGER");
+            oned_marginless_decode_effort_level.setdisplay_name("1D Quiet Zone Level");
+            oned_marginless_decode_effort_level.setvalue_name("Level 3");
+            DWProfileDAOPlugin_Input_Scanner.insertRecord(oned_marginless_decode_effort_level);
+        }
+
+        ArrayList<Plugin_Input_Scanner> poor_quality_bcdecode_effort_level_records = DWProfileDAOPlugin_Input_Scanner.loadAllRecords("param_id = ? AND scanner_type = ?", new String[] { "poor_quality_bcdecode_effort_level", "INTERNAL_IMAGER" }, null, null, null);
+        Plugin_Input_Scanner poor_quality_bcdecode_effort_level = null;
+        if(poor_quality_bcdecode_effort_level_records != null && poor_quality_bcdecode_effort_level_records.size() > 0)
+        {
+            poor_quality_bcdecode_effort_level = poor_quality_bcdecode_effort_level_records.get(0);
+            poor_quality_bcdecode_effort_level.setparam_value("3");
+            poor_quality_bcdecode_effort_level.setvalue_name("Effort Level 3");
+            DWProfileDAOPlugin_Input_Scanner.updateRecord(poor_quality_bcdecode_effort_level);
+        }
+        else
+        {
+            poor_quality_bcdecode_effort_level = new Plugin_Input_Scanner();
+            poor_quality_bcdecode_effort_level.setprofile_id(1);
+            poor_quality_bcdecode_effort_level.setdevice_id("1");
+            poor_quality_bcdecode_effort_level.setparam_id("poor_quality_bcdecode_effort_level");
+            poor_quality_bcdecode_effort_level.setparam_value("3");
+            poor_quality_bcdecode_effort_level.setscanner_type("INTERNAL_IMAGER");
+            poor_quality_bcdecode_effort_level.setdisplay_name("Poor Quality Decode Effort");
+            poor_quality_bcdecode_effort_level.setvalue_name("Effort Level 3");
+            DWProfileDAOPlugin_Input_Scanner.insertRecord(poor_quality_bcdecode_effort_level);
+        }
+
+        ArrayList<Plugin_Input_Scanner> upcean_security_level_records = DWProfileDAOPlugin_Input_Scanner.loadAllRecords("param_id = ? AND scanner_type = ?", new String[] { "upcean_security_level", "INTERNAL_IMAGER" }, null, null, null);
+        Plugin_Input_Scanner upcean_security_level = null;
+        if(upcean_security_level_records != null && upcean_security_level_records.size() > 0)
+        {
+            upcean_security_level = upcean_security_level_records.get(0);
+            upcean_security_level.setparam_value("0");
+            upcean_security_level.setvalue_name("Level 0");
+            DWProfileDAOPlugin_Input_Scanner.updateRecord(upcean_security_level);
+        }
+        else
+        {
+            upcean_security_level = new Plugin_Input_Scanner();
+            upcean_security_level.setprofile_id(1);
+            upcean_security_level.setdevice_id("1");
+            upcean_security_level.setparam_id("upcean_security_level");
+            upcean_security_level.setparam_value("0");
+            upcean_security_level.setscanner_type("INTERNAL_IMAGER");
+            upcean_security_level.setdisplay_name("Security Level");
+            upcean_security_level.setvalue_name("Level 0");
+            DWProfileDAOPlugin_Input_Scanner.insertRecord(upcean_security_level);
+        }
+
+        ArrayList<Plugin_Input_Scanner> upcean_retry_count_records = DWProfileDAOPlugin_Input_Scanner.loadAllRecords("param_id = ? AND scanner_type = ?", new String[] { "upcean_retry_count", "INTERNAL_IMAGER" }, null, null, null);
+        Plugin_Input_Scanner upcean_retry_count = null;
+        if(upcean_retry_count_records != null && upcean_retry_count_records.size() > 0)
+        {
+            upcean_retry_count = upcean_retry_count_records.get(0);
+            upcean_retry_count.setparam_value("2");
+            DWProfileDAOPlugin_Input_Scanner.updateRecord(upcean_retry_count);
+        }
+        else
+        {
+            upcean_retry_count = new Plugin_Input_Scanner();
+            upcean_retry_count.setprofile_id(1);
+            upcean_retry_count.setdevice_id("1");
+            upcean_retry_count.setparam_id("upcean_retry_count");
+            upcean_retry_count.setparam_value("2");
+            upcean_retry_count.setscanner_type("INTERNAL_IMAGER");
+            upcean_retry_count.setdisplay_name("Retry Count");
+            upcean_retry_count.setvalue_name("2");
+            DWProfileDAOPlugin_Input_Scanner.insertRecord(upcean_retry_count);
+        }
+
+
+        DbManager.getsInstance().close();
+
+        importProfile(profileFilename, destinationFolder);
+    }
+
+    private void importProfile(String profileFilename, String folder)
     {
         // Source : http://techdocs.zebra.com/datawedge/6-7/guide/settings/
         //Export your profile using
@@ -296,11 +407,16 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             String autoImportDir = "/enterprise/device/settings/datawedge/autoimport/";
-            String temporaryFileName = progileFilenameWithoutDbExtension + ".tmp";
-            String finalFileName = progileFilenameWithoutDbExtension + ".db";
+            String temporaryFileName = DWProfileDAOHelpers.removeExtension(profileFilename) + ".tmp";
+            String finalFileName = DWProfileDAOHelpers.removeExtension(profileFilename) + ".db";
 
+            if(folder == null || folder.isEmpty())
                 fis = getAssets().open(finalFileName);
-
+            else
+            {
+                File inputFile = new File(folder, profileFilename);
+                fis = new FileInputStream(inputFile);
+            }
 
             // create a File object for the parent directory
             File outputDirectory = new File(autoImportDir);
