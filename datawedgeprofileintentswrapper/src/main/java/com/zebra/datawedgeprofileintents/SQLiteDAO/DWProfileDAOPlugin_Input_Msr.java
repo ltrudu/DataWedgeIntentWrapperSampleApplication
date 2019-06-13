@@ -1,4 +1,4 @@
-package com.zebra.datawedgeprofileintents.sqlitedao;
+package com.zebra.datawedgeprofileintents.SQLiteDAO;
 
 import java.util.ArrayList;
 import android.content.ContentValues;

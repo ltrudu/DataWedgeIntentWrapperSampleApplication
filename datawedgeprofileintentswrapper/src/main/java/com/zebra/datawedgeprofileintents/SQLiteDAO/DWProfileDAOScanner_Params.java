@@ -1,4 +1,4 @@
-package com.zebra.datawedgeprofileintents.sqlitedao;
+package com.zebra.datawedgeprofileintents.SQLiteDAO;
 
 import java.util.ArrayList;
 import android.content.ContentValues;
@@ -27,6 +27,7 @@ public class DWProfileDAOScanner_Params extends DbManager {
         mDbManager = DbManager.getsInstance();
         mDbManager.close();
     }
+
 
     public static Scanner_Params loadRecordById(int m_id)  { 
         database_open();

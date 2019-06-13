@@ -1,7 +1,6 @@
-package com.zebra.datawedgeprofileintents.sqlitedao;
+package com.zebra.datawedgeprofileintents.SQLiteDAO;
 
 import android.os.Bundle;
-import java.util.Date;
 
 public class Plugin_Process_Bdf {
 
