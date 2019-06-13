@@ -1,9 +1,8 @@
-package com.zebra.datawedgeprofileintents.sqlitedao;
+package com.zebra.datawedgeprofileintents.SQLiteDAO;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DbManager {
     private static final String TAG = "DBMANAGER";
@@ -23,8 +22,7 @@ public class DbManager {
         return sInstance;
     }
 
-
-    protected static DbManager getsInstance() {
+    public static DbManager getsInstance() {
         if (sInstance==null) throw new NullPointerException("DbManager is null, Please set DbManger.setConfig(this) in your activity before using the DAO objects.");
         return sInstance;
     }
@@ -37,7 +35,15 @@ public class DbManager {
     protected DbManager() {}
 
     public DbManager open() {
-        mDbHelper = new DbHelper(this);
+        if(mDbHelper == null)
+            mDbHelper = new DbHelper(this);
+        mDb = mDbHelper.getWritableDatabase();
+        return this;
+    }
+
+    public DbManager open(String filename, int version) {
+        if(mDbHelper == null)
+            mDbHelper = new DbHelper(this, filename, version);
         mDb = mDbHelper.getWritableDatabase();
         return this;
     }
@@ -47,7 +53,8 @@ public class DbManager {
     }
 
     public SQLiteDatabase getDatabase() {
-        mDbHelper = new DbHelper(this);
+        if(mDbHelper == null)
+            mDbHelper = new DbHelper(this);
         mDb = mDbHelper.getWritableDatabase();
         return mDb;
     }
@@ -65,11 +72,27 @@ public class DbManager {
             return sInstance;
         }
 
+        public static DbHelper initWithDatabase(DbManager manager, String fileName)
+        {
+            if (sInstance == null) {
+                sInstance = new DbHelper(manager);
+            }
+            return sInstance;
+        }
+
 
         private DbHelper(DbManager dbmanger) {
             super(dbmanger.mCtx, DbSchema.DATABASE_NAME, null, DbSchema.DATABASE_VERSION);
             mDbManager = dbmanger;
         }
+
+        private DbHelper(DbManager dbmanger, String fileName, int version) {
+            super(dbmanger.mCtx, fileName, null, version);
+            DbSchema.DATABASE_NAME = fileName;
+            DbSchema.DATABASE_VERSION = 0;
+            mDbManager = dbmanger;
+        }
+
 
         @Override
         public void onCreate(SQLiteDatabase db) {

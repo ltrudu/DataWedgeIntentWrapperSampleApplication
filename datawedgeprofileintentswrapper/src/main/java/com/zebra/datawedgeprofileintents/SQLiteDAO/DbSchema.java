@@ -1,12 +1,12 @@
-package com.zebra.datawedgeprofileintents.sqlitedao;
+package com.zebra.datawedgeprofileintents.SQLiteDAO;
 
 import android.provider.BaseColumns;
 
 public class DbSchema {
     private static final String TAG = "DbSchema";
 
-    public static final String DATABASE_NAME = "dwprofile_test.db";
-    public static final int DATABASE_VERSION = 1;
+    public static String DATABASE_NAME = "dwprofile_com.symbol.datacapturereceiver.db";
+    public static int DATABASE_VERSION = 0;
     public static final String SORT_ASC = " ASC";
     public static final String SORT_DESC = " DESC";
     public static final String[] ORDERS = {SORT_ASC,SORT_DESC};
