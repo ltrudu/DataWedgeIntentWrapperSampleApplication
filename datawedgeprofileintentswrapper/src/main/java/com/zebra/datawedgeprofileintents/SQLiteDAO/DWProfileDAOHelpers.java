@@ -10,7 +10,7 @@ import java.io.InputStream;
 public class DWProfileDAOHelpers {
     private static String TAG = "DWProDAOHelp";
 
-    public static void copyDataBaseFromAssetsToFolder(Context context, String assetNamePath, String destinatinFolder)
+    public static String copyDataBaseFromAssetsToFolder(Context context, String assetNamePath, String destinatinFolder, String destinationFileName)
     {
         // Source : http://techdocs.zebra.com/datawedge/6-7/guide/settings/
         //Export your profile using
@@ -25,10 +25,11 @@ public class DWProfileDAOHelpers {
         FileOutputStream fos = null;
         File outputFile = null;
         File finalFile = null;
+        String returnFileName = "";
 
         try {
             String temporaryFileName = removeExtension(assetNamePath) + ".tmp";
-            String finalFileName = removeExtension(assetNamePath) + ".db";
+            String finalFileName = removeExtension(destinationFileName) + ".db";
 
             fis = context.getAssets().open(finalFileName);
 
@@ -65,6 +66,7 @@ public class DWProfileDAOHelpers {
 
             //release resources
             fos.close();
+
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -78,9 +80,12 @@ public class DWProfileDAOHelpers {
                 //rename the file
                 if(finalFile != null)
                     outputFile.renameTo(finalFile);
+
+                returnFileName = finalFile.getAbsolutePath();
             }
 
         }
+        return returnFileName;
     }
 
     public static String removeExtension(String s) {

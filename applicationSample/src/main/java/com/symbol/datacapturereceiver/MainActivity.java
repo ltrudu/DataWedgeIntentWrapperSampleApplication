@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 //importProfile("dwprofile_com.symbol.datacapturereceiver.db");
 
                 // Let's use DAO classes to import a modified DW Profile
-                updateThenImportAssetDBProfile("dwprofile_com.symbol.datacapturereceiver.db");
+                updateThenImportAssetDBProfile("MC32_dwprofile_com.symbol.datacapturereceiver.db", "dwprofile_com.symbol.datacapturereceiver.db");
             }
         });
 
@@ -289,12 +289,12 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void updateThenImportAssetDBProfile(String profileFilename)
+    private void updateThenImportAssetDBProfile(String profileFilename, String destinationFileName)
     {
         String destinationFolder = "/sdcard/";
-        DWProfileDAOHelpers.copyDataBaseFromAssetsToFolder(this, profileFilename, destinationFolder);
+        String dbpath = DWProfileDAOHelpers.copyDataBaseFromAssetsToFolder(this, profileFilename, destinationFolder, destinationFileName);
         DbManager.setConfig(this);
-        DbManager.getsInstance().open(destinationFolder + profileFilename, 1);
+        DbManager.getsInstance().open(dbpath, 1);
 
         ArrayList<Plugin_Input_Scanner> oned_marginless_decode_effort_level_records = DWProfileDAOPlugin_Input_Scanner.loadAllRecords("param_id = ? AND scanner_type = ?", new String[] { "1d_marginless_decode_effort_level", "INTERNAL_IMAGER" }, null, null, null);
         Plugin_Input_Scanner oned_marginless_decode_effort_level = null;
@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
 
         DbManager.getsInstance().close();
 
-        importProfile(profileFilename, destinationFolder);
+        importProfile(destinationFileName, destinationFolder);
     }
 
     private void importProfile(String profileFilename, String folder)
