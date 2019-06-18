@@ -61,6 +61,7 @@ public class DataWedgeConstants {
     //  6.2 API and up Extras sent to DataWedge
     public static final String EXTRA_GET_ACTIVE_PROFILE = "com.symbol.datawedge.api.GET_ACTIVE_PROFILE";
     public static final String EXTRA_GET_PROFILES_LIST = "com.symbol.datawedge.api.GET_PROFILES_LIST";
+    public static final String EXTRA_GET_CONFIG = "com.symbol.datawedge.api.GET_CONFIG";
     public static final String EXTRA_DELETE_PROFILE = "com.symbol.datawedge.api.DELETE_PROFILE";
     public static final String EXTRA_CLONE_PROFILE = "com.symbol.datawedge.api.CLONE_PROFILE";
     public static final String EXTRA_RENAME_PROFILE = "com.symbol.datawedge.api.RENAME_PROFILE";
@@ -71,6 +72,7 @@ public class DataWedgeConstants {
     //  6.2 API and up Extras received from DataWedge
     public static final String EXTRA_RESULT_GET_ACTIVE_PROFILE = "com.symbol.datawedge.api.RESULT_GET_ACTIVE_PROFILE";
     public static final String EXTRA_RESULT_GET_PROFILE_LIST = "com.symbol.datawedge.api.RESULT_GET_PROFILES_LIST";
+    public static final String EXTRA_RESULT_GET_CONFIG = "com.symbol.datawedge.api.GET_CONFIG_RESULT";
 
 
     //  6.3 API and up Extras sent to DataWedge
