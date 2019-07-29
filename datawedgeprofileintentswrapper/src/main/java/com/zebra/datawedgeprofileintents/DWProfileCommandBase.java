@@ -63,7 +63,8 @@ public class DWProfileCommandBase extends DWProfileBase {
         /*
         Register receiver for resutls
          */
-        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
+        if(settings.mEnableCommandResult)
+            mContext.registerReceiver(mBroadcastReceiver, intentFilter);
 
      }
 
@@ -169,7 +170,8 @@ public class DWProfileCommandBase extends DWProfileBase {
     protected void cleanAll()
     {
         mProfileCommandCallback = null;
-        mContext.unregisterReceiver(mBroadcastReceiver);
+        if(mSettings.mEnableCommandResult)
+            mContext.unregisterReceiver(mBroadcastReceiver);
         super.cleanAll();
     }
 

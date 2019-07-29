@@ -29,6 +29,12 @@ public class DWProfileBaseSettings
      */
     public long mTimeOutMS = 5000;
 
+    /*
+    If set to false, the executed command will not wait for a result
+    and will not call the methods of onProfileCommandResult
+     */
+    public boolean mEnableCommandResult = true;
+
     public static DWProfileBaseSettings fromJson(String myJSONString)
     {
         Log.v("JSONBuilder:", myJSONString);
