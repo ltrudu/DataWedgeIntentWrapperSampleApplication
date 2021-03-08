@@ -61,6 +61,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_code128 = true;
             ScannerPlugin.Decoders.decoder_i2of5 = true;
             ScannerPlugin.Decoders.decoder_ean13 = true;
+            ScannerPlugin.Decoders.decoder_datamatrix = true;
             ScannerPlugin.Decoders.decoder_japanese_postal = true;
             ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
             ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
@@ -75,6 +76,7 @@ public class DataWedgeSettingsHolder {
         {{
             mProfileName =mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
+            mEnableTimeOutMechanism = true;
             ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.TRIGGER;
             ScannerPlugin.ReaderParams.beam_timer = 5000;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
