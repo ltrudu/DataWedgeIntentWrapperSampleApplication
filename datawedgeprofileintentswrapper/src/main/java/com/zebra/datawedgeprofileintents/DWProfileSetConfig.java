@@ -50,36 +50,34 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         // Having an APP_LIST set when in update mode throws an APP_ALREADY_ASSOCIATED error.
         if(settings.MainBundle.CONFIG_MODE != MB_E_CONFIG_MODE.UPDATE)
         {
-            if(settings.MainBundle.APP_LIST == null || settings.MainBundle.APP_LIST.size() == 0)
+            if(settings.IntentPlugin.use_component == false)
             {
-                // Setup app list for this package only
-                Bundle appConfig = new Bundle();
-                appConfig.putString("PACKAGE_NAME", mContext.getPackageName());
-                appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
-                profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
-            }
-            else
-            {
-                Bundle[] appConfigs = new Bundle[settings.MainBundle.APP_LIST.size()];
-                int index = 0;
-                // Setup associated application and activities
-                for(Map.Entry<String, List<String>> packageDescription : settings.MainBundle.APP_LIST.entrySet())
-                {
+                // We are going to use the old configuration mode that use application
+                // and activity binding to send Datawedge Intents
+                if (settings.MainBundle.APP_LIST == null || settings.MainBundle.APP_LIST.size() == 0) {
+                    // Setup app list for this package only
                     Bundle appConfig = new Bundle();
-                    appConfig.putString("PACKAGE_NAME", packageDescription.getKey());
-                    List<String> activityList = packageDescription.getValue();
-                    if(activityList == null || activityList.size() == 0)
-                    {
-                        appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+                    appConfig.putString("PACKAGE_NAME", mContext.getPackageName());
+                    appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+                    profileConfig.putParcelableArray("APP_LIST", new Bundle[]{appConfig});
+                } else {
+                    Bundle[] appConfigs = new Bundle[settings.MainBundle.APP_LIST.size()];
+                    int index = 0;
+                    // Setup associated application and activities
+                    for (Map.Entry<String, List<String>> packageDescription : settings.MainBundle.APP_LIST.entrySet()) {
+                        Bundle appConfig = new Bundle();
+                        appConfig.putString("PACKAGE_NAME", packageDescription.getKey());
+                        List<String> activityList = packageDescription.getValue();
+                        if (activityList == null || activityList.size() == 0) {
+                            appConfig.putStringArray("ACTIVITY_LIST", new String[]{"*"});
+                        } else {
+                            appConfig.putStringArray("ACTIVITY_LIST", (String[]) activityList.toArray());
+                        }
+                        appConfigs[index] = appConfig;
+                        index++;
                     }
-                    else
-                    {
-                        appConfig.putStringArray("ACTIVITY_LIST", (String[])activityList.toArray());
-                    }
-                    appConfigs[index] = appConfig;
-                    index++;
+                    profileConfig.putParcelableArray("APP_LIST", appConfigs);
                 }
-                profileConfig.putParcelableArray("APP_LIST", appConfigs);
             }
         }
 
@@ -96,7 +94,7 @@ public class DWProfileSetConfig extends DWProfileCommandBase {
         pluginConfigs.add(settings.BasicDataFormatting.getBDFPluginBundle(true, "INTENT"));
 
         // Setup intent delivery by broadcast for this case
-        pluginConfigs.add(settings.IntentPlugin.getIntentPluginBundle(true));
+        pluginConfigs.add(settings.IntentPlugin.getIntentPluginBundle(true, mContext));
 
         // Send Plugin configuration intent
         profileConfig.putParcelableArrayList("PLUGIN_CONFIG", pluginConfigs);
