@@ -45,7 +45,7 @@ public class DWSynchronousMethods {
         settings.mProfileName = mContext.getPackageName();
 
         // First delete the profile synchronously
-        _deleteProfile(settings.mProfileName);
+        deleteProfile(settings.mProfileName);
         // Then setup the new profile
 
         if(mJobDoneLatch != null)
@@ -111,10 +111,10 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> enablePlugin()
     {
-        return _enablePlugin(mContext.getPackageName());
+        return enablePlugin(mContext.getPackageName());
     }
 
-    private Pair<EResults, String> _enablePlugin(final String profileName)
+    public Pair<EResults, String> enablePlugin(final String profileName)
     {
         if(mJobDoneLatch != null)
         {
@@ -178,10 +178,10 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> disablePlugin()
     {
-        return _disablePlugin(mContext.getPackageName());
+        return disablePlugin(mContext.getPackageName());
     }
 
-    private Pair<EResults, String> _disablePlugin(final String profileName)
+    public Pair<EResults, String> disablePlugin(final String profileName)
     {
         if(mJobDoneLatch != null)
         {
@@ -245,10 +245,10 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> startScan()
     {
-        return _startScan(mContext.getPackageName());
+        return startScan(mContext.getPackageName());
     }
 
-    private Pair<EResults, String> _startScan(final String profileName)
+    public Pair<EResults, String> startScan(final String profileName)
     {
         if(mJobDoneLatch != null)
         {
@@ -313,10 +313,10 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> stopScan()
     {
-        return _stopScan(mContext.getPackageName());
+        return stopScan(mContext.getPackageName());
     }
 
-    private Pair<EResults, String> _stopScan(final String profileName)
+    public Pair<EResults, String> stopScan(final String profileName)
     {
         if(mJobDoneLatch != null)
         {
@@ -381,10 +381,10 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> profileExists()
     {
-        return _profileExists(mContext.getPackageName());
+        return profileExists(mContext.getPackageName());
     }
 
-    private Pair<EResults, String> _profileExists(final String profileName)
+    public Pair<EResults, String> profileExists(final String profileName)
     {
         if(mJobDoneLatch != null)
         {
@@ -449,11 +449,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> deleteProfile()
     {
-        return _deleteProfile(mContext.getPackageName());
+        return deleteProfile(mContext.getPackageName());
     }
 
 
-    private Pair<EResults, String> _deleteProfile(final String profileName)
+    public Pair<EResults, String> deleteProfile(final String profileName)
     {
         if(mJobDoneLatch != null)
         {

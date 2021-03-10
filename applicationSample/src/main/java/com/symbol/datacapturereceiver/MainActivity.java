@@ -762,7 +762,7 @@ public class MainActivity extends AppCompatActivity {
     {
         mProfileProcessingStartDate = new Date();
         Date totalTimeStart = mProfileProcessingStartDate;
-        DWSynchronousMethods dwSynchronousMethods = new DWSynchronousMethods(this);
+        DWSynchronousMethodsNT dwSynchronousMethods = new DWSynchronousMethodsNT(this);
         Pair<DWSynchronousMethods.EResults,String> result = dwSynchronousMethods.profileExists();
         addLineToResults("Total time to check if profile exists:");
         addTotalTimeToResults();
