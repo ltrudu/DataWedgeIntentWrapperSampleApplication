@@ -24,37 +24,17 @@ public class DWSynchronousMethodsNT {
     private class SynchronousNTRunnable implements Runnable
     {
         private String mMethodName;
-        private String mStringParam = null;
-        private DWProfileSetConfigSettings mSettingsParams = null;
-        private DWProfileSwitchBarcodeParamsSettings mSwitchSettingsParams = null;
+        private Object mParam;
+        private Class<?> mParamClass;
         private Context mContext;
         public Pair<DWSynchronousMethods.EResults, String> mResults = null;
         public boolean mHasFinished = false;
 
-        public SynchronousNTRunnable(Context context, String methodName, DWProfileSetConfigSettings settingsParams)
+        public SynchronousNTRunnable(Context context, String methodName, Object param, Class<?> paramClass)
         {
             mMethodName = methodName;
-            mStringParam = null;
-            mSettingsParams = settingsParams;
-            mSwitchSettingsParams = null;
-            mContext = context;
-        }
-
-        public SynchronousNTRunnable(Context context, String methodName, String stringParam)
-        {
-            mMethodName = methodName;
-            mStringParam = stringParam;
-            mSettingsParams = null;
-            mSwitchSettingsParams = null;
-            mContext = context;
-        }
-
-        public SynchronousNTRunnable(Context context, String methodName, DWProfileSwitchBarcodeParamsSettings switchBarcodeParamsSettings)
-        {
-            mMethodName = methodName;
-            mStringParam = null;
-            mSettingsParams = null;
-            mSwitchSettingsParams = switchBarcodeParamsSettings;
+            mParam = param;
+            mParamClass = paramClass;
             mContext = context;
         }
 
@@ -65,20 +45,8 @@ public class DWSynchronousMethodsNT {
                 Method method;
                 Object result = null;
                 DWSynchronousMethods dwSynchronousMethods = new DWSynchronousMethods(mContext);
-                if(mStringParam != null) {
-                    method = DWSynchronousMethods.class.getMethod(mMethodName, String.class);
-                    result = method.invoke(dwSynchronousMethods, mStringParam);
-                }
-                else if(mSettingsParams != null){
-                    method = DWSynchronousMethods.class.getMethod(mMethodName, DWProfileSetConfigSettings.class);
-                    result = method.invoke(dwSynchronousMethods, mSettingsParams);
-                }
-                else
-                {
-                    method = DWSynchronousMethods.class.getMethod(mMethodName, DWProfileSwitchBarcodeParamsSettings.class);
-                    result = method.invoke(dwSynchronousMethods, mSwitchSettingsParams);
-                }
-
+                method = DWSynchronousMethods.class.getMethod(mMethodName, mParamClass);
+                result = method.invoke(dwSynchronousMethods, mParam);
                 if(result != null)
                 {
                     mResults = (Pair<DWSynchronousMethods.EResults, String>)result;
@@ -104,26 +72,9 @@ public class DWSynchronousMethodsNT {
         return mLastMessage;
     }
 
-    public Pair<DWSynchronousMethods.EResults,String> runInNewThread(String methodName, String stringParams)
+    public Pair<DWSynchronousMethods.EResults,String> runInNewThread(String methodName, Object param, Class<?> paramClass)
     {
-        SynchronousNTRunnable synchronousNTRunnable = new SynchronousNTRunnable(mContext, methodName, stringParams);
-        Thread synchronizedThread = new Thread(synchronousNTRunnable);
-        synchronizedThread.start();
-        while (synchronousNTRunnable.mHasFinished == false) {
-            try {
-                Thread.sleep(100L);
-            } catch (Throwable e) {
-                // on android this may not be allowed, that's why we
-                // catch throwable the wait should be very short because we are
-                // just waiting for the bind of the socket
-            }
-        }     
-        return synchronousNTRunnable.mResults;
-    }
-
-    public Pair<DWSynchronousMethods.EResults,String> runInNewThread(String methodName, DWProfileSetConfigSettings settingsParams)
-    {
-        SynchronousNTRunnable synchronousNTRunnable = new SynchronousNTRunnable(mContext, methodName, settingsParams);
+        SynchronousNTRunnable synchronousNTRunnable = new SynchronousNTRunnable(mContext, methodName, param, paramClass);
         Thread synchronizedThread = new Thread(synchronousNTRunnable);
         synchronizedThread.start();
         while (synchronousNTRunnable.mHasFinished == false) {
@@ -137,93 +88,76 @@ public class DWSynchronousMethodsNT {
         }
         return synchronousNTRunnable.mResults;
     }
-
-    public Pair<DWSynchronousMethods.EResults,String> runInNewThread(String methodName, DWProfileSwitchBarcodeParamsSettings settingsParams)
-    {
-        SynchronousNTRunnable synchronousNTRunnable = new SynchronousNTRunnable(mContext, methodName, settingsParams);
-        Thread synchronizedThread = new Thread(synchronousNTRunnable);
-        synchronizedThread.start();
-        while (synchronousNTRunnable.mHasFinished == false) {
-            try {
-                Thread.sleep(100L);
-            } catch (Throwable e) {
-                // on android this may not be allowed, that's why we
-                // catch throwable the wait should be very short because we are
-                // just waiting for the bind of the socket
-            }
-        }
-        return synchronousNTRunnable.mResults;
-    }
-
+    
     public Pair<DWSynchronousMethods.EResults,String> setupDWProfile(final DWProfileSetConfigSettings settings) 
     {
-        return runInNewThread("setupDWProfile", settings);
+        return runInNewThread("setupDWProfile", settings, DWProfileSetConfigSettings.class);
     }
     
     public Pair<DWSynchronousMethods.EResults, String> enablePlugin()
     {
-        return runInNewThread("enablePlugin", mContext.getPackageName());
+        return runInNewThread("enablePlugin", mContext.getPackageName(), String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> enablePlugin(String profileName)
     {
-        return runInNewThread("enablePlugin", profileName);
+        return runInNewThread("enablePlugin", profileName, String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> disablePlugin()
     {
-        return runInNewThread("disablePlugin", mContext.getPackageName());
+        return runInNewThread("disablePlugin", mContext.getPackageName(), String.class);
     }
     
     public Pair<DWSynchronousMethods.EResults, String> disablePlugin(String profileName)
     {
-        return runInNewThread("disablePlugin", profileName);
+        return runInNewThread("disablePlugin", profileName, String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> startScan()
     {
-        return runInNewThread("startScan", mContext.getPackageName());
+        return runInNewThread("startScan", mContext.getPackageName(), String.class);
     }
     
     public Pair<DWSynchronousMethods.EResults, String> startScan(String profileName)
     {
-        return runInNewThread("startScan", profileName);
+        return runInNewThread("startScan", profileName, String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> stopScan()
     {
-        return runInNewThread("stopScan", mContext.getPackageName());
+        return runInNewThread("stopScan", mContext.getPackageName(), String.class);
     }
     
     public Pair<DWSynchronousMethods.EResults, String> stopScan(String profileName)
     {
-        return runInNewThread("stopScan", profileName);
+        return runInNewThread("stopScan", profileName, String.class);
     }
 
 
     public Pair<DWSynchronousMethods.EResults, String> profileExists()
     {
-        return runInNewThread("profileExists", mContext.getPackageName());
+        return runInNewThread("profileExists", mContext.getPackageName(), String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> profileExists(String profileName)
     {
-        return runInNewThread("profileExists", profileName);
+        return runInNewThread("profileExists", profileName, String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> deleteProfile()
     {
-        return runInNewThread("deleteProfile", mContext.getPackageName());
+        return runInNewThread("deleteProfile", mContext.getPackageName(), String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> deleteProfile(String profileName)
     {
-        return runInNewThread("deleteProfile", profileName);
+        return runInNewThread("deleteProfile", profileName, String.class);
     }
 
     public Pair<DWSynchronousMethods.EResults, String> switchBarcodeParams(DWProfileSwitchBarcodeParamsSettings settings)
     {
-        return runInNewThread("switchBarcodeParams", settings);
+        return runInNewThread("switchBarcodeParams", settings, DWProfileSwitchBarcodeParamsSettings.class);
     }
 
 }
