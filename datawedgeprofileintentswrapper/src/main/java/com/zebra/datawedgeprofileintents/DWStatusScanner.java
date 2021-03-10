@@ -5,11 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 public class DWStatusScanner {
     private Context mContext;
     private dataWedgeScannerStatusReceiver mStatusBroadcastReceiver = null;
     private DWStatusScannerSettings mStatusSettings = null;
+    private Handler broadcastReceiverHandler = null;
+    private HandlerThread broadcastReceiverThread = null;
+    private Looper broadcastReceiverThreadLooper = null;
+
 
     public DWStatusScanner(Context aContext, DWStatusScannerSettings settings) {
         mContext = aContext;
@@ -85,13 +92,26 @@ public class DWStatusScanner {
 
     void registerNotificationReceiver() {
         //to register the broadcast receiver
+        broadcastReceiverThread = new HandlerThread(mStatusSettings.mPackageName + ".NOTIFICATION.THREAD");//Create a thread for BroadcastReceiver
+        broadcastReceiverThread.start();
+
+        broadcastReceiverThreadLooper = broadcastReceiverThread.getLooper();
+        broadcastReceiverHandler = new Handler(broadcastReceiverThreadLooper);
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(DataWedgeConstants.NOTIFICATION_ACTION);
-        mContext.registerReceiver(mStatusBroadcastReceiver, filter);//Android method
+        mContext.registerReceiver(mStatusBroadcastReceiver, filter, null, broadcastReceiverHandler);
     }
 
     void unRegisterNotificationReceiver() {
         //to unregister the broadcast receiver
         mContext.unregisterReceiver(mStatusBroadcastReceiver); //Android method
+        if(broadcastReceiverThreadLooper != null)
+        {
+            broadcastReceiverThreadLooper.quit();
+            broadcastReceiverThreadLooper = null;
+            broadcastReceiverThread = null;
+            broadcastReceiverHandler = null;
+        }
     }
 }

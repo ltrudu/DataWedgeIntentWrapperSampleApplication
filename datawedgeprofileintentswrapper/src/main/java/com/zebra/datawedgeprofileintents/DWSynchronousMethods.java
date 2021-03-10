@@ -38,6 +38,16 @@ public class DWSynchronousMethods {
 
 
     public Pair<EResults,String> setupDWProfile(final DWProfileSetConfigSettings settings) {
+
+        // Profile name is forced to package name when using sync methods
+        // it is not possible to get more than one profile on the same app
+        // so managing profiles names is not relevant
+        settings.mProfileName = mContext.getPackageName();
+
+        // First delete the profile synchronously
+        _deleteProfile(settings.mProfileName);
+        // Then setup the new profile
+
         if(mJobDoneLatch != null)
         {
             mLastMessage = "DataWedge Service: Error, a job is already running in background. Please wait for it to finish or timeout.";
@@ -82,32 +92,7 @@ public class DWSynchronousMethods {
                 mJobDoneLatch.countDown();
             }
         };
-
-        DWProfileDeleteSettings deleteSettings = new DWProfileDeleteSettings()
-        {{
-            mProfileName = settings.mProfileName;
-            mTimeOutMS = settings.mTimeOutMS;
-        }};
-        DWProfileDelete.onProfileCommandResult onDeleteCommandResult = new DWProfileCommandBase.onProfileCommandResult() {
-            @Override
-            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
-                // We don't care about the result
-                // if it is success, the profile has been deleted
-                // if it is a failed, the profile does not exists
-                // the only thing we need right now is to setup the configuration
-                // using the CREATE_IF_NOT_EXISTS mode
-                setConfig.execute(settings, onSetConfigCommandResult);
-            }
-
-            @Override
-            public void timeout(String profileName) {
-                mLastMessage = "Setup Scanner: timeout while trying to delete profile: " + settings.mProfileName;
-                mLastResult = EResults.TIMEOUT;
-                mJobDoneLatch.countDown();
-            }
-        };
-        DWProfileDelete deleteProfile = new DWProfileDelete(mContext);
-        deleteProfile.execute(deleteSettings, onDeleteCommandResult);
+        setConfig.execute(settings, onSetConfigCommandResult);
 
         try {
             mJobDoneLatch.await();
@@ -126,6 +111,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> enablePlugin()
     {
+        return _enablePlugin(mContext.getPackageName());
+    }
+
+    private Pair<EResults, String> _enablePlugin(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "DataWedge Service: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -135,7 +125,7 @@ public class DWSynchronousMethods {
 
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -188,6 +178,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> disablePlugin()
     {
+        return _disablePlugin(mContext.getPackageName());
+    }
+
+    private Pair<EResults, String> _disablePlugin(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "DataWedge Service: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -197,7 +192,7 @@ public class DWSynchronousMethods {
 
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -250,6 +245,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> startScan()
     {
+        return _startScan(mContext.getPackageName());
+    }
+
+    private Pair<EResults, String> _startScan(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "Start Scan: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -259,7 +259,7 @@ public class DWSynchronousMethods {
 
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -313,6 +313,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> stopScan()
     {
+        return _stopScan(mContext.getPackageName());
+    }
+
+    private Pair<EResults, String> _stopScan(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "Stop Scan: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -322,7 +327,7 @@ public class DWSynchronousMethods {
 
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -376,6 +381,11 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> profileExists()
     {
+        return _profileExists(mContext.getPackageName());
+    }
+
+    private Pair<EResults, String> _profileExists(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "profileExists: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -385,7 +395,7 @@ public class DWSynchronousMethods {
 
         DWProfileCheckerSettings settings = new DWProfileCheckerSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -439,6 +449,12 @@ public class DWSynchronousMethods {
 
     public Pair<EResults, String> deleteProfile()
     {
+        return _deleteProfile(mContext.getPackageName());
+    }
+
+
+    private Pair<EResults, String> _deleteProfile(final String profileName)
+    {
         if(mJobDoneLatch != null)
         {
             return new Pair<>(EResults.FAILED, "deleteProfile: Error, a job is already running in background. Please wait for it to finish or timeout.");
@@ -448,7 +464,7 @@ public class DWSynchronousMethods {
 
         DWProfileDeleteSettings settings = new DWProfileDeleteSettings()
         {{
-            mProfileName = mContext.getPackageName();
+            mProfileName = profileName;
         }};
 
         try
@@ -500,6 +516,7 @@ public class DWSynchronousMethods {
             return new Pair<>(EResults.FAILED, "deleteProfile: Exception while waiting for CountDownLatch : " + e.getMessage());
         }
     }
+
 
     public Pair<EResults, String> switchBarcodeParams(DWProfileSwitchBarcodeParamsSettings settings)
     {

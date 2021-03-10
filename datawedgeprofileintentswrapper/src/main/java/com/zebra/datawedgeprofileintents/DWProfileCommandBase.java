@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 
 import java.util.Date;
@@ -15,6 +18,9 @@ import java.util.Set;
  */
 
 public class DWProfileCommandBase extends DWProfileBase {
+    private Handler broadcastReceiverHandler = null;
+    private HandlerThread broadcastReceiverThread = null;
+    private Looper broadcastReceiverThreadLooper = null;
 
     /*
     A command identifier used if we request a result from DataWedge
@@ -61,10 +67,19 @@ public class DWProfileCommandBase extends DWProfileBase {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
 
         /*
-        Register receiver for resutls
+        Register receiver for results
+        Receiver is registered in a new thread instead of the main thread
+        This allow us to still receive the broadcasted results even if we
+        are working on a separate thread or in synchronous mode
          */
-        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
+        broadcastReceiverThread = new HandlerThread(settings.mProfileName + ".THREAD");//Create a thread for BroadcastReceiver
+        broadcastReceiverThread.start();
 
+        broadcastReceiverThreadLooper = broadcastReceiverThread.getLooper();
+        broadcastReceiverHandler = new Handler(broadcastReceiverThreadLooper);
+
+        //mContext.registerReceiver(mBroadcastReceiver, intentFilter);
+        mContext.registerReceiver(mBroadcastReceiver, intentFilter, null, broadcastReceiverHandler);
      }
 
     protected void sendDataWedgeIntentWithExtraRequestResult(String action, String extraKey, String extraValue)
@@ -170,6 +185,13 @@ public class DWProfileCommandBase extends DWProfileBase {
     {
         mProfileCommandCallback = null;
         mContext.unregisterReceiver(mBroadcastReceiver);
+        if(broadcastReceiverThread != null)
+        {
+            broadcastReceiverThreadLooper.quit();
+            broadcastReceiverThreadLooper = null;
+            broadcastReceiverThread = null;
+            broadcastReceiverHandler = null;
+        }
         super.cleanAll();
     }
 

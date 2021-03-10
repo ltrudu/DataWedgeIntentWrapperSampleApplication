@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 public class DWScanReceiver {
 
@@ -28,7 +31,9 @@ public class DWScanReceiver {
      * Local Broadcast receiver
      */
     private BroadcastReceiver mMessageReceiver = null;
-
+    private Handler broadcastReceiverHandler = null;
+    private HandlerThread broadcastReceiverThread = null;
+    private Looper broadcastReceiverThreadLooper = null;
     /***
      * Object that handle the scans associated with the defined intent action and category
      * @param myContext : a reference to the Context that will handle the scans
@@ -65,11 +70,18 @@ public class DWScanReceiver {
     {
         try
         {
-            mContext.registerReceiver(mMessageReceiver, mIntentFilter);
+            broadcastReceiverThread = new HandlerThread(mContext.getPackageName() + ".SCANNER.THREAD");//Create a thread for BroadcastReceiver
+            broadcastReceiverThread.start();
+
+            broadcastReceiverThreadLooper = broadcastReceiverThread.getLooper();
+            broadcastReceiverHandler = new Handler(broadcastReceiverThreadLooper);
+
+            mContext.registerReceiver(mMessageReceiver, mIntentFilter, null, broadcastReceiverHandler);
         }
         catch(Exception e)
         {
             e.printStackTrace();
+            cleanReceiverThread();
         }
         // Register the internal broadcast receiver when we are alive
     }
@@ -78,12 +90,28 @@ public class DWScanReceiver {
     {
         try
         {
-            // Unregister internal broadcast receiver when we are going in background
-            mContext.unregisterReceiver(mMessageReceiver);
+            if(broadcastReceiverThread != null)
+            {
+                // Unregister internal broadcast receiver when we are going in background
+                mContext.unregisterReceiver(mMessageReceiver);
+                cleanReceiverThread();
+            }
         }
         catch(Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private void cleanReceiverThread()
+    {
+        if(broadcastReceiverThread != null)
+        {
+            if(broadcastReceiverThreadLooper != null)
+                broadcastReceiverThreadLooper.quit();
+            broadcastReceiverThreadLooper = null;
+            broadcastReceiverThread = null;
+            broadcastReceiverHandler = null;
         }
     }
 

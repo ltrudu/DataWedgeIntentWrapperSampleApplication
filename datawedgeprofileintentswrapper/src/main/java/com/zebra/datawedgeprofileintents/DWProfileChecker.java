@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 import java.util.Arrays;
 
@@ -12,6 +15,10 @@ import java.util.Arrays;
  */
 
 public class DWProfileChecker extends DWProfileBase {
+
+    private Handler broadcastReceiverHandler = null;
+    private HandlerThread broadcastReceiverThread = null;
+    private Looper broadcastReceiverThreadLooper = null;
 
     public DWProfileChecker(Context aContext) {
         super(aContext);
@@ -55,7 +62,19 @@ public class DWProfileChecker extends DWProfileBase {
         /*
         Register receiver for resutls
          */
-        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
+               /*
+        Register receiver for results
+        Receiver is registered in a new thread instead of the main thread
+        This allow us to still receive the broadcasted results even if we
+        are working on a separate thread or in synchronous mode
+         */
+        broadcastReceiverThread = new HandlerThread(settings.mProfileName + ".CHECKPROFILE.THREAD");//Create a thread for BroadcastReceiver
+        broadcastReceiverThread.start();
+
+        broadcastReceiverThreadLooper = broadcastReceiverThread.getLooper();
+        broadcastReceiverHandler = new Handler(broadcastReceiverThreadLooper);
+
+        mContext.registerReceiver(mBroadcastReceiver, intentFilter, null, broadcastReceiverHandler);
 
         /*
         Ask for DataWedge profile list
@@ -89,6 +108,13 @@ public class DWProfileChecker extends DWProfileBase {
         mSettings.mProfileName = "";
         mProfileExistsCallback = null;
         mContext.unregisterReceiver(mBroadcastReceiver);
+        if(broadcastReceiverThread != null)
+        {
+            broadcastReceiverThreadLooper.quit();
+            broadcastReceiverThreadLooper = null;
+            broadcastReceiverThread = null;
+            broadcastReceiverHandler = null;
+        }
         super.cleanAll();
     }
 

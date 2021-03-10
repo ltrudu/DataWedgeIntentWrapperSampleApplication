@@ -137,7 +137,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Create\nProfile"
+            android:text="Create\nProfile Async"
+            android:textSize="10sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/button_create_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Create\nProfile Sync"
+            android:textSize="10sp"
             android:visibility="visible" />
 
         <Button
@@ -153,7 +163,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Delete\nProfile" />
+            android:text="Delete\nProfile"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/button_openNewActivity"
@@ -161,6 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Open\nActivity"
+            android:textSize="10sp"
             android:visibility="visible" />
 
     </LinearLayout>

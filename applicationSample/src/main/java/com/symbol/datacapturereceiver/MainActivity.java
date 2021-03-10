@@ -12,6 +12,7 @@ import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -212,6 +213,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mResults = "";
                 et_results.setText(mResults);
+            }
+        });
+
+        Button btCreateProfileSync = (Button) findViewById(R.id.button_create_sync);
+        btCreateProfileSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupProfileSync();
             }
         });
 
@@ -722,6 +731,7 @@ public class MainActivity extends AppCompatActivity {
         mScannerStatusChecker.stop();
     }
 
+
     private void setProfileConfigAsync()
     {
         DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this);
@@ -747,6 +757,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setupProfileSync()
+    {
+        mProfileProcessingStartDate = new Date();
+        Date totalTimeStart = mProfileProcessingStartDate;
+        DWSynchronousMethods dwSynchronousMethods = new DWSynchronousMethods(this);
+        Pair<DWSynchronousMethods.EResults,String> result = dwSynchronousMethods.profileExists();
+        addLineToResults("Total time to check if profile exists:");
+        addTotalTimeToResults();
+        if(result.first == DWSynchronousMethods.EResults.SUCCEEDED)
+        {
+            // the profile exists
+            // we delete it
+            mProfileProcessingStartDate = new Date();
+            dwSynchronousMethods.deleteProfile();
+            addLineToResults("Total time to delete profile.");
+            addTotalTimeToResults();
+        }
+        // we create and setup the profile
+        mProfileProcessingStartDate = new Date();
+        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettings);
+        addLineToResults("Total time to setup profile.");
+        addTotalTimeToResults();
+        addLineToResults("Total time to fully create and setup profile in synchronous mode:");
+        mProfileProcessingStartDate = totalTimeStart;
+        addTotalTimeToResults();
+    }
+
 
     private void setupProfileAsync()
     {
