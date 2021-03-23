@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.ResultReceiver;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -27,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -203,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mContinuousModeSwitch = !mContinuousModeSwitch;
-                switchScannerParamsAsync(mContinuousModeSwitch);
+                //switchScannerParamsAsync(mContinuousModeSwitch);
+                switchScannerParams(mContinuousModeSwitch);
             }
         });
 
@@ -257,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
                         // typology contains the typology of what has been scanned
                         addLineToResults("Typology: " + typology+ ", Data: " + data);
                     }
-                }
+                },
+                false
         );
 
         /*
@@ -614,6 +617,62 @@ public class MainActivity extends AppCompatActivity {
                 addLineToResults("Timeout while trying to switching params on profile: " + profileName);
             }
         });
+    }
+
+   private void switchScannerParams(final boolean continuousMode)
+    {
+        addLineToResults(continuousMode ? "Switching to Continuous mode" : "Switching to normal mode");
+        if(mProfileProcessingStartDate == null)
+            mProfileProcessingStartDate = new Date();
+
+        /**
+         * The switch param class will only change the settings that differs between the targetSettings and the previousSettings
+         * In our case we hold the settings we used for profile creation in the member mNormalSettingsForSwitchParams
+         * And we hold the aggressive settings in the member mAggressiveSettingsForSwitchParams
+         * We will pass both settings to the switchBarcodeParams to allow comparison of both settings
+         * This will ensure that we don't pass the whole settings parameters to the Intent
+         */
+        DWProfileSwitchBarcodeParamsSettings targetSettings;
+        DWProfileSwitchBarcodeParamsSettings previousSettings;
+        if(continuousMode)
+        {
+            targetSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
+            previousSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+        }
+        else
+        {
+            targetSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+            previousSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
+        }
+
+        Pair<DWSynchronousMethods.EResults, String> returnValue = null;
+        DWSynchronousMethodsNT dwSynchronousMethodsNT = new DWSynchronousMethodsNT(this);
+        addLineToResults("Disabling pugin");
+        returnValue = dwSynchronousMethodsNT.disablePlugin();
+        if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
+        {
+            addLineToResults("Failed to disable plugin:\n" + returnValue.second);
+        }
+        else
+            addLineToResults("Plugin disabled successfully");
+
+        addLineToResults("Switching parameters");
+        dwSynchronousMethodsNT.switchBarcodeParams(targetSettings);
+        returnValue = dwSynchronousMethodsNT.disablePlugin();
+        if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
+        {
+            addLineToResults("Failed to switch barcode params" + returnValue.second);
+        }
+        else
+            addLineToResults("Barcode params switched successfully");
+        addLineToResults("Enabling pugin");
+        returnValue = dwSynchronousMethodsNT.enablePlugin();
+        if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
+        {
+            addLineToResults("Failed to enable plugin" + returnValue.second);
+        }
+        else
+            addLineToResults("Plugin enabled successfully");
     }
 
     private void deleteProfileAsync()

@@ -1,6 +1,5 @@
 package com.zebra.datawedgeprofileintents;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +27,16 @@ public class DWScanReceiver {
     private onScannedData mOnScannedDataCallback = null;
 
     /**
-     * Local Broadcast receiver
+     * Broadcast receiver
      */
     private BroadcastReceiver mMessageReceiver = null;
-    private Handler broadcastReceiverHandler = null;
-    private HandlerThread broadcastReceiverThread = null;
-    private Looper broadcastReceiverThreadLooper = null;
+    /**
+     * To launch broadcast receiver in a separate thread
+     */
+    private boolean mUseSeparateThread = false;
+    private Handler mBroadcastReceiverHandler = null;
+    private HandlerThread mBroadcastReceiverThread = null;
+    private Looper mBroadcastReceiverThreadLooper = null;
     /***
      * Object that handle the scans associated with the defined intent action and category
      * @param myContext : a reference to the Context that will handle the scans
@@ -66,22 +69,51 @@ public class DWScanReceiver {
         };
     }
 
+    public DWScanReceiver(Context myContext, String intentAction, String intentCategory
+            , boolean showSpecialChars, onScannedData scannedDataCallback, boolean useSeparateThread)
+    {
+        mIntentAction = intentAction;
+        mIntentCategory = intentCategory;
+        mContext = myContext;
+
+        mOnScannedDataCallback = scannedDataCallback;
+        mShowSpecialCharacters = showSpecialChars;
+
+        // Create the intent filter for further usage
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mIntentAction);
+        mIntentFilter.addCategory(mIntentCategory);
+
+        mUseSeparateThread = useSeparateThread;
+
+        // Create the message receiver
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleDecodeData(intent);
+            }
+        };
+    }
+
     public void startReceive()
     {
-        try
-        {
-            broadcastReceiverThread = new HandlerThread(mContext.getPackageName() + ".SCANNER.THREAD");//Create a thread for BroadcastReceiver
-            broadcastReceiverThread.start();
+        if(mUseSeparateThread) {
+            try {
+                mBroadcastReceiverThread = new HandlerThread(mContext.getPackageName() + ".SCANNER.THREAD");//Create a thread for BroadcastReceiver
+                mBroadcastReceiverThread.start();
 
-            broadcastReceiverThreadLooper = broadcastReceiverThread.getLooper();
-            broadcastReceiverHandler = new Handler(broadcastReceiverThreadLooper);
+                mBroadcastReceiverThreadLooper = mBroadcastReceiverThread.getLooper();
+                mBroadcastReceiverHandler = new Handler(mBroadcastReceiverThreadLooper);
 
-            mContext.registerReceiver(mMessageReceiver, mIntentFilter, null, broadcastReceiverHandler);
+                mContext.registerReceiver(mMessageReceiver, mIntentFilter, null, mBroadcastReceiverHandler);
+            } catch (Exception e) {
+                e.printStackTrace();
+                cleanReceiverThread();
+            }
         }
-        catch(Exception e)
+        else
         {
-            e.printStackTrace();
-            cleanReceiverThread();
+            mContext.registerReceiver(mMessageReceiver, mIntentFilter);
         }
         // Register the internal broadcast receiver when we are alive
     }
@@ -90,7 +122,7 @@ public class DWScanReceiver {
     {
         try
         {
-            if(broadcastReceiverThread != null)
+            if(mBroadcastReceiverThread != null)
             {
                 // Unregister internal broadcast receiver when we are going in background
                 mContext.unregisterReceiver(mMessageReceiver);
@@ -105,13 +137,13 @@ public class DWScanReceiver {
 
     private void cleanReceiverThread()
     {
-        if(broadcastReceiverThread != null)
+        if(mUseSeparateThread && mBroadcastReceiverThread != null)
         {
-            if(broadcastReceiverThreadLooper != null)
-                broadcastReceiverThreadLooper.quit();
-            broadcastReceiverThreadLooper = null;
-            broadcastReceiverThread = null;
-            broadcastReceiverHandler = null;
+            if(mBroadcastReceiverThreadLooper != null)
+                mBroadcastReceiverThreadLooper.quit();
+            mBroadcastReceiverThreadLooper = null;
+            mBroadcastReceiverThread = null;
+            mBroadcastReceiverHandler = null;
         }
     }
 

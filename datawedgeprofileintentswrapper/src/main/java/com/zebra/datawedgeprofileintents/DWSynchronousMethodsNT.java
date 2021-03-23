@@ -88,7 +88,7 @@ public class DWSynchronousMethodsNT {
         }
         return synchronousNTRunnable.mResults;
     }
-    
+
     public Pair<DWSynchronousMethods.EResults,String> setupDWProfile(final DWProfileSetConfigSettings settings) 
     {
         return runInNewThread("setupDWProfile", settings, DWProfileSetConfigSettings.class);

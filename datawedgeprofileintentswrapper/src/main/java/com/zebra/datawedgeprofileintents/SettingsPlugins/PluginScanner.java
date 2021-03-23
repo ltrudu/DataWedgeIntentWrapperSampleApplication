@@ -2,6 +2,7 @@ package com.zebra.datawedgeprofileintents.SettingsPlugins;
 
 import android.os.Bundle;
 
+import com.zebra.datawedgeprofileenums.SC_E_1D_MARGINLESS_DECODE_EFFORT_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
 import com.zebra.datawedgeprofileenums.SC_E_CHARSET_NAME;
@@ -29,6 +30,8 @@ import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SECURITY_LEVEL;
 import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_VOLUME_SLIDER_TYPE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
+
+import androidx.annotation.RequiresPermission;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // BARCODE Plugin... THE BIG ONE !!!!
@@ -164,7 +167,7 @@ public class PluginScanner
         public Boolean decoder_i2of5_redundancy = null;
         public Boolean decoder_i2of5_report_check_digit = null;
         public SC_E_SECURITY_LEVEL decoder_i2of5_security_level = null;
-        public Boolean decoder_itf14_convert_to_ean13 = null;
+        public Boolean decoder_i2of5_convert_to_ean13 = null;
 
         public Integer decoder_matrix_2of5_length1 = null;
         public Integer decoder_matrix_2of5_length2 = null;
@@ -241,6 +244,8 @@ public class PluginScanner
         public Integer different_barcode_timeout = null; //0-5000 must be a multiple value of 500 (0 included)
         public Integer same_barcode_timeout = null; //0-5000 must be a multiple value of 500 (0 included)
         public SC_E_SCANNINGMODE scanning_mode = null;
+        public SC_E_1D_MARGINLESS_DECODE_EFFORT_LEVEL oneD_marginless_decode_effort_level = null;
+
     }
     public ReaderParams ReaderParams = new ReaderParams();
 
@@ -431,7 +436,7 @@ public class PluginScanner
         if(DecodersParams.decoder_i2of5_redundancy                        != null   ) barcodeProps.putBoolean(   "decoder_i2of5_redundancy"                 , DecodersParams.decoder_i2of5_redundancy                 );
         if(DecodersParams.decoder_i2of5_report_check_digit                != null   ) barcodeProps.putBoolean(   "decoder_i2of5_report_check_digit"         , DecodersParams.decoder_i2of5_report_check_digit         );
         if(DecodersParams.decoder_i2of5_security_level                    != null   ) barcodeProps.putString(    "decoder_i2of5_security_level"             , DecodersParams.decoder_i2of5_security_level.toString()             );
-        if(DecodersParams.decoder_itf14_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_itf14_convert_to_ean13"           , DecodersParams.decoder_itf14_convert_to_ean13           );
+        if(DecodersParams.decoder_i2of5_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_i2of5_convert_to_ean13"           , DecodersParams.decoder_i2of5_convert_to_ean13           );
         if(DecodersParams.decoder_matrix_2of5_length1                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length1"              , DecodersParams.decoder_matrix_2of5_length1              );
         if(DecodersParams.decoder_matrix_2of5_length2                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length2"              , DecodersParams.decoder_matrix_2of5_length2              );
         if(DecodersParams.decoder_matrix_2of5_redundancy                  != null   ) barcodeProps.putBoolean(   "decoder_matrix_2of5_redundancy"           , DecodersParams.decoder_matrix_2of5_redundancy           );
@@ -547,6 +552,10 @@ public class PluginScanner
         if( ReaderParams.scanning_mode != null)
             barcodeProps.putString("scanning_mode", ReaderParams.scanning_mode.toString());
 
+        if( ReaderParams.oneD_marginless_decode_effort_level != null)
+        {
+            barcodeProps.putString("1d_marginless_decode_effort_level", ReaderParams.oneD_marginless_decode_effort_level.toString());
+        }
     }
 
     private void setupScanParams(Bundle barcodeProps)

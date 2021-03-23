@@ -2,7 +2,6 @@ package com.symbol.datacapturereceiver;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +10,9 @@ import android.widget.TextView;
 
 import com.zebra.datawedgeprofileintents.DWScanReceiver;
 
-public class ThirdActivity extends AppCompatActivity  implements DWScanReceiver.onScannedData {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.onScannedData {
 
     private TextView et_results;
     private ScrollView sv_results;
