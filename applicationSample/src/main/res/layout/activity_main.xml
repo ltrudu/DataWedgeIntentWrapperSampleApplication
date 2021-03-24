@@ -119,7 +119,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Switch\nParams" />
+            android:text="Switch\nParams Async"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/button_switch_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="Switch\nParams Sync"
+            android:textSize="10sp" />
 
 
     </LinearLayout>

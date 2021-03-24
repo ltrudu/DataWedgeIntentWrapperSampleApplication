@@ -177,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mProfileProcessingStartDate = new Date();
-                //setProfileConfigAsync();
                 setupProfileAsync();
             }
         });
@@ -204,7 +203,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mContinuousModeSwitch = !mContinuousModeSwitch;
-                //switchScannerParamsAsync(mContinuousModeSwitch);
+                switchScannerParamsAsync(mContinuousModeSwitch);
+            }
+        });
+
+        Button btSwitchSync = (Button) findViewById(R.id.button_switch_sync);
+        btSwitchSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContinuousModeSwitch = !mContinuousModeSwitch;
                 switchScannerParams(mContinuousModeSwitch);
             }
         });
@@ -647,32 +654,15 @@ public class MainActivity extends AppCompatActivity {
 
         Pair<DWSynchronousMethods.EResults, String> returnValue = null;
         DWSynchronousMethodsNT dwSynchronousMethodsNT = new DWSynchronousMethodsNT(this);
-        addLineToResults("Disabling pugin");
-        returnValue = dwSynchronousMethodsNT.disablePlugin();
-        if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
-        {
-            addLineToResults("Failed to disable plugin:\n" + returnValue.second);
-        }
-        else
-            addLineToResults("Plugin disabled successfully");
 
         addLineToResults("Switching parameters");
-        dwSynchronousMethodsNT.switchBarcodeParams(targetSettings);
-        returnValue = dwSynchronousMethodsNT.disablePlugin();
+        returnValue = dwSynchronousMethodsNT.switchBarcodeParams(targetSettings);
         if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
         {
             addLineToResults("Failed to switch barcode params" + returnValue.second);
         }
         else
             addLineToResults("Barcode params switched successfully");
-        addLineToResults("Enabling pugin");
-        returnValue = dwSynchronousMethodsNT.enablePlugin();
-        if(returnValue.first == DWSynchronousMethods.EResults.FAILED)
-        {
-            addLineToResults("Failed to enable plugin" + returnValue.second);
-        }
-        else
-            addLineToResults("Plugin enabled successfully");
     }
 
     private void deleteProfileAsync()
