@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Pair;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class DWSynchronousMethodsNT {
@@ -15,10 +16,18 @@ public class DWSynchronousMethodsNT {
     private DWSynchronousMethods.EResults mLastResult = DWSynchronousMethods.EResults.NONE;
     private CountDownLatch mJobDoneLatch = null;
     private Context mContext = null;
+    private long mSleepTimer = 50L;
 
     public DWSynchronousMethodsNT(Context context)
     {
         mContext = context;
+        mSleepTimer = 50L;
+    }
+
+    public DWSynchronousMethodsNT(Context context, long sleepTimer)
+    {
+        mContext = context;
+        mSleepTimer = sleepTimer;
     }
 
     private class SynchronousNTRunnable implements Runnable
@@ -79,7 +88,7 @@ public class DWSynchronousMethodsNT {
         synchronizedThread.start();
         while (synchronousNTRunnable.mHasFinished == false) {
             try {
-                Thread.sleep(100L);
+                Thread.sleep(mSleepTimer);
             } catch (Throwable e) {
                 // on android this may not be allowed, that's why we
                 // catch throwable the wait should be very short because we are
@@ -158,6 +167,61 @@ public class DWSynchronousMethodsNT {
     public Pair<DWSynchronousMethods.EResults, String> switchBarcodeParams(DWProfileSwitchBarcodeParamsSettings settings)
     {
         return runInNewThread("switchBarcodeParams", settings, DWProfileSwitchBarcodeParamsSettings.class);
+    }
+
+    private class SynchronousEnumerateScannersRunnable implements Runnable
+    {
+        private DWEnumerateScannersSettings mDWEnumerateScannersSettings;
+        private Context mContext;
+        public Pair<DWSynchronousMethods.EResults, Pair<String, List<DWEnumerateScanners.Scanner>>> mResults = null;
+        public boolean mHasFinished = false;
+
+        public SynchronousEnumerateScannersRunnable(Context context, DWEnumerateScannersSettings settings)
+        {
+            mDWEnumerateScannersSettings = settings;
+            mContext = context;
+        }
+
+        @Override
+        public void run() {
+            try {
+                mHasFinished = false;
+                Method method;
+                Object result = null;
+                DWSynchronousMethods dwSynchronousMethods = new DWSynchronousMethods(mContext);
+                method = DWSynchronousMethods.class.getMethod("enumerateScanners", DWEnumerateScannersSettings.class);
+                result = method.invoke(dwSynchronousMethods, mDWEnumerateScannersSettings);
+                if(result != null)
+                {
+                    mResults = (Pair<DWSynchronousMethods.EResults, Pair<String, List<DWEnumerateScanners.Scanner>>>)result;
+                }
+                else
+                    mResults = null;
+                mHasFinished = true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public Pair<DWSynchronousMethods.EResults, Pair<String, List<DWEnumerateScanners.Scanner>>> enumerateScanners(DWEnumerateScannersSettings settings)
+    {
+        // For this case, we are returning a custom structure, so we do all the things inside this class according to our needs (returning a pair of pairs)
+        SynchronousEnumerateScannersRunnable synchronousEnumerateScannersRunnable = new SynchronousEnumerateScannersRunnable(mContext, settings);
+        Thread synchronizedThread = new Thread(synchronousEnumerateScannersRunnable);
+        synchronizedThread.start();
+        while (synchronousEnumerateScannersRunnable.mHasFinished == false) {
+            try {
+                Thread.sleep(mSleepTimer);
+            } catch (Throwable e) {
+                // on android this may not be allowed, that's why we
+                // catch throwable the wait should be very short because we are
+                // just waiting for the bind of the socket
+            }
+        }
+        return synchronousEnumerateScannersRunnable.mResults;
     }
 
 }

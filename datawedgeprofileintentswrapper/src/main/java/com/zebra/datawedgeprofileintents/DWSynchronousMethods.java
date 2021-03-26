@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Looper;
 import android.util.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class DWSynchronousMethods {
@@ -18,6 +20,7 @@ public class DWSynchronousMethods {
 
     private String mLastMessage = "";
     private EResults mLastResult = EResults.NONE;
+    private List<DWEnumerateScanners.Scanner> mEnumerateScannersReturnList = null;
     private CountDownLatch mJobDoneLatch = null;
     private Context mContext = null;
 
@@ -577,6 +580,73 @@ public class DWSynchronousMethods {
                 mJobDoneLatch = null;
             }
             return new Pair<>(EResults.FAILED, "switchBarcodeParams: Exception while waiting for CountDownLatch : " + e.getMessage());
+        }
+    }
+
+    public Pair<EResults, Pair<String, List<DWEnumerateScanners.Scanner>>> enumerateScanners(DWEnumerateScannersSettings settings)
+    {
+        if(mJobDoneLatch != null)
+        {
+            return new Pair<>(EResults.FAILED, new Pair<>("enumerateScanners: Error, a job is already running in background. Please wait for it to finish or timeout.", (List<DWEnumerateScanners.Scanner>)null));
+        }
+
+        mEnumerateScannersReturnList = null;
+
+        mJobDoneLatch = new CountDownLatch(1);
+
+        // Force package name on settings
+        settings.mProfileName = mContext.getPackageName();
+
+        try
+        {
+            Looper.prepare();
+        }
+        catch(Exception e)
+        {
+        }
+
+        DWEnumerateScanners dwEnumerateScanners = new DWEnumerateScanners(mContext);
+        dwEnumerateScanners.execute(settings, new DWEnumerateScanners.onEnumerateScannerResult(){
+            @Override
+            public void result(String profileName, List<DWEnumerateScanners.Scanner> scannerList) {
+                if(scannerList != null && scannerList.size() != 0) {
+                    mLastMessage = "enumerateScanners: Scanners enumerated successfully.";
+                    mLastResult = EResults.SUCCEEDED;
+                    mEnumerateScannersReturnList = new ArrayList<>(scannerList);
+                    mJobDoneLatch.countDown();
+                }
+                else
+                {
+                    mLastMessage = "enumerateScanners: Error while trying to enumerate scanners, returned list is empty.";
+                    mLastResult = EResults.FAILED;
+                    mEnumerateScannersReturnList = null;
+                    mJobDoneLatch.countDown();
+                }
+            }
+
+            @Override
+            public void timeOut(String profileName) {
+                mLastMessage = "enumerateScanners: timeout while trying to enumerate scanners.";
+                mLastResult = EResults.TIMEOUT;
+                mEnumerateScannersReturnList = null;
+                mJobDoneLatch.countDown();
+            }
+        });
+
+
+        try {
+            mJobDoneLatch.await();
+            mJobDoneLatch = null;
+            return new Pair<>(mLastResult, new Pair<>(mLastMessage, mEnumerateScannersReturnList));
+        } catch (InterruptedException e) {
+            if(mJobDoneLatch != null)
+            {
+                while(mJobDoneLatch.getCount() > 0)
+                    mJobDoneLatch.countDown();
+                mJobDoneLatch = null;
+            }
+            mEnumerateScannersReturnList = null;
+            return new Pair<>(EResults.FAILED, new Pair<>("switchBarcodeParams: Exception while waiting for CountDownLatch : " + e.getMessage(), mEnumerateScannersReturnList));
         }
     }
 }

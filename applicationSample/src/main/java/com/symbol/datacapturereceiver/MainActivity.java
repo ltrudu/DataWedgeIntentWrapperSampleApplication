@@ -1,31 +1,31 @@
 package com.symbol.datacapturereceiver;
 
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcel;
-import android.os.ResultReceiver;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
-import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
+import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
+import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileintents.*;
+import com.zebra.datawedgeprofileintents.SettingsPlugins.PluginScanner;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private TextView et_results;
+    private Spinner sp_ScannerDevices = null;
+    private List<DWEnumerateScanners.Scanner> mScannerList = null;
+    private int mScannerIndex = 0;
     private ScrollView sv_results;
     private String mResults = "";
     private boolean mContinuousModeSwitch = false;
@@ -121,6 +124,50 @@ public class MainActivity extends AppCompatActivity {
 
         et_results = (TextView)findViewById(R.id.et_results);
         sv_results = (ScrollView)findViewById(R.id.sv_results);
+
+        sp_ScannerDevices = (Spinner)findViewById(R.id.spinnerScannerDevices);
+        sp_ScannerDevices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View arg1, int position, long arg3) {
+                if (mScannerIndex != position) {
+                    final DWEnumerateScanners.Scanner selectedScanner = mScannerList.get(position);
+                    DWProfileSetConfigSettings settings = new DWProfileSetConfigSettings() {{
+                        mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+                        MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.UPDATE;
+                        ScannerPlugin.scanner_selection_by_identifier = selectedScanner.mScannerIdentifier;
+                    }};
+                    DWProfileSetConfig dwProfileSetConfig = new DWProfileSetConfig(MainActivity.this);
+                    final int fPosition = position;
+                    dwProfileSetConfig.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+                        @Override
+                        public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                            if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS)) {
+                                addLineToResults("New scanner selected with success:" + selectedScanner.mName);
+                                mScannerIndex = fPosition;
+                            }
+                            else
+                            {
+                                addLineToResults("Error while trying to switch to new scanner:" + selectedScanner.mName);
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        MainActivity.this.sp_ScannerDevices.setSelection(mScannerIndex);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void timeout(String profileName) {
+
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onNothingSelected (AdapterView < ? > arg0){
+            }
+        });
 
         Button btEnableDW = (Button) findViewById(R.id.button_enabledw);
         btEnableDW.setOnClickListener(new View.OnClickListener() {
@@ -242,6 +289,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btEnumerateScannersSync = (Button)findViewById(R.id.button_enumerateSync);
+        btEnumerateScannersSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // In this setup we'll use the NT (new thread methods), if you are using this wrapper in a service
+                // thats use threading, you may encounter ANR using the DWSynchronousMethods, the "ugly" implementation
+                // of DWSynchronousMethodsNT prevent this.
+                // When you create it, one constructor takes a long parameter that represents the thread sleep used to wait
+                // for the command to finish.
+                DWSynchronousMethodsNT dwSynchronousMethodsNT = new DWSynchronousMethodsNT(MainActivity.this, 30L);
+                DWEnumerateScannersSettings dwEnumerateScannersSettings = new DWEnumerateScannersSettings();
+                Pair<DWSynchronousMethods.EResults, Pair<String, List<DWEnumerateScanners.Scanner>>> returnValue = dwSynchronousMethodsNT.enumerateScanners(dwEnumerateScannersSettings);
+                if(returnValue != null && returnValue.first == DWSynchronousMethods.EResults.SUCCEEDED) {
+                    List<DWEnumerateScanners.Scanner> scannerList = returnValue.second.second;
+                    if(scannerList != null && scannerList.size() > 0)
+                    {
+                        addLineToResults("Enumeration of scanner succeeded:");
+                        for(DWEnumerateScanners.Scanner scanner : scannerList)
+                        {
+                            addLineToResults("Scanner name: " + scanner.mName + "\nScanner identifier:" + scanner.mScannerIdentifier);
+                        }
+                        addLineToResults("End of scanner enumeration.");
+                    }
+                }
+                else
+                {
+                    addLineToResults("Error while trying to enumerate scanners.");
+                }
+            }
+        });
+
         /**
          * We initialize the settings class that will hold all the configurations
          * we are going to use in this application
@@ -279,12 +357,69 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
+    private void enumerateScannerDevices() {
+        addLineToResults("Enumerating scanners.");
+        DWEnumerateScanners dwEnumerateScanners = new DWEnumerateScanners(this);
+        DWEnumerateScannersSettings settings = new DWEnumerateScannersSettings()
+        {{
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
+        }};
+        dwEnumerateScanners.execute(settings, new DWEnumerateScanners.onEnumerateScannerResult() {
+            @Override
+            public void result(String profileName, List<DWEnumerateScanners.Scanner> scannerList) {
+                List<String> friendlyNameList = new ArrayList<String>();
+                mScannerList = new ArrayList<DWEnumerateScanners.Scanner>(scannerList);
+                int spinnerIndex = 0;
+                if ((scannerList != null) && (scannerList.size() != 0)) {
+                    addLineToResults("Scanner enumeration succeeded, found " + scannerList.size() + " scanners.");
+                    Iterator<DWEnumerateScanners.Scanner> it = scannerList.iterator();
+                    while(it.hasNext()) {
+                        DWEnumerateScanners.Scanner scanner = it.next();
+                        friendlyNameList.add(scanner.mName);
+                        ++spinnerIndex;
+                    }
+                }
+                else {
+                    addLineToResults("Failed to get the list of supported scanner devices! Please close and restart the application.");
+                }
+
+                // Add auto scanner selection
+                DWEnumerateScanners.Scanner autoScanner = new DWEnumerateScanners.Scanner();
+                autoScanner.mName = "AUTO";
+                autoScanner.mScannerIdentifier = SC_E_SCANNER_IDENTIFIER.AUTO;
+                friendlyNameList.add(0, autoScanner.mName);
+                mScannerList.add(0, autoScanner);
+                mScannerIndex = 0;
+
+                final int fDefaultIndex = mScannerIndex;
+                final List<String> fFriendlyNameList = friendlyNameList;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, fFriendlyNameList);
+                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        sp_ScannerDevices.setAdapter(spinnerAdapter);
+                        sp_ScannerDevices.setSelection(fDefaultIndex);
+                        mScannerIndex = fDefaultIndex;
+                    }
+                });
+            }
+
+            @Override
+            public void timeOut(String profileName) {
+                addLineToResults("Timeout while trying to enumerate scanners");
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         mScanReceiver.startReceive();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
         setupScannerStatusChecker();
+        // Enumerate scanners
+        enumerateScannerDevices();
     }
 
     @Override

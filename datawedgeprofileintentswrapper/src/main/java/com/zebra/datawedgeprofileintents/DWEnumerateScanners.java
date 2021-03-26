@@ -4,34 +4,47 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by laure on 16/04/2018.
  */
 
-public class DWProfileChecker extends DWProfileBase {
+public class DWEnumerateScanners extends DWProfileBase {
 
     private Handler broadcastReceiverHandler = null;
     private HandlerThread broadcastReceiverThread = null;
     private Looper broadcastReceiverThreadLooper = null;
 
-    public DWProfileChecker(Context aContext) {
+    public DWEnumerateScanners(Context aContext) {
         super(aContext);
-        mBroadcastReceiver = new checkProfileReceiver();
+        mBroadcastReceiver = new enumerateScannerReceiver();
+    }
+
+    public static class Scanner
+    {
+        public String mName = "";
+        public int mIndex = -1;
+        public boolean mScannerConnectionState = false;
+        public SC_E_SCANNER_IDENTIFIER mScannerIdentifier = SC_E_SCANNER_IDENTIFIER.AUTO;
     }
 
     /*
         An interface callback to be informed of the result
         when checking if a profile exists
          */
-    public interface onProfileExistResult
+    public interface onEnumerateScannerResult
     {
-        void result(String profileName, boolean exists);
+        void result(String profileName, List<Scanner> scannerList);
         void timeOut(String profileName);
     }
 
@@ -39,21 +52,21 @@ public class DWProfileChecker extends DWProfileBase {
     A store to keep the callback to be fired when we will get the
     result of the intent
      */
-    private onProfileExistResult mProfileExistsCallback = null;
+    private onEnumerateScannerResult mEnumerateScannerCallback = null;
 
     /*
     The receiver that we will register to retrieve DataWedge answer
      */
-    private checkProfileReceiver mBroadcastReceiver = null;
+    private enumerateScannerReceiver mBroadcastReceiver = null;
 
-    public void execute(DWProfileCheckerSettings settings, onProfileExistResult callback)
+    public void execute(DWEnumerateScannersSettings settings, onEnumerateScannerResult callback)
     {
         /*
         Launch timeout mechanism
          */
         super.execute(settings);
 
-        mProfileExistsCallback = callback;
+        mEnumerateScannerCallback = callback;
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DataWedgeConstants.ACTION_RESULT_DATAWEDGE_FROM_6_2);
@@ -79,23 +92,31 @@ public class DWProfileChecker extends DWProfileBase {
         /*
         Ask for DataWedge profile list
          */
-        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_GET_PROFILES_LIST, DataWedgeConstants.EXTRA_EMPTY);
+        sendDataWedgeIntentWithExtra(DataWedgeConstants.ACTION_DATAWEDGE_FROM_6_2, DataWedgeConstants.EXTRA_ENUMERATESCANNERS_FROM_6_3, DataWedgeConstants.EXTRA_EMPTY);
 
     }
 
-    private class checkProfileReceiver extends BroadcastReceiver
+    private class enumerateScannerReceiver extends BroadcastReceiver
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra(DataWedgeConstants.EXTRA_RESULT_GET_PROFILE_LIST))
+            if (intent.hasExtra(DataWedgeConstants.EXTRA_RESULT_ENUMERATE_SCANNERS_FROM_6_3))
             {
-                //  6.2 API to GetProfileList
-                String[] profilesList = intent.getStringArrayExtra(DataWedgeConstants.EXTRA_RESULT_GET_PROFILE_LIST);
-                //  Profile list for 6.2 APIs
-                boolean exists = Arrays.asList(profilesList).contains(mSettings.mProfileName);
-                if(mProfileExistsCallback != null)
+                ArrayList<Scanner> returnList = new ArrayList<>();
+                ArrayList<Bundle> scannerList = (ArrayList<Bundle>) intent.getSerializableExtra(DataWedgeConstants.EXTRA_RESULT_ENUMERATE_SCANNERS_FROM_6_3);
+                if((scannerList != null) && (scannerList.size() > 0)) {
+                    for (Bundle bunb : scannerList){
+                        Scanner scanner = new Scanner();
+                        scanner.mName = bunb.getString("SCANNER_NAME");
+                        scanner.mScannerConnectionState = bunb.getBoolean("SCANNER_CONNECTION_STATE");
+                        scanner.mIndex = bunb.getInt("SCANNER_INDEX");
+                        scanner.mScannerIdentifier = SC_E_SCANNER_IDENTIFIER.fromString(bunb.getString("SCANNER_IDENTIFIER"));
+                        returnList.add(scanner);
+                    }
+                }
+                if(mEnumerateScannerCallback != null)
                 {
-                    mProfileExistsCallback.result(mSettings.mProfileName, exists);
+                    mEnumerateScannerCallback.result(mSettings.mProfileName, returnList);
                     cleanAll();
                 }
             }
@@ -106,7 +127,7 @@ public class DWProfileChecker extends DWProfileBase {
     protected void cleanAll()
     {
         mSettings.mProfileName = "";
-        mProfileExistsCallback = null;
+        mEnumerateScannerCallback = null;
         mContext.unregisterReceiver(mBroadcastReceiver);
         if(broadcastReceiverThread != null)
         {
@@ -123,9 +144,9 @@ public class DWProfileChecker extends DWProfileBase {
      */
     @Override
     protected void onTimeOut() {
-        if(mProfileExistsCallback != null)
+        if(mEnumerateScannerCallback != null)
         {
-            mProfileExistsCallback.timeOut(mSettings.mProfileName);
+            mEnumerateScannerCallback.timeOut(mSettings.mProfileName);
             cleanAll();
         }
     }
