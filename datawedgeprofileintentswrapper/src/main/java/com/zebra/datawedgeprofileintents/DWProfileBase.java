@@ -53,6 +53,14 @@ public abstract class DWProfileBase {
         mContext.sendBroadcast(dwIntent);
     }
 
+    protected void sendDataWedgeIntentWithExtra(String action, String extraKey, String[] extraValues)
+    {
+        Intent dwIntent = new Intent();
+        dwIntent.setAction(action);
+        dwIntent.putExtra(extraKey, extraValues);
+        mContext.sendBroadcast(dwIntent);
+    }
+
     protected void sendDataWedgeIntentWithExtra(String action, String extraKey, Bundle extras)
     {
         Intent dwIntent = new Intent();

@@ -276,7 +276,10 @@ public class MainActivity extends AppCompatActivity {
         btCreateProfileSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setupProfileSync();
+                // This version checks if the profile exists, if yes, delete it and create a new one
+                //setupProfileSync();
+                // This version will force profile delete, and create a new one all the time
+                setupProfileSyncFast();
             }
         });
 
@@ -959,6 +962,25 @@ public class MainActivity extends AppCompatActivity {
             addLineToResults("Total time to delete profile.");
             addTotalTimeToResults();
         }
+        // we create and setup the profile
+        mProfileProcessingStartDate = new Date();
+        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettings);
+        addLineToResults("Total time to setup profile.");
+        addTotalTimeToResults();
+        addLineToResults("Total time to fully create and setup profile in synchronous mode:");
+        mProfileProcessingStartDate = totalTimeStart;
+        addTotalTimeToResults();
+    }
+
+    private void setupProfileSyncFast()
+    {
+        mProfileProcessingStartDate = new Date();
+        Date totalTimeStart = mProfileProcessingStartDate;
+        DWSynchronousMethodsNT dwSynchronousMethods = new DWSynchronousMethodsNT(this);
+        mProfileProcessingStartDate = new Date();
+        dwSynchronousMethods.deleteProfile();
+        addLineToResults("Total time to delete profile.");
+        addTotalTimeToResults();
         // we create and setup the profile
         mProfileProcessingStartDate = new Date();
         dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettings);

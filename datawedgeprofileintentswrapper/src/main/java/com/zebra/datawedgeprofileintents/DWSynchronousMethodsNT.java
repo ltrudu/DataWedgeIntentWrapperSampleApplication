@@ -88,6 +88,14 @@ public class DWSynchronousMethodsNT {
         synchronizedThread.start();
         while (synchronousNTRunnable.mHasFinished == false) {
             try {
+                // Sorry but we are not at school anymore...
+                // And this is the only method I found to prevent ANR when
+                // us use specific threading model (didn't found why on some
+                // multi-thread apps it Countdownlatch usage throws an Android
+                // Not Responding (ANR) exception.
+                // This awful solution resolve the issue....
+                // If you have a better solution, you are welcome
+                // to do a PULL request on the code.
                 Thread.sleep(mSleepTimer);
             } catch (Throwable e) {
                 // on android this may not be allowed, that's why we
