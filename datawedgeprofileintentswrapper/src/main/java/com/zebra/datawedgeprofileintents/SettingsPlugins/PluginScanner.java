@@ -628,8 +628,24 @@ public class PluginScanner
         // Pass everything to the bundle
         Bundle barcodeProps = new Bundle();
 
+        // Setup decoders
+        setupDecoders(barcodeProps);
+
+        // Setup parameters associated with decoders
+        setupDecodersParams(barcodeProps);
+
+        // Setup UPC/EAN Params
+        setupUPC_EANParams(barcodeProps);
+
         // Setup Reader Params
         setupReaderParams(barcodeProps, true);
+
+        // Setup Scan Params
+        setupScanParams(barcodeProps);
+
+        // Multibarcode
+        setupMultiBarcode(barcodeProps);
+
 
         return barcodeProps;
     }

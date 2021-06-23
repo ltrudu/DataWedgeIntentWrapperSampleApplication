@@ -520,7 +520,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Start Scan on profile: " + profileName + " succeeded");
                 }
                 else
@@ -550,7 +549,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Stop Scan on profile: " + profileName + " succeeded");
                 }
                 else
@@ -580,7 +578,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Toggle Scan on profile: " + profileName + " succeeded");
                 }
                 else
@@ -609,7 +606,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Enabling plugin on profile: " + profileName + " succeeded");
                 }
                 else
@@ -638,7 +634,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Disabling plugin on profile: " + profileName + " succeeded");
                 }
                 else
@@ -668,7 +663,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Enabling datawedge on profile: " + profileName + " succeeded");
                 }
                 else
@@ -697,7 +691,6 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    // We will never see this one.... only errors are reported, no success callback
                     addLineToResults("Disabling datawedge on profile: " + profileName + " succeeded");
                 }
                 else

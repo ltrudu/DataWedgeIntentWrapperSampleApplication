@@ -58,9 +58,10 @@ public class DataWedgeSettingsHolder {
             KeystrokePlugin.keystroke_output_enabled = false;
             ScannerPlugin.scanner_input_enabled = true;
             ScannerPlugin.Decoders.decoder_aztec = true;
+            ScannerPlugin.Decoders.decoder_ean8 = false;
+            ScannerPlugin.Decoders.decoder_ean13 = false;
             ScannerPlugin.Decoders.decoder_code128 = true;
             ScannerPlugin.Decoders.decoder_i2of5 = true;
-            ScannerPlugin.Decoders.decoder_ean13 = true;
             ScannerPlugin.Decoders.decoder_datamatrix = true;
             ScannerPlugin.Decoders.decoder_japanese_postal = true;
             ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
@@ -81,6 +82,8 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.beam_timer = 5000;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
+            ScannerPlugin.Decoders.decoder_ean8 = false;
+            ScannerPlugin.Decoders.decoder_ean13 = false;
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
@@ -91,6 +94,8 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.beam_timer = 0;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 0;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 0;
+            ScannerPlugin.Decoders.decoder_ean8 = true;
+            ScannerPlugin.Decoders.decoder_ean13 = true;
         }};
     }
 }

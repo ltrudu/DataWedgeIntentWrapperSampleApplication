@@ -58,6 +58,7 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
                 true,
                 this
         );
+
     }
 
     @Override

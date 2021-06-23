@@ -55,16 +55,16 @@ public class PluginIntent
             intentProps.putString("intent_output_enabled", intent_output_enabled ? "true" : "false");
         if(intent_action != null)
             intentProps.putString("intent_action", intent_action);
-        /*else
-            intentProps.putString("intent_action", context.getPackageName() + ".RECVR");*/
+        else
+            intentProps.putString("intent_action", context.getPackageName() + ".RECVR");
         if(intent_category != null)
             intentProps.putString("intent_category", intent_category);
-        /*else
-            intentProps.putString("intent_categoty", "android.intent.category.DEFAULT");*/
+        else
+            intentProps.putString("intent_categoty", "android.intent.category.DEFAULT");
         if(intent_delivery != null)
             intentProps.putString("intent_delivery", intent_delivery.toString());
-        /*else
-            intentProps.putString("intent_delivery", INT_E_DELIVERY.BROADCAST.toString());*/
+        else
+            intentProps.putString("intent_delivery", INT_E_DELIVERY.BROADCAST.toString());
         if(use_component == true)
         {
             // We are going to use the new method that consists

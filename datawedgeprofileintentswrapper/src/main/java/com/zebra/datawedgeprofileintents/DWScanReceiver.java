@@ -48,8 +48,18 @@ public class DWScanReceiver {
     public DWScanReceiver(Context myContext, String intentAction, String intentCategory
             , boolean showSpecialChars, onScannedData scannedDataCallback)
     {
-        mIntentAction = intentAction;
-        mIntentCategory = intentCategory;
+        if(intentAction != null && intentAction.isEmpty() != true)
+            mIntentAction = intentAction;
+        else
+        {
+            mIntentAction = myContext.getPackageName().toString() + ".RECVR";
+        }
+        if(intentCategory != null && intentCategory.isEmpty() != true)
+            mIntentCategory = intentCategory;
+        else
+        {
+            mIntentCategory = "android.intent.category.DEFAULT";
+        }
         mContext = myContext;
 
         mOnScannedDataCallback = scannedDataCallback;
