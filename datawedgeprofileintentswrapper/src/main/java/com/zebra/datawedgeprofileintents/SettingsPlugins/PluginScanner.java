@@ -168,6 +168,7 @@ public class PluginScanner
         public Boolean decoder_i2of5_report_check_digit = null;
         public SC_E_SECURITY_LEVEL decoder_i2of5_security_level = null;
         public Boolean decoder_i2of5_convert_to_ean13 = null;
+        public Boolean decoder_itf14_convert_to_ean13 = null;
 
         public Integer decoder_matrix_2of5_length1 = null;
         public Integer decoder_matrix_2of5_length2 = null;
@@ -437,6 +438,7 @@ public class PluginScanner
         if(DecodersParams.decoder_i2of5_report_check_digit                != null   ) barcodeProps.putBoolean(   "decoder_i2of5_report_check_digit"         , DecodersParams.decoder_i2of5_report_check_digit         );
         if(DecodersParams.decoder_i2of5_security_level                    != null   ) barcodeProps.putString(    "decoder_i2of5_security_level"             , DecodersParams.decoder_i2of5_security_level.toString()             );
         if(DecodersParams.decoder_i2of5_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_i2of5_convert_to_ean13"           , DecodersParams.decoder_i2of5_convert_to_ean13           );
+        if(DecodersParams.decoder_itf14_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_itf14_convert_to_ean13"
         if(DecodersParams.decoder_matrix_2of5_length1                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length1"              , DecodersParams.decoder_matrix_2of5_length1              );
         if(DecodersParams.decoder_matrix_2of5_length2                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length2"              , DecodersParams.decoder_matrix_2of5_length2              );
         if(DecodersParams.decoder_matrix_2of5_redundancy                  != null   ) barcodeProps.putBoolean(   "decoder_matrix_2of5_redundancy"           , DecodersParams.decoder_matrix_2of5_redundancy           );
