@@ -427,7 +427,7 @@ public class PluginScanner
         if(DecodersParams.decoder_d2of5_length2                           != null   ) barcodeProps.putInt(       "decoder_d2of5_length2"                    , DecodersParams.decoder_d2of5_length2                    );
         if(DecodersParams.decoder_d2of5_redundancy                        != null   ) barcodeProps.putBoolean(   "decoder_d2of5_redundancy"                 , DecodersParams.decoder_d2of5_redundancy                 );
         if(DecodersParams.decoder_ean8_convert_to_ean13                   != null   ) barcodeProps.putBoolean(   "decoder_ean8_convert_to_ean13"            , DecodersParams.decoder_ean8_convert_to_ean13            );
-        if(DecodersParams.decoder_gs1_databar_exp                         != null   ) barcodeProps.putBoolean(   "decoder_gs1_databar_exp"                  , DecodersParams.decoder_gs1_databar_exp                  );
+        if(DecodersParams.decoder_gs1_databar_exp                         != null   ) barcodeProps.putString(   "decoder_gs1_databar_exp"                  , DecodersParams.decoder_gs1_databar_exp ? "true" : "false"                  );
         if(DecodersParams.decoder_gs1_databar_lim                         != null   ) barcodeProps.putBoolean(   "decoder_gs1_databar_lim"                  , DecodersParams.decoder_gs1_databar_lim                  );
         if(DecodersParams.decoder_gs1_lim_security_level                  != null   ) barcodeProps.putString(    "decoder_gs1_lim_security_level"           , DecodersParams.decoder_gs1_lim_security_level.toString()           );
         if(DecodersParams.decoder_hanxin_inverse                          != null   ) barcodeProps.putString(    "decoder_hanxin_inverse"                   , DecodersParams.decoder_hanxin_inverse.toString()                   );
@@ -438,7 +438,7 @@ public class PluginScanner
         if(DecodersParams.decoder_i2of5_report_check_digit                != null   ) barcodeProps.putBoolean(   "decoder_i2of5_report_check_digit"         , DecodersParams.decoder_i2of5_report_check_digit         );
         if(DecodersParams.decoder_i2of5_security_level                    != null   ) barcodeProps.putString(    "decoder_i2of5_security_level"             , DecodersParams.decoder_i2of5_security_level.toString()             );
         if(DecodersParams.decoder_i2of5_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_i2of5_convert_to_ean13"           , DecodersParams.decoder_i2of5_convert_to_ean13           );
-        if(DecodersParams.decoder_itf14_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_itf14_convert_to_ean13"
+        if(DecodersParams.decoder_itf14_convert_to_ean13                  != null   ) barcodeProps.putBoolean(   "decoder_itf14_convert_to_ean13"           , DecodersParams.decoder_itf14_convert_to_ean13           );
         if(DecodersParams.decoder_matrix_2of5_length1                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length1"              , DecodersParams.decoder_matrix_2of5_length1              );
         if(DecodersParams.decoder_matrix_2of5_length2                     != null   ) barcodeProps.putInt(       "decoder_matrix_2of5_length2"              , DecodersParams.decoder_matrix_2of5_length2              );
         if(DecodersParams.decoder_matrix_2of5_redundancy                  != null   ) barcodeProps.putBoolean(   "decoder_matrix_2of5_redundancy"           , DecodersParams.decoder_matrix_2of5_redundancy           );
@@ -462,7 +462,7 @@ public class PluginScanner
         if(DecodersParams.decoder_upce1_report_check_digit                != null   ) barcodeProps.putBoolean(   "decoder_upce1_report_check_digit"         , DecodersParams.decoder_upce1_report_check_digit         );
         if(DecodersParams.decoder_us4state_fics                           != null   ) barcodeProps.putBoolean(   "decoder_us4state_fics"                    , DecodersParams.decoder_us4state_fics                    );
         if(DecodersParams.decoder_usplanet_report_check_digit             != null   ) barcodeProps.putBoolean(   "decoder_usplanet_report_check_digit"      , DecodersParams.decoder_usplanet_report_check_digit      );
-    }
+   }
 
     private void setupUPC_EANParams(Bundle barcodeProps)
     {
@@ -483,7 +483,7 @@ public class PluginScanner
         if( UpcEan.upcean_security_level != null)
             barcodeProps.putString("upcean_security_level", UpcEan.upcean_security_level.toString());
         if( UpcEan.upcean_supplemental2 != null)
-            barcodeProps.putBoolean("upcean_supplemental2", UpcEan.upcean_supplemental2);
+            barcodeProps.putString("upcean_supplemental2", UpcEan.upcean_supplemental2 ? "true" : "false");
         if( UpcEan.upcean_supplemental5 != null)
             barcodeProps.putBoolean("upcean_supplemental5", UpcEan.upcean_supplemental5);
         if( UpcEan.upcean_supplemental_mode != null)

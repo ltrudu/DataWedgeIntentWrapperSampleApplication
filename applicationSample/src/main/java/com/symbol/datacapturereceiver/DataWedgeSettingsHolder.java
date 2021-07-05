@@ -84,6 +84,10 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
             ScannerPlugin.Decoders.decoder_ean8 = false;
             ScannerPlugin.Decoders.decoder_ean13 = false;
+            ScannerPlugin.DecodersParams.decoder_gs1_databar_exp = false;
+            //ScannerPlugin.Decoders.decoder_webcode = false;
+            ScannerPlugin.UpcEan.upcean_supplemental2 = false;
+
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
