@@ -56,6 +56,7 @@ public class DataWedgeSettingsHolder {
             IntentPlugin.intent_output_enabled = true;
             IntentPlugin.intent_delivery = INT_E_DELIVERY.BROADCAST;
             KeystrokePlugin.keystroke_output_enabled = false;
+            ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.AUTO;
             ScannerPlugin.scanner_input_enabled = true;
             ScannerPlugin.Decoders.decoder_aztec = true;
             ScannerPlugin.Decoders.decoder_ean8 = false;

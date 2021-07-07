@@ -50,7 +50,7 @@ public class PluginScanner
     You should provide an index from 0-n based on the index from ENUMERATE_SCANNERS API
     http://techdocs.zebra.com/datawedge/6-7/guide/api/enumeratescanners/
      */
-    public String scanner_selection = "auto";
+    //public String scanner_selection = "auto";
 
     /*
      Set the scanner you want to use for this profile
@@ -314,7 +314,7 @@ public class PluginScanner
         barcodeProps.putString("scanner_input_enabled", scanner_input_enabled ? "true" : "false");
 
         // Use this for Datawedge < 6.7
-        barcodeProps.putString("scanner_selection", scanner_selection);
+        //barcodeProps.putString("scanner_selection", scanner_selection);
 
         // Use this for Datawedge < 6.7
         //barcodeProps.putString("scanner_selection", "AUTO");
