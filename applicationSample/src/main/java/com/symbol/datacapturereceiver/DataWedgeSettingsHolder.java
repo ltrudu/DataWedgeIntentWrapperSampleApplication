@@ -88,7 +88,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.DecodersParams.decoder_gs1_databar_exp = false;
             //ScannerPlugin.Decoders.decoder_webcode = false;
             ScannerPlugin.UpcEan.upcean_supplemental2 = false;
-
+            ScannerPlugin.UpcEan.upcean_supplemental5 = false;
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()

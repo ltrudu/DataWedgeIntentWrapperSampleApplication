@@ -485,7 +485,7 @@ public class PluginScanner
         if( UpcEan.upcean_supplemental2 != null)
             barcodeProps.putString("upcean_supplemental2", UpcEan.upcean_supplemental2 ? "true" : "false");
         if( UpcEan.upcean_supplemental5 != null)
-            barcodeProps.putBoolean("upcean_supplemental5", UpcEan.upcean_supplemental5);
+            barcodeProps.putString("upcean_supplemental5", UpcEan.upcean_supplemental5 ? "true" : "false");
         if( UpcEan.upcean_supplemental_mode != null)
             barcodeProps.putString("upcean_supplemental_mode", UpcEan.upcean_supplemental_mode.toString());
         if( UpcEan.upcean_linear_decode != null)
