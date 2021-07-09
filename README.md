@@ -1,8 +1,5 @@
-This library is available in jcenter.
-
-Add the following line in your module build.gradle to include it :
-
-api 'com.zebra.datawedgeprofileintentswrapper:datawedgeprofileintentswrapper:6.7.2'
+Sample app for the DataWedgeIntentWrapper:
+https://github.com/ltrudu/DataWedgeIntentWrapper
 
 
 # END USER LICENSE AGREEMENT (UNRESTRICTED SOFTWARE)
