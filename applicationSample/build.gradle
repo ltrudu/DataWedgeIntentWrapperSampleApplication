@@ -24,6 +24,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation project(path: ':datawedgeprofileintentswrapper')
+    //implementation project(path: ':datawedgeprofileintentswrapper')
     //api 'com.zebra.datawedgeprofileintentswrapper:datawedgeprofileintentswrapper:6.7.2'
+    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:V6.7.6'
 }
