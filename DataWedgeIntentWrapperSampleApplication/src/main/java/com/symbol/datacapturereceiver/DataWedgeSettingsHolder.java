@@ -86,9 +86,9 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_ean8 = false;
             ScannerPlugin.Decoders.decoder_ean13 = false;
             ScannerPlugin.DecodersParams.decoder_gs1_databar_exp = false;
-            //ScannerPlugin.Decoders.decoder_webcode = false;
             ScannerPlugin.UpcEan.upcean_supplemental2 = false;
             ScannerPlugin.UpcEan.upcean_supplemental5 = false;
+            ScannerPlugin.Decoders.decoder_i2of5 = true;
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
@@ -101,6 +101,9 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.same_barcode_timeout = 0;
             ScannerPlugin.Decoders.decoder_ean8 = true;
             ScannerPlugin.Decoders.decoder_ean13 = true;
+            ScannerPlugin.UpcEan.upcean_supplemental2 = true;
+            ScannerPlugin.UpcEan.upcean_supplemental5 = true;
+            ScannerPlugin.Decoders.decoder_i2of5 = false;
         }};
     }
 }

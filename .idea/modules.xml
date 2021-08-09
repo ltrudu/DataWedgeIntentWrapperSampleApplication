@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DataCaptureReceiver.iml" filepath="$PROJECT_DIR$/DataCaptureReceiver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/applicationSample/DataCaptureReceiver.applicationSample.iml" filepath="$PROJECT_DIR$/.idea/modules/applicationSample/DataCaptureReceiver.applicationSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" filepath="$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" />
     </modules>
   </component>

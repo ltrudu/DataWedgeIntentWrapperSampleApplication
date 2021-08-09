@@ -1,1 +1,1 @@
-include ':applicationSample', ':datawedgeprofileintentswrapper'
+include ':DataWedgeIntentWrapperSampleApplication'//, ':datawedgeprofileintentswrapper'
