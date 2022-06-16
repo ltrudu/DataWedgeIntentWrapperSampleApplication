@@ -59,8 +59,8 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.AUTO;
             ScannerPlugin.scanner_input_enabled = true;
             ScannerPlugin.Decoders.decoder_aztec = true;
-            ScannerPlugin.Decoders.decoder_ean8 = false;
-            ScannerPlugin.Decoders.decoder_ean13 = false;
+            ScannerPlugin.Decoders.decoder_ean8 = true;
+            ScannerPlugin.Decoders.decoder_ean13 = true;
             ScannerPlugin.Decoders.decoder_code128 = true;
             ScannerPlugin.Decoders.decoder_i2of5 = true;
             ScannerPlugin.Decoders.decoder_datamatrix = true;
@@ -68,6 +68,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
             ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
             ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
+            ScannerPlugin.Decoders.decoder_canadian_postal = true;
         }};
 
         // Settings classes can be exported to JSON format and initialized from JSON format
@@ -83,12 +84,22 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.beam_timer = 5000;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
-            ScannerPlugin.Decoders.decoder_ean8 = false;
-            ScannerPlugin.Decoders.decoder_ean13 = false;
+            ScannerPlugin.Decoders.decoder_ean8 = true;
+            ScannerPlugin.Decoders.decoder_ean13 = true;
             ScannerPlugin.DecodersParams.decoder_gs1_databar_exp = false;
             ScannerPlugin.UpcEan.upcean_supplemental2 = false;
             ScannerPlugin.UpcEan.upcean_supplemental5 = false;
             ScannerPlugin.Decoders.decoder_i2of5 = true;
+
+            ScannerPlugin.DecodersParams.decoder_i2of5_report_check_digit = true;
+            ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = true;
+            ScannerPlugin.DecodersParams.decoder_i2of5_length1 = 2;
+            ScannerPlugin.DecodersParams.decoder_i2of5_length2 = 5;
+
+            ScannerPlugin.DecodersParams.decoder_upca_report_check_digit = true;
+            ScannerPlugin.DecodersParams.decoder_upce0_report_check_digit = true;
+            ScannerPlugin.DecodersParams.decoder_upce0_convert_to_upca = true;
+
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
@@ -104,6 +115,18 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.UpcEan.upcean_supplemental2 = true;
             ScannerPlugin.UpcEan.upcean_supplemental5 = true;
             ScannerPlugin.Decoders.decoder_i2of5 = false;
+
+            ScannerPlugin.DecodersParams.decoder_i2of5_report_check_digit = false;
+
+            ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
+            ScannerPlugin.DecodersParams.decoder_i2of5_length1 = 2;
+            ScannerPlugin.DecodersParams.decoder_i2of5_length2 = 8;
+
+            ScannerPlugin.DecodersParams.decoder_upca_report_check_digit = false;
+            ScannerPlugin.DecodersParams.decoder_upce0_report_check_digit = false;
+            ScannerPlugin.DecodersParams.decoder_upce0_convert_to_upca = false;
+
+
         }};
     }
 }

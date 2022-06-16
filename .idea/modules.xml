@@ -4,7 +4,13 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" filepath="$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.main.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.unitTest.iml" />
     </modules>
   </component>
 </project>
