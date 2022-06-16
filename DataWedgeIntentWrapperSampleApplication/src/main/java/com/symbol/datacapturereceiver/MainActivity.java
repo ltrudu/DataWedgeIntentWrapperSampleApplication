@@ -606,13 +606,7 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    addLineToResults("Plugin enabled successfully on profile: " + profileName);
-                    /*
-                    switchScannerParams(true);
-                    addLineToResults("Switching params: " + profileName + " succeeded");
-                    switchScannerParams(true);
-                    addLineToResults("Switching params: " + profileName + " succeeded");
-                     */
+                    addLineToResults("Enabling plugin on profile: " + profileName + " succeeded");
                 }
                 else
                 {
