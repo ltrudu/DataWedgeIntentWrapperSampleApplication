@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" filepath="$PROJECT_DIR$/.idea/modules/DataCaptureReceiver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataCaptureReceiver.DataWedgeIntentWrapperSampleApplication.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/datawedgeprofileintentswrapper/DataCaptureReceiver.datawedgeprofileintentswrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DataWedgeIntentWrapperSampleApplication/DataWedgeIntentWrapperSampleApplication.DataWedgeIntentWrapperSampleApplication.unitTest.iml" />
     </modules>
   </component>
 </project>
