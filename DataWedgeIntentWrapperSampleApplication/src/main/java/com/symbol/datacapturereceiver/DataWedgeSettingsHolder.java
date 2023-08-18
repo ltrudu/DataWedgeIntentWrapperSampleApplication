@@ -16,6 +16,7 @@ import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class DataWedgeSettingsHolder {
 
@@ -58,16 +59,17 @@ public class DataWedgeSettingsHolder {
             KeystrokePlugin.keystroke_output_enabled = false;
             ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.AUTO;
             ScannerPlugin.scanner_input_enabled = true;
-            ScannerPlugin.Decoders.decoder_aztec = true;
-            ScannerPlugin.Decoders.decoder_ean8 = false;
-            ScannerPlugin.Decoders.decoder_ean13 = false;
-            ScannerPlugin.Decoders.decoder_code128 = true;
-            ScannerPlugin.Decoders.decoder_i2of5 = true;
-            ScannerPlugin.Decoders.decoder_datamatrix = true;
-            ScannerPlugin.Decoders.decoder_japanese_postal = true;
-            ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
-            ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
-            ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
+            //ScannerPlugin.ScanParams.decode_audio_feedback_uri = "";
+            //ScannerPlugin.Decoders.decoder_aztec = true;
+            //ScannerPlugin.Decoders.decoder_ean8 = false;
+            //ScannerPlugin.Decoders.decoder_ean13 = false;
+            //ScannerPlugin.Decoders.decoder_code128 = true;
+            //ScannerPlugin.Decoders.decoder_i2of5 = true;
+            //ScannerPlugin.Decoders.decoder_datamatrix = true;
+            //ScannerPlugin.Decoders.decoder_japanese_postal = true;
+            //ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
+            //ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
+            //ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
         }};
 
         // Settings classes can be exported to JSON format and initialized from JSON format
@@ -83,27 +85,17 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.beam_timer = 5000;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
-            ScannerPlugin.Decoders.decoder_ean8 = false;
-            ScannerPlugin.Decoders.decoder_ean13 = false;
-            ScannerPlugin.DecodersParams.decoder_gs1_databar_exp = false;
-            ScannerPlugin.UpcEan.upcean_supplemental2 = false;
-            ScannerPlugin.UpcEan.upcean_supplemental5 = false;
-            ScannerPlugin.Decoders.decoder_i2of5 = true;
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
         {{
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
+            mEnableTimeOutMechanism = true;
             ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.PRESS_AND_SUSTAIN;
             ScannerPlugin.ReaderParams.beam_timer = 0;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 0;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 0;
-            ScannerPlugin.Decoders.decoder_ean8 = true;
-            ScannerPlugin.Decoders.decoder_ean13 = true;
-            ScannerPlugin.UpcEan.upcean_supplemental2 = true;
-            ScannerPlugin.UpcEan.upcean_supplemental5 = true;
-            ScannerPlugin.Decoders.decoder_i2of5 = false;
         }};
     }
 }

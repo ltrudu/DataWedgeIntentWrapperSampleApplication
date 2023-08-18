@@ -1,19 +1,32 @@
 package com.symbol.datacapturereceiver;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.zebra.datawedgeprofileintents.DWScanReceiver;
+import com.zebra.datawedgeprofileintents.DWStatusScanner;
+import com.zebra.datawedgeprofileintents.DWStatusScannerCallback;
+import com.zebra.datawedgeprofileintents.DWStatusScannerSettings;
+import com.zebra.datawedgeprofileintents.DataWedgeConstants;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SecondActivity extends AppCompatActivity implements DWScanReceiver.onScannedData {
+
+    private static String TAG = "DataCaptureReceiver";
 
     private TextView et_results;
     private ScrollView sv_results;
@@ -23,6 +36,8 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
      * Scanner data receiver
      */
     DWScanReceiver mScanReceiver;
+
+    DWStatusScanner mStatusReceiver;
 
     /*
         Handler and runnable to scroll down textview
@@ -59,6 +74,15 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
             }
         });
 
+        Button btImport = (Button) findViewById(R.id.button_import);
+        btImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //"database profile auto creation" import mode (filebased)
+                    importProfile("dwprofile_com.symbol.datacapturereceiver");
+            }
+        });
+
         /**
          * Initialize the scan receiver
          */
@@ -68,6 +92,38 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
                 true,
                 this
         );
+
+        DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
+        {{
+            mPackageName = getPackageName();
+            mScannerCallback = new DWStatusScannerCallback() {
+                @Override
+                public void result(String status) {
+                    switch(status)
+                    {
+                        case DataWedgeConstants.SCAN_STATUS_CONNECTED:
+                            addLineToResults("Scanner is connected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISABLED:
+                            addLineToResults("Scanner is disabled.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISCONNECTED:
+                            addLineToResults("Scanner is disconnected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_SCANNING:
+                            addLineToResults("Scanner is scanning.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_WAITING:
+                            addLineToResults("Scanner is waiting.");
+                            break;
+                    }
+                }
+            };
+        }};
+
+        addLineToResults("Setting up scanner status checking on package : " + profileStatusSettings.mPackageName + ".");
+
+        mStatusReceiver = new DWStatusScanner(this, profileStatusSettings);
     }
 
     @Override
@@ -79,12 +135,14 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
     protected void onResume() {
         super.onResume();
         mScanReceiver.startReceive();
+        mStatusReceiver.start();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     protected void onPause() {
         mScanReceiver.stopReceive();
+        mStatusReceiver.stop();
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
@@ -124,6 +182,73 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
             // reset handler to repost it....
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
         }
-        mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
+        if(mScrollDownHandler != null)
+            mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
     }
+
+    private void importProfile(String progileFilenameWithoutDbExtension) {
+            // Source : http://techdocs.zebra.com/datawedge/6-7/guide/settings/
+            //Export your profile using
+            //1. Open DataWedge
+            //2. Open Hamburger Menu -> Settings (Paramètres)
+            //3. Open "Export" list entry
+            //4. Select profile to export
+            //5. Retrieve exportes file in folder "\sdcard\Android\data\com.symbol.datawedge\files"
+
+            // Open the db as the input stream
+            InputStream fis = null;
+            FileOutputStream fos = null;
+            File outputFile = null;
+            File finalFile = null;
+
+            try {
+
+                String autoImportDir = "/enterprise/device/settings/datawedge/autoimport/";
+                String temporaryFileName = progileFilenameWithoutDbExtension + ".tmp";
+                String finalFileName = progileFilenameWithoutDbExtension + ".db";
+
+                fis = getAssets().open(finalFileName);
+
+
+                // create a File object for the parent directory
+                File outputDirectory = new File(autoImportDir);
+
+                // create a temporary File object for the output file
+                outputFile = new File(outputDirectory, temporaryFileName);
+                finalFile = new File(outputDirectory, finalFileName);
+
+                // attach the OutputStream to the file object
+                fos = new FileOutputStream(outputFile);
+
+                // transfer bytes from the input file to the output file
+                byte[] buffer = new byte[1024];
+                int length;
+                int tot = 0;
+                while ((length = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
+                    tot += length;
+                }
+                Log.d(TAG, tot + " bytes copied");
+
+                //flush the buffers
+                fos.flush();
+
+                //release resources
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                fos = null;
+                //set permission to the file to read, write and exec.
+                if (outputFile != null) {
+                    outputFile.setExecutable(true, false);
+                    outputFile.setReadable(true, false);
+                    outputFile.setWritable(true, false);
+                    //rename the file
+                    if (finalFile != null)
+                        outputFile.renameTo(finalFile);
+                }
+
+            }
+        }
 }

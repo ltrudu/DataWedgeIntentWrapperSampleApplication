@@ -9,6 +9,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.zebra.datawedgeprofileintents.DWScanReceiver;
+import com.zebra.datawedgeprofileintents.DWStatusScanner;
+import com.zebra.datawedgeprofileintents.DWStatusScannerCallback;
+import com.zebra.datawedgeprofileintents.DWStatusScannerSettings;
+import com.zebra.datawedgeprofileintents.DataWedgeConstants;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +26,8 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
      * Scanner data receiver
      */
     DWScanReceiver mScanReceiver;
+
+    DWStatusScanner mStatusReceiver;
 
     /*
         Handler and runnable to scroll down textview
@@ -59,6 +65,37 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
                 this
         );
 
+        DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
+        {{
+            mPackageName = getPackageName();
+            mScannerCallback = new DWStatusScannerCallback() {
+                @Override
+                public void result(String status) {
+                    switch(status)
+                    {
+                        case DataWedgeConstants.SCAN_STATUS_CONNECTED:
+                            addLineToResults("Scanner is connected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISABLED:
+                            addLineToResults("Scanner is disabled.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_DISCONNECTED:
+                            addLineToResults("Scanner is disconnected.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_SCANNING:
+                            addLineToResults("Scanner is scanning.");
+                            break;
+                        case DataWedgeConstants.SCAN_STATUS_WAITING:
+                            addLineToResults("Scanner is waiting.");
+                            break;
+                    }
+                }
+            };
+        }};
+
+        addLineToResults("Setting up scanner status checking on package : " + profileStatusSettings.mPackageName + ".");
+
+        mStatusReceiver = new DWStatusScanner(this, profileStatusSettings);
     }
 
     @Override
@@ -70,12 +107,14 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
     protected void onResume() {
         super.onResume();
         mScanReceiver.startReceive();
+        mStatusReceiver.start();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     protected void onPause() {
         mScanReceiver.stopReceive();
+        mStatusReceiver.stop();
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
@@ -115,6 +154,7 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
             // reset handler to repost it....
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
         }
-        mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
+        if(mScrollDownHandler != null)
+            mScrollDownHandler.postDelayed(mScrollDownRunnable, 300);
     }
 }

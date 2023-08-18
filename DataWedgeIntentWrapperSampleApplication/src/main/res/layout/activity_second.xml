@@ -35,6 +35,12 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/button_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Import\nProfile" />
+
+        <Button
             android:id="@+id/button_closeSecondActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
