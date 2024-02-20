@@ -50,7 +50,6 @@ public class DataWedgeSettingsHolder {
             mTimeOutMS = mDemoTimeOutMS;
             MainBundle.APP_LIST = new HashMap<>();
             MainBundle.APP_LIST.put(myActivity.getPackageName(), null);
-            MainBundle.APP_LIST.put("com.google.com", null);
             MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.CREATE_IF_NOT_EXIST;
             IntentPlugin.intent_action = mDemoIntentAction;
             IntentPlugin.intent_category = mDemoIntentCategory;
@@ -60,7 +59,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.AUTO;
             ScannerPlugin.scanner_input_enabled = true;
             //ScannerPlugin.ScanParams.decode_audio_feedback_uri = "";
-            //ScannerPlugin.Decoders.decoder_aztec = true;
+            ScannerPlugin.Decoders.decoder_aztec = true;
             //ScannerPlugin.Decoders.decoder_ean8 = false;
             //ScannerPlugin.Decoders.decoder_ean13 = false;
             //ScannerPlugin.Decoders.decoder_code128 = true;
@@ -85,6 +84,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.ReaderParams.beam_timer = 5000;
             ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
             ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
+
         }};
 
         mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()

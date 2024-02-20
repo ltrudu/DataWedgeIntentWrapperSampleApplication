@@ -3,6 +3,7 @@ package com.symbol.datacapturereceiver;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -122,6 +123,12 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
             mScrollDownHandler = null;
         }
         super.onPause();
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        addLineToResults("Keycode Up:" + keyCode);
+        return super.onKeyUp(keyCode, event);
     }
 
     private void addLineToResults(final String lineToAdd)

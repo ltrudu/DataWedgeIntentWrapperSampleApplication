@@ -2,12 +2,12 @@ plugins {
     id 'com.android.application'
 }
 android {
-    compileSdkVersion 32
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.symbol.datacapturereceiver"
         minSdkVersion 19
-        targetSdkVersion 32
+        targetSdkVersion 34
         versionCode 2
         versionName "1.2"
     }
@@ -23,12 +23,14 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    //implementation project(path: ':datawedgeprofileintentswrapper')
-    //api 'com.zebra.datawedgeprofileintentswrapper:datawedgeprofileintentswrapper:6.7.2'
-    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:11.5'
+    // The CriticalPermissionHelper is only used for the demo (not necessary for your implementation)
     implementation 'com.github.ltrudu:CriticalPermissionsHelper:0.1'
+    // Add the DWIntentWrapper implementation to your build.gradle
+    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.0'
+    // This one is for my developments only, use only if you plan to imrpove the wrapper
+    //implementation project(path: ':datawedgeprofileintentswrapper')
 }

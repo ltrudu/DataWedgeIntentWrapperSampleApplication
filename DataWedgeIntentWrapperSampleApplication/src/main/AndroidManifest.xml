@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="com.symbol.emdk.permission.EMDK" />
 
+    <!-- BEGIN demo only, not necessary for datawedge implementation -->
+    <uses-permission android:name="com.symbol.emdk.permission.EMDK" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ProtectedPermissions" />
+    <uses-sdk tools:overrideLibrary="com.zebra.criticalpermissionshelper"/>
+    <!-- END demo only, not necessary for datawedge implementation -->
 
+    <!-- ADD THIS TO YOUR MANIFEST !!!! MANDATORY -->
+    <uses-permission android:name="com.symbol.datawedge.permission.contentprovider" />
     <queries>
-        <package android:name="com.symbol.datawedge"/>
+        <package android:name="com.symbol.datawedge" />
     </queries>
 
-    <uses-sdk tools:overrideLibrary="com.zebra.criticalpermissionshelper"/>
+
 
     <application
         android:name=".MainApplication"
@@ -20,7 +25,9 @@
         android:launchMode="singleInstance"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!-- BEGIN demo only, not necessary for datawedge implementation -->
         <uses-library android:name="com.symbol.emdk" />
+        <!-- END demo only, not necessary for datawedge implementation -->
 
         <activity android:name=".MainActivity"
             android:exported="true">

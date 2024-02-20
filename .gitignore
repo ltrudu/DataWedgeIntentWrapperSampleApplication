@@ -9,3 +9,5 @@
 datawedgeprofileintentswrapper/build/
 DataWedgeIntentWrapperSampleApplication/release/
 DataWedgeIntentWrapperSampleApplication/.idea/workspace.xml
+*.hprof
+.idea/

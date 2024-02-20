@@ -11,7 +11,11 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.zebra.datawedgeprofileintents.DWProfileBaseSettings;
+import com.zebra.datawedgeprofileintents.DWProfileCommandBase;
 import com.zebra.datawedgeprofileintents.DWScanReceiver;
+import com.zebra.datawedgeprofileintents.DWScannerPluginDisable;
+import com.zebra.datawedgeprofileintents.DWScannerPluginEnable;
 import com.zebra.datawedgeprofileintents.DWStatusScanner;
 import com.zebra.datawedgeprofileintents.DWStatusScannerCallback;
 import com.zebra.datawedgeprofileintents.DWStatusScannerSettings;
@@ -89,8 +93,14 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
         mScanReceiver = new DWScanReceiver(this,
                 DataWedgeSettingsHolder.mDemoIntentAction,
                 DataWedgeSettingsHolder.mDemoIntentCategory,
-                true,
-                this
+                false,
+                new DWScanReceiver.onScannedData() {
+                    @Override
+                    public void scannedData(String source, String data, String typology) {
+                        addLineToResults("Source: " + source);
+                        addLineToResults("Typology: " + typology+ ", Data: " + data);
+                    }
+                }
         );
 
         DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
@@ -134,6 +144,24 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
     @Override
     protected void onResume() {
         super.onResume();
+        DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = getPackageName();
+        }};
+
+        dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                addLineToResults("DWPlugin enable result:" + result);
+            }
+
+            @Override
+            public void timeout(String profileName) {
+
+            }
+        });
+
         mScanReceiver.startReceive();
         mStatusReceiver.start();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
@@ -143,6 +171,22 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
     protected void onPause() {
         mScanReceiver.stopReceive();
         mStatusReceiver.stop();
+        DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(this);
+        DWProfileBaseSettings settings = new DWProfileBaseSettings()
+        {{
+            mProfileName = getPackageName();
+        }};
+
+        dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
+            @Override
+            public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                addLineToResults("DWPlugin disable result:" + result);
+            }
+            @Override
+            public void timeout(String profileName) {
+
+            }
+        });
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
