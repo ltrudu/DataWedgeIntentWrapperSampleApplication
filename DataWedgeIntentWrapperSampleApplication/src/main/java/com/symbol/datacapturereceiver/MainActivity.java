@@ -526,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = getPackageName();
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -554,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
         DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(MainActivity.this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = getPackageName();
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -767,7 +767,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createProfileAsync()
     {
-        DWProfileCreate profileCreate = new DWProfileCreate(MainActivity.this);
+        DWProfileCreate profileCreate = new DWProfileCreate(this);
 
         DWProfileCreateSettings profileCreateSettings = new DWProfileCreateSettings()
         {{

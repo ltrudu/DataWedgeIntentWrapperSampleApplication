@@ -99,6 +99,7 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
                     public void scannedData(String source, String data, String typology) {
                         addLineToResults("Source: " + source);
                         addLineToResults("Typology: " + typology+ ", Data: " + data);
+
                     }
                 }
         );
@@ -147,7 +148,7 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
         DWScannerPluginEnable dwpluginenable = new DWScannerPluginEnable(this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = getPackageName();
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwpluginenable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {
@@ -174,7 +175,7 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
         DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
-            mProfileName = getPackageName();
+            mProfileName = DataWedgeSettingsHolder.mDemoProfileName;
         }};
 
         dwplugindisable.execute(settings, new DWProfileCommandBase.onProfileCommandResult() {

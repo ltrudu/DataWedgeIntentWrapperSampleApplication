@@ -1,23 +1,14 @@
-package com.symbol.datacapturereceiver;
+package com.zebra.datawedgeintentwrapperkotlinsampleapplication;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.ArrayMap;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
-import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
-import com.zebra.datawedgeprofileenums.SC_E_I2OF5_CHECK_DIGIT;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
-import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
-import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  *
@@ -52,17 +43,6 @@ public class DataWedgeSettingsHolder {
      */
     protected static DWProfileSetConfigSettings mSetConfigSettings;
 
-    /**
-     * This member will be used to restore the original scanner configuration that we used
-     * to setup the DataWedge profile when we created it
-     */
-    protected static DWProfileSwitchBarcodeParamsSettings mNormalSettingsForSwitchParams;
-
-    /**
-     * This member will hold the configuration for the aggressive mode
-     */
-    protected static DWProfileSwitchBarcodeParamsSettings mAggressiveSettingsForSwitchParams;
-
     public static void initSettings(final Context myContext)
     {
         mSetConfigSettings = new DWProfileSetConfigSettings()
@@ -91,35 +71,6 @@ public class DataWedgeSettingsHolder {
             //ScannerPlugin.DecodersParams.decoder_i2of5_check_digit = SC_E_I2OF5_CHECK_DIGIT.USS_CHECK_DIGIT;
             //ScannerPlugin.DecodersParams.decoder_i2of5_redundancy = false;
             //ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
-        }};
-
-        // Settings classes can be exported to JSON format and initialized from JSON format
-        String jsonWithNullTest = DWProfileSetConfigSettings.toJsonWN(mSetConfigSettings);
-        DWProfileSetConfigSettings profileFromJSon = DWProfileSetConfigSettings.fromJson(jsonWithNullTest);
-
-        mNormalSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
-        {{
-            mProfileName =mDemoProfileName;
-            mTimeOutMS = mDemoTimeOutMS;
-            mEnableTimeOutMechanism = true;
-            //ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.TRIGGER;
-            //ScannerPlugin.ReaderParams.beam_timer = 5000;
-            //ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
-            //ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
-            ScannerPlugin.Decoders.decoder_ean13 = true;
-
-        }};
-
-        mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
-        {{
-            mProfileName = mDemoProfileName;
-            mTimeOutMS = mDemoTimeOutMS;
-            mEnableTimeOutMechanism = true;
-            //ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.PRESS_AND_SUSTAIN;
-            //ScannerPlugin.ReaderParams.beam_timer = 0;
-            //ScannerPlugin.ReaderParams.different_barcode_timeout = 0;
-            //ScannerPlugin.ReaderParams.same_barcode_timeout = 0;
-            ScannerPlugin.Decoders.decoder_ean13 = false;
         }};
     }
 }

@@ -28,8 +28,6 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
      */
     DWScanReceiver mScanReceiver;
 
-    DWStatusScanner mStatusReceiver;
-
     /*
         Handler and runnable to scroll down textview
      */
@@ -95,8 +93,6 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
         }};
 
         addLineToResults("Setting up scanner status checking on package : " + profileStatusSettings.mPackageName + ".");
-
-        mStatusReceiver = new DWStatusScanner(this, profileStatusSettings);
     }
 
     @Override
@@ -108,14 +104,12 @@ public class ThirdActivity extends AppCompatActivity implements DWScanReceiver.o
     protected void onResume() {
         super.onResume();
         mScanReceiver.startReceive();
-        mStatusReceiver.start();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     protected void onPause() {
         mScanReceiver.stopReceive();
-        mStatusReceiver.stop();
         if(mScrollDownRunnable != null)
         {
             mScrollDownHandler.removeCallbacks(mScrollDownRunnable);
