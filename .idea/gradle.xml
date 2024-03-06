@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/DataWedgeIntentWrapperSampleApplication" />
+            <option value="$PROJECT_DIR$/datawedgeintentwrapperkotlinsampleapplication" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
