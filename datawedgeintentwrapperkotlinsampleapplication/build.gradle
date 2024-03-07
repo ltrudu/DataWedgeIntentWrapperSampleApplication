@@ -63,6 +63,9 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.0'
 
+    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.1'
+
+    // This one is for my developments only, use only if you plan to imrpove the wrapper
+    //implementation project(path: ':datawedgeprofileintentswrapper')
 }

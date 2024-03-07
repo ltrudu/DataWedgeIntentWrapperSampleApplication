@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,15 +16,11 @@ import android.widget.TextView;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileintents.*;
-import com.zebra.datawedgeprofileintents.SettingsPlugins.PluginScanner;
 import com.zebra.datawedgeprofileintents.SynchronousMethodsNT.DWSynchronousMethodsNT;
+import com.zebra.datawedgeprofileintentshelpers.CreateProfileHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -254,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mContinuousModeSwitch = !mContinuousModeSwitch;
-                switchScannerParams(mContinuousModeSwitch);
+                switchScannerParamsSync(mContinuousModeSwitch);
             }
         });
 
@@ -267,14 +262,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btCreateProfileSync = (Button) findViewById(R.id.button_create_sync);
-        btCreateProfileSync.setOnClickListener(new View.OnClickListener() {
+        Button btEasyCreateProfile = (Button) findViewById(R.id.button_create_easy);
+        btEasyCreateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // This version checks if the profile exists, if yes, delete it and create a new one
-                //setupProfileSync();
-                // This version will force profile delete, and create a new one all the time
-                setupProfileSyncFast();
+                easyCreateProfile();
             }
         });
 
@@ -353,6 +345,30 @@ public class MainActivity extends AppCompatActivity {
         DWProfileSetConfigSettings returnSettings = DWProfileSetConfigSettings.fromJson(json);
         String profilName = returnSettings.mProfileName;
         */
+    }
+
+    private void easyCreateProfile() {
+        mProfileProcessingStartDate = new Date();
+        addLineToResults("Creating a profile using CreateProfileHelper.");
+        CreateProfileHelper.createProfile(MainActivity.this, DataWedgeSettingsHolder.mSetConfigSettings, new CreateProfileHelper.CreateProfileHelperCallback() {
+            @Override
+            public void onSuccess(String profileName) {
+                addLineToResults("Easy creation of profile:" + profileName + " succeeded.");
+                addTotalTimeToResults();
+            }
+
+            @Override
+            public void onError(String profileName, String error, String errorMessage) {
+                addLineToResults("Error while trying to create profile:" + profileName);
+                addLineToResults("Error:" + error);
+                addLineToResults("ErrorMessage:" + errorMessage);
+            }
+
+            @Override
+            public void ondebugMessage(String profileName, String message) {
+                addLineToResults("Debug:" + message);
+            }
+        });
     }
 
     private void enumerateScannerDevices() {
@@ -633,31 +649,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
-    private void switchScannerParamsAsync(final boolean continuousMode)
+    private void switchScannerParamsAsync(final boolean mode)
     {
-        addLineToResults(continuousMode ? "Switching to Continuous mode" : "Switching to normal mode");
+        addLineToResults(mode ? "Switching to Restricted mode" : "Switching to normal mode");
         if(mProfileProcessingStartDate == null)
             mProfileProcessingStartDate = new Date();
         DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
 
         /**
-         * The switch param class will only change the settings that differs between the targetSettings and the previousSettings
+         * The switch param class will only change the settings inside targetSettings
          * In our case we hold the settings we used for profile creation in the member mNormalSettingsForSwitchParams
-         * And we hold the aggressive settings in the member mAggressiveSettingsForSwitchParams
-         * We will pass both settings to the switchBarcodeParams to allow comparison of both settings
-         * This will ensure that we don't pass the whole settings parameters to the Intent
+         * And we hold the restricted settings in the member mRestrictedSettingsForSwitchParams
          */
         DWProfileSwitchBarcodeParamsSettings targetSettings;
-        DWProfileSwitchBarcodeParamsSettings previousSettings;
-        if(continuousMode)
+        if(mode)
         {
-            targetSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
-            previousSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+            targetSettings = DataWedgeSettingsHolder.mRestrictedSettingsForSwitchParams;
         }
         else
         {
             targetSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
-            previousSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
         }
 
         // You can now use two different modes to switch params
@@ -669,11 +680,11 @@ public class MainActivity extends AppCompatActivity {
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    addLineToResults("Params switched to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
+                    addLineToResults("Params switched to " + (mode ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error switching params to " + (continuousMode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + resultInfo);
+                    addLineToResults("Error switching params to " + (mode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + resultInfo);
                 }
                 addTotalTimeToResults();
             }
@@ -685,30 +696,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-   private void switchScannerParams(final boolean continuousMode)
+   private void switchScannerParamsSync(final boolean mode)
     {
-        addLineToResults(continuousMode ? "Switching to Continuous mode" : "Switching to normal mode");
+        addLineToResults(mode ? "Switching to Restricted mode" : "Switching to normal mode");
         if(mProfileProcessingStartDate == null)
             mProfileProcessingStartDate = new Date();
 
         /**
-         * The switch param class will only change the settings that differs between the targetSettings and the previousSettings
+         * The switch param class will only change the settings inside targetSettings
          * In our case we hold the settings we used for profile creation in the member mNormalSettingsForSwitchParams
-         * And we hold the aggressive settings in the member mAggressiveSettingsForSwitchParams
-         * We will pass both settings to the switchBarcodeParams to allow comparison of both settings
-         * This will ensure that we don't pass the whole settings parameters to the Intent
+         * And we hold the restricted settings in the member mRestrictedSettingsForSwitchParams
          */
         DWProfileSwitchBarcodeParamsSettings targetSettings;
-        DWProfileSwitchBarcodeParamsSettings previousSettings;
-        if(continuousMode)
+        if(mode)
         {
-            targetSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
-            previousSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
+            targetSettings = DataWedgeSettingsHolder.mRestrictedSettingsForSwitchParams;
         }
         else
         {
             targetSettings = DataWedgeSettingsHolder.mNormalSettingsForSwitchParams;
-            previousSettings = DataWedgeSettingsHolder.mAggressiveSettingsForSwitchParams;
         }
 
         Pair<DWSynchronousMethods.EResults, String> returnValue = null;

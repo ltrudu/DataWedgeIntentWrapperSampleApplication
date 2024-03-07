@@ -16,5 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-include ':DataWedgeIntentWrapperSampleApplication'//, ':datawedgeprofileintentswrapper'
-include ':datawedgeintentwrapperkotlinsampleapplication'
+include ':DataWedgeIntentWrapperSampleApplication'
+include ':DatawedgeIntentWrapperKotlinSampleApplication'
+//include ':datawedgeprofileintentswrapper'

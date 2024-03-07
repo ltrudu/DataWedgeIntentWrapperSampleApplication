@@ -10,7 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/DataWedgeIntentWrapperSampleApplication" />
-            <option value="$PROJECT_DIR$/datawedgeintentwrapperkotlinsampleapplication" />
+            <option value="$PROJECT_DIR$/DatawedgeIntentWrapperKotlinSampleApplication" />
+            <option value="$PROJECT_DIR$/datawedgeprofileintentswrapper" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

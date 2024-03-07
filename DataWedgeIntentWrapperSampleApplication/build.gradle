@@ -8,8 +8,8 @@ android {
         applicationId "com.symbol.datacapturereceiver"
         minSdkVersion 19
         targetSdkVersion 34
-        versionCode 2
-        versionName "1.2"
+        versionCode 3
+        versionName "1.3"
     }
     buildTypes {
         release {
@@ -30,7 +30,7 @@ dependencies {
     // The CriticalPermissionHelper is only used for the demo (not necessary for your implementation)
     implementation 'com.github.ltrudu:CriticalPermissionsHelper:0.1'
     // Add the DWIntentWrapper implementation to your build.gradle
-    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.0'
+    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.1'
     // This one is for my developments only, use only if you plan to imrpove the wrapper
     //implementation project(path: ':datawedgeprofileintentswrapper')
 }

@@ -32,8 +32,8 @@ import java.util.HashMap;
 
 public class DataWedgeSettingsHolder {
 
-    protected static String mDemoProfileName = "com.symbol.datacapturereceiver";
-    protected static String mDemoIntentAction = "com.symbol.datacapturereceiver.RECVR";
+    protected static String mDemoProfileName = "com.symbol.datacapturereceiverkotlin";
+    protected static String mDemoIntentAction = "com.symbol.datacapturereceiverkotlin.RECVR";
     protected static String mDemoIntentCategory = "android.intent.category.DEFAULT";
     protected static long mDemoTimeOutMS = 30000; //30s timeout...
 

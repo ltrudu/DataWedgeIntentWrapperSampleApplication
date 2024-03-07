@@ -23,6 +23,7 @@ import com.zebra.datawedgeprofileintents.DWScanReceiver
 import com.zebra.datawedgeprofileintents.DWScannerPluginDisable
 import com.zebra.datawedgeprofileintents.DWScannerPluginEnable
 import com.zebra.datawedgeprofileintents.DataWedgeConstants
+import com.zebra.datawedgeprofileintentshelpers.CreateProfileHelper
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
@@ -50,7 +51,22 @@ class MainActivity : ComponentActivity() {
         DataWedgeSettingsHolder.initSettings(this)
 
         findViewById<Button>(R.id.bt_createProfile).setOnClickListener(View.OnClickListener { view ->
-            setupProfileAsync(this)
+            CreateProfileHelper.createProfile(this, DataWedgeSettingsHolder.mSetConfigSettings, object:
+                CreateProfileHelper.CreateProfileHelperCallback {
+                override fun onSuccess(profileName: String?) {
+                    addLineToResults("Profile:" + profileName + " created with success.")
+                }
+
+                override fun onError(profileName: String?, error: String?, errorMessage: String?) {
+                    addLineToResults("Error creating profile:" + profileName)
+                    addLineToResults("Error: " + error)
+                    addLineToResults("ErrorMessage:" + errorMessage)
+                }
+
+                override fun ondebugMessage(profileName: String?, message: String?) {
+                    addLineToResults("(Debug "+profileName +")" + message)
+                }
+                })
         })
 
         findViewById<Button>(R.id.bt_deleteProfile).setOnClickListener(View.OnClickListener { view ->

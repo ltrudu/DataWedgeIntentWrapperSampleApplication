@@ -1,23 +1,14 @@
 package com.symbol.datacapturereceiver;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.ArrayMap;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
-import com.zebra.datawedgeprofileenums.SC_E_AIM_TYPE;
-import com.zebra.datawedgeprofileenums.SC_E_I2OF5_CHECK_DIGIT;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
-import com.zebra.datawedgeprofileenums.SC_E_SCANNINGMODE;
-import com.zebra.datawedgeprofileenums.SC_E_UPCEAN_SUPPLEMENTAL_MODE;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  *
@@ -61,7 +52,7 @@ public class DataWedgeSettingsHolder {
     /**
      * This member will hold the configuration for the aggressive mode
      */
-    protected static DWProfileSwitchBarcodeParamsSettings mAggressiveSettingsForSwitchParams;
+    protected static DWProfileSwitchBarcodeParamsSettings mRestrictedSettingsForSwitchParams;
 
     public static void initSettings(final Context myContext)
     {
@@ -102,24 +93,27 @@ public class DataWedgeSettingsHolder {
             mProfileName =mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
             mEnableTimeOutMechanism = true;
-            //ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.TRIGGER;
-            //ScannerPlugin.ReaderParams.beam_timer = 5000;
-            //ScannerPlugin.ReaderParams.different_barcode_timeout = 500;
-            //ScannerPlugin.ReaderParams.same_barcode_timeout = 500;
+            ScannerPlugin.Decoders.decoder_ean8 = true;
             ScannerPlugin.Decoders.decoder_ean13 = true;
-
+            ScannerPlugin.Decoders.decoder_code128 = true;
+            ScannerPlugin.Decoders.decoder_i2of5 = true;
+            ScannerPlugin.Decoders.decoder_qrcode = false;
+            ScannerPlugin.Decoders.decoder_pdf417 = false;
+            ScannerPlugin.Decoders.decoder_datamatrix = false;
         }};
 
-        mAggressiveSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
+        mRestrictedSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
         {{
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
             mEnableTimeOutMechanism = true;
-            //ScannerPlugin.ReaderParams.aim_type = SC_E_AIM_TYPE.PRESS_AND_SUSTAIN;
-            //ScannerPlugin.ReaderParams.beam_timer = 0;
-            //ScannerPlugin.ReaderParams.different_barcode_timeout = 0;
-            //ScannerPlugin.ReaderParams.same_barcode_timeout = 0;
+            ScannerPlugin.Decoders.decoder_ean8 = false;
             ScannerPlugin.Decoders.decoder_ean13 = false;
+            ScannerPlugin.Decoders.decoder_code128 = false;
+            ScannerPlugin.Decoders.decoder_i2of5 = false;
+            ScannerPlugin.Decoders.decoder_qrcode = true;
+            ScannerPlugin.Decoders.decoder_pdf417 = true;
+            ScannerPlugin.Decoders.decoder_datamatrix = true;
         }};
     }
 }
