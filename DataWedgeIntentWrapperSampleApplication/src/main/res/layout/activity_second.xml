@@ -35,24 +35,33 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_import"
+            android:id="@+id/button_import_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import\nProfile" />
+            android:text="Import\nProfile"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/button_auto_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auto Import\nProfile"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/button_closeSecondActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Close\nActivity" />
+            android:text="Close\nActivity"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/button_openThirdActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Open\nActivity" />
+            android:text="Open\nActivity"
+            android:textSize="10sp" />
     </LinearLayout>
 
 </RelativeLayout>
