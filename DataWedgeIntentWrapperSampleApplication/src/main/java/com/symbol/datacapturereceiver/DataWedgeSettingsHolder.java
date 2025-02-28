@@ -50,7 +50,7 @@ public class DataWedgeSettingsHolder {
     protected static DWProfileSwitchBarcodeParamsSettings mNormalSettingsForSwitchParams;
 
     /**
-     * This member will hold the configuration for the aggressive mode
+     * This member will hold the configuration for the restricted mode
      */
     protected static DWProfileSwitchBarcodeParamsSettings mRestrictedSettingsForSwitchParams;
 
@@ -100,6 +100,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_qrcode = false;
             ScannerPlugin.Decoders.decoder_pdf417 = false;
             ScannerPlugin.Decoders.decoder_datamatrix = false;
+            ScannerPlugin.Decoders.decoder_microqr = false;
         }};
 
         mRestrictedSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()
@@ -114,6 +115,7 @@ public class DataWedgeSettingsHolder {
             ScannerPlugin.Decoders.decoder_qrcode = true;
             ScannerPlugin.Decoders.decoder_pdf417 = true;
             ScannerPlugin.Decoders.decoder_datamatrix = true;
+            ScannerPlugin.Decoders.decoder_microqr = true;
         }};
     }
 }

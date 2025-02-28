@@ -136,7 +136,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Switch\nParams Async"
+            android:text="Switch Params\nQRCodes"
             android:textSize="10sp" />
 
         <Button
@@ -144,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="Switch\nParams Sync"
+            android:text="Switch Params\n1D Codes"
             android:textSize="10sp" />
 
 

@@ -654,7 +654,7 @@ public class MainActivity extends AppCompatActivity {
         addLineToResults(mode ? "Switching to Restricted mode" : "Switching to normal mode");
         if(mProfileProcessingStartDate == null)
             mProfileProcessingStartDate = new Date();
-        DWProfileSwitchBarcodeParams switchContinuousMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
+        DWProfileSwitchBarcodeParams switchRestrictedMode = new DWProfileSwitchBarcodeParams(MainActivity.this);
 
         /**
          * The switch param class will only change the settings inside targetSettings
@@ -673,18 +673,18 @@ public class MainActivity extends AppCompatActivity {
 
         // You can now use two different modes to switch params
         // The first mode use a single configuration object and switch all the settings (revert unset parameters to default)
-        switchContinuousMode.execute(targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
+        switchRestrictedMode.execute(targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
         // The second mode use two different configuration previous->target to switch only the difference between the members of each settings
-        //switchContinuousMode.execute(previousSettings, targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
+        //switchRestrictedMode.execute(previousSettings, targetSettings, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
                 {
-                    addLineToResults("Params switched to " + (mode ? "continuous mode" : "normal mode") + " on profile: " + profileName + " succeeded");
+                    addLineToResults("Params switched to " + (mode ? "restricted mode" : "normal mode") + " on profile: " + profileName + " succeeded");
                 }
                 else
                 {
-                    addLineToResults("Error switching params to " + (mode ? "continuous mode" : "normal mode") + " on profile: " + profileName + "\n" + resultInfo);
+                    addLineToResults("Error switching params to " + (mode ? "restricted mode" : "normal mode") + " on profile: " + profileName + "\n" + resultInfo);
                 }
                 addTotalTimeToResults();
             }
