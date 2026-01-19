@@ -8,49 +8,65 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".SecondActivity">
+    tools:context=".SwitchProfileActivity">
 
     <ScrollView
-        android:id="@+id/sv_resultsSecondActivity"
+        android:id="@+id/sv_resultsSwitchProfileActivity"
         android:layout_width="368dp"
         android:layout_height="430dp"
-        android:layout_above="@+id/ll_buttons_secondActivity"
+        android:layout_above="@+id/ll_buttons_switchActivity"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginBottom="1dp">
 
         <TextView
-            android:id="@+id/et_resultsSecondActivity"
+            android:id="@+id/et_resultsSwitchProfileActivity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine" />
     </ScrollView>
 
+
     <LinearLayout
-        android:id="@+id/ll_buttons_secondActivity"
+        android:id="@+id/ll_buttons_switchActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_buttons_secondActivity2"
+        android:layout_above="@+id/ll_buttons2_switchActivity"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_import_profile"
+            android:id="@+id/button_create_scanner_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import\nProfile"
+            android:text="Create\nScanner"
             android:textSize="10sp" />
 
         <Button
-            android:id="@+id/button_auto_import"
+            android:id="@+id/button_create_workflow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Auto Import\nProfile"
+            android:text="Create\nWorkflow"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/button_switch_scanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Switch\nScanner"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/button_switch_workflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch\nWorkflow"
             android:textSize="10sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ll_buttons_secondActivity2"
+        android:id="@+id/ll_buttons2_switchActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -58,7 +74,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_closeSecondActivity"
+            android:id="@+id/button_closeSwitchActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -71,15 +87,6 @@
             android:layout_height="wrap_content"
             android:text="Open\nActivity"
             android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/button_openSwitchProfileActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="Open\nSwitchProfile"
-            android:textSize="10sp" />
-
     </LinearLayout>
 
 </RelativeLayout>

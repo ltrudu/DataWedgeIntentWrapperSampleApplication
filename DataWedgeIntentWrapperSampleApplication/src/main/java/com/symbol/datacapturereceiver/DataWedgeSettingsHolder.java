@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.zebra.datawedgeprofileenums.INT_E_DELIVERY;
 import com.zebra.datawedgeprofileenums.MB_E_CONFIG_MODE;
+import com.zebra.datawedgeprofileenums.RFID_E_MEMORY_BANK;
+import com.zebra.datawedgeprofileenums.RFID_E_SESSION;
+import com.zebra.datawedgeprofileenums.RFID_E_TRIGGER_MODE;
 import com.zebra.datawedgeprofileenums.SC_E_SCANNER_IDENTIFIER;
 import com.zebra.datawedgeprofileintents.DWProfileSetConfigSettings;
 import com.zebra.datawedgeprofileintents.DWProfileSwitchBarcodeParamsSettings;
@@ -40,8 +43,16 @@ public class DataWedgeSettingsHolder {
     /**
      * This member will hold the profile settings that will be used to setup
      * the DataWedge configuration profile when doing a SetProfileConfig
+     * for Scanner input
      */
-    protected static DWProfileSetConfigSettings mSetConfigSettings;
+    protected static DWProfileSetConfigSettings mSetConfigSettingsScanner;
+
+    /**
+     * This member will hold the profile settings that will be used to setup
+     * the DataWedge configuration profile when doing a SetProfileConfig
+     * for RFID input
+     */
+    protected static DWProfileSetConfigSettings mSetConfigSettingsRfid;
 
     /**
      * This member will be used to restore the original scanner configuration that we used
@@ -56,7 +67,7 @@ public class DataWedgeSettingsHolder {
 
     public static void initSettings(final Context myContext)
     {
-        mSetConfigSettings = new DWProfileSetConfigSettings()
+        mSetConfigSettingsScanner = new DWProfileSetConfigSettings()
         {{
             mProfileName = mDemoProfileName;
             mTimeOutMS = mDemoTimeOutMS;
@@ -68,7 +79,8 @@ public class DataWedgeSettingsHolder {
             IntentPlugin.intent_output_enabled = true;
             IntentPlugin.intent_delivery = INT_E_DELIVERY.BROADCAST;
             KeystrokePlugin.keystroke_output_enabled = false;
-            ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.AUTO;
+            RFIDPlugin.rfid_input_enabled = false;
+            ScannerPlugin.scanner_selection_by_identifier = SC_E_SCANNER_IDENTIFIER.INTERNAL_IMAGER;
             ScannerPlugin.scanner_input_enabled = true;
             //ScannerPlugin.ScanParams.decode_audio_feedback_uri = "";
             ScannerPlugin.Decoders.decoder_aztec = true;
@@ -84,8 +96,29 @@ public class DataWedgeSettingsHolder {
             //ScannerPlugin.UpcEan.upcean_supplemental_mode = SC_E_UPCEAN_SUPPLEMENTAL_MODE.SUPPLEMENTAL_378_379;
         }};
 
+        mSetConfigSettingsRfid = new DWProfileSetConfigSettings()
+        {{
+            mProfileName = mDemoProfileName;
+            mTimeOutMS = mDemoTimeOutMS;
+            MainBundle.APP_LIST = new HashMap<>();
+            MainBundle.APP_LIST.put(myContext.getPackageName(), null);
+            MainBundle.CONFIG_MODE = MB_E_CONFIG_MODE.OVERWRITE;
+            IntentPlugin.intent_action = mDemoIntentAction;
+            IntentPlugin.intent_category = mDemoIntentCategory;
+            IntentPlugin.intent_output_enabled = true;
+            IntentPlugin.intent_delivery = INT_E_DELIVERY.BROADCAST;
+            KeystrokePlugin.keystroke_output_enabled = false;
+            ScannerPlugin.scanner_input_enabled = false;
+            RFIDPlugin.rfid_input_enabled = true;
+            RFIDPlugin.rfid_beeper_enable = true;
+            RFIDPlugin.rfid_antenna_transmit_power = 5;
+            RFIDPlugin.rfid_memory_bank = RFID_E_MEMORY_BANK.NONE;
+            RFIDPlugin.rfid_session = RFID_E_SESSION.S0;
+            RFIDPlugin.rfid_trigger_mode = RFID_E_TRIGGER_MODE.IMMEDIATE;
+        }};
+
         // Settings classes can be exported to JSON format and initialized from JSON format
-        String jsonWithNullTest = DWProfileSetConfigSettings.toJsonWN(mSetConfigSettings);
+        String jsonWithNullTest = DWProfileSetConfigSettings.toJsonWN(mSetConfigSettingsScanner);
         DWProfileSetConfigSettings profileFromJSon = DWProfileSetConfigSettings.fromJson(jsonWithNullTest);
 
         mNormalSettingsForSwitchParams = new DWProfileSwitchBarcodeParamsSettings()

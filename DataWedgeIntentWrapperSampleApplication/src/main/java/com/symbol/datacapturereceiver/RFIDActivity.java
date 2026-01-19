@@ -15,12 +15,11 @@ import android.widget.TextView;
 
 import com.zebra.datawedgeprofileintents.DWProfileBaseSettings;
 import com.zebra.datawedgeprofileintents.DWProfileCommandBase;
+import com.zebra.datawedgeprofileintents.DWProfileSetConfig;
+import com.zebra.datawedgeprofileintents.DWRFIDReceiver;
 import com.zebra.datawedgeprofileintents.DWScanReceiver;
 import com.zebra.datawedgeprofileintents.DWScannerPluginDisable;
 import com.zebra.datawedgeprofileintents.DWScannerPluginEnable;
-import com.zebra.datawedgeprofileintents.DWStatusScanner;
-import com.zebra.datawedgeprofileintents.DWStatusScannerCallback;
-import com.zebra.datawedgeprofileintents.DWStatusScannerSettings;
 import com.zebra.datawedgeprofileintents.DataWedgeConstants;
 
 import java.io.File;
@@ -32,7 +31,7 @@ import java.util.Set;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-public class SecondActivity extends AppCompatActivity implements DWScanReceiver.onScannedData {
+public class RFIDActivity extends AppCompatActivity implements DWScanReceiver.onScannedData {
 
     private static String TAG = "DataCaptureReceiver";
 
@@ -43,9 +42,7 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
     /**
      * Scanner data receiver
      */
-    DWScanReceiver mScanReceiver;
-
-    DWStatusScanner mStatusReceiver;
+    DWRFIDReceiver mRFIDReceiver;
 
     /*
         Handler and runnable to scroll down textview
@@ -60,19 +57,19 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_rfid);
 
         setTitle("Second Activity");
 
-        et_results = (TextView)findViewById(R.id.et_resultsSecondActivity);
-        sv_results = (ScrollView)findViewById(R.id.sv_resultsSecondActivity);
+        et_results = (TextView)findViewById(R.id.et_resultsRFIDActivity);
+        sv_results = (ScrollView)findViewById(R.id.sv_resultsRFIDActivity);
 
 
-        Button btClose = (Button)findViewById(R.id.button_closeSecondActivity);
+        Button btClose = (Button)findViewById(R.id.button_closeRFIDActivity);
         btClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SecondActivity.this.finish();
+                RFIDActivity.this.finish();
             }
         });
 
@@ -80,85 +77,53 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
         btOpenThirdActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SecondActivity.this, ThirdActivity.class);
+                Intent intent = new Intent(RFIDActivity.this, ThirdActivity.class);
                 startActivity(intent);
             }
         });
 
-        Button btOpenSwitchActivity = (Button)findViewById(R.id.button_openSwitchProfileActivity);
-        btOpenSwitchActivity.setOnClickListener(new View.OnClickListener() {
+        Button btSetRFIDProfile = (Button)findViewById(R.id.button_setRFIDProfile);
+        btSetRFIDProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SecondActivity.this, SwitchProfileActivity.class);
-                startActivity(intent);
-            }
-        });
+                DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(RFIDActivity.this);
 
-        Button btImportProfile = (Button)findViewById(R.id.button_import_profile);
-        btImportProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                importProfileFromDownloadFolder("dwprofile_com.symbol.datacapturereceiver");
-            }
-        });
+                profileSetConfig.execute(DataWedgeSettingsHolder.mSetConfigSettingsRfid, new DWProfileCommandBase.onProfileCommandResult() {
+                    @Override
+                    public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
+                        if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
+                        {
+                            addLineToResults("Set config on profile: " + profileName + " succeeded.");
 
-        Button btAutoImport = (Button) findViewById(R.id.button_auto_import);
-        btAutoImport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //"database profile auto creation" import mode (filebased)
-                    importProfileFromAssets("dwprofile_com.symbol.datacapturereceiver");
+                        }
+                        else
+                        {
+                            addLineToResults("Error setting params on profile: " + profileName + "\n" + resultInfo);
+                        }
+                    }
+
+                    @Override
+                    public void timeout(String profileName) {
+                        addLineToResults("Timeout while trying to set params on profile: " + profileName);
+                    }
+                });
             }
         });
 
         /**
          * Initialize the scan receiver
          */
-        mScanReceiver = new DWScanReceiver(this,
+        mRFIDReceiver = new DWRFIDReceiver(this,
                 DataWedgeSettingsHolder.mDemoIntentAction,
                 DataWedgeSettingsHolder.mDemoIntentCategory,
                 false,
-                new DWScanReceiver.onScannedData() {
+                new DWRFIDReceiver.onRFIDData() {
                     @Override
-                    public void scannedData(String source, String data, String typology) {
-                        addLineToResults("Source: " + source);
-                        addLineToResults("Typology: " + typology+ ", Data: " + data);
+                    public void rfidData(String source, String data, String typology) {
 
                     }
                 }
         );
-
-        DWStatusScannerSettings profileStatusSettings = new DWStatusScannerSettings()
-        {{
-            mPackageName = getPackageName();
-            mScannerCallback = new DWStatusScannerCallback() {
-                @Override
-                public void result(String status) {
-                    switch(status)
-                    {
-                        case DataWedgeConstants.SCAN_STATUS_CONNECTED:
-                            addLineToResults("Scanner is connected.");
-                            break;
-                        case DataWedgeConstants.SCAN_STATUS_DISABLED:
-                            addLineToResults("Scanner is disabled.");
-                            break;
-                        case DataWedgeConstants.SCAN_STATUS_DISCONNECTED:
-                            addLineToResults("Scanner is disconnected.");
-                            break;
-                        case DataWedgeConstants.SCAN_STATUS_SCANNING:
-                            addLineToResults("Scanner is scanning.");
-                            break;
-                        case DataWedgeConstants.SCAN_STATUS_WAITING:
-                            addLineToResults("Scanner is waiting.");
-                            break;
-                    }
-                }
-            };
-        }};
-
-        addLineToResults("Setting up scanner status checking on package : " + profileStatusSettings.mPackageName + ".");
-
-        mStatusReceiver = new DWStatusScanner(this, profileStatusSettings);
     }
 
     @Override
@@ -187,15 +152,13 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
             }
         });
 
-        mScanReceiver.startReceive();
-        mStatusReceiver.start();
+        mRFIDReceiver.startReceive();
         mScrollDownHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     protected void onPause() {
-        mScanReceiver.stopReceive();
-        mStatusReceiver.stop();
+        mRFIDReceiver.stopReceive();
         DWScannerPluginDisable dwplugindisable = new DWScannerPluginDisable(this);
         DWProfileBaseSettings settings = new DWProfileBaseSettings()
         {{
@@ -237,7 +200,7 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
             mScrollDownRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    SecondActivity.this.runOnUiThread(new Runnable() {
+                    RFIDActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             et_results.setText(mResults);
@@ -462,9 +425,9 @@ public class SecondActivity extends AppCompatActivity implements DWScanReceiver.
                                         "Result: " + result + "\n" +
                                         "Result Info: " + resultInfo + "\n" +
                                         "CID:" + commandidentifier;
-                                SecondActivity.this.addLineToResults(text);
+                                RFIDActivity.this.addLineToResults(text);
                                 Log.d(TAG, text);
-                                SecondActivity.this.unregisterReceiver(mBroadcastReceiverImportCommand);
+                                RFIDActivity.this.unregisterReceiver(mBroadcastReceiverImportCommand);
                                 mBroadcastReceiverImportCommand = null;
                             }
                         }

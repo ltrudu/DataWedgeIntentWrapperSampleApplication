@@ -279,6 +279,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btOpenRFIDActivity = (Button)findViewById(R.id.button_openRFIDActivity);
+        btOpenRFIDActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, RFIDActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btOpenSwitchActivity = (Button)findViewById(R.id.button_maOpenSwitchProfilesActivity);
+        btOpenSwitchActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SwitchProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button btEnumerateScannersSync = (Button)findViewById(R.id.button_enumerateSync);
         btEnumerateScannersSync.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -324,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 DataWedgeSettingsHolder.mDemoIntentCategory,
                 false, // Displays special chars between brackets
                 // You can inline the code here (like in this exampleà, or make the current activity
-                // extends the interface DWScanReceiver.onScannedData then pass directly the
+                // extends the interface DWScanReceiver.onRFIDData then pass directly the
                 // "this" reference instead
                 new DWScanReceiver.onScannedData() {
                     @Override
@@ -350,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
     private void easyCreateProfile() {
         mProfileProcessingStartDate = new Date();
         addLineToResults("Creating a profile using CreateProfileHelper.");
-        CreateProfileHelper.createProfile(MainActivity.this, DataWedgeSettingsHolder.mSetConfigSettings, new CreateProfileHelper.CreateProfileHelperCallback() {
+        CreateProfileHelper.createProfile(MainActivity.this, DataWedgeSettingsHolder.mSetConfigSettingsScanner, new CreateProfileHelper.CreateProfileHelperCallback() {
             @Override
             public void onSuccess(String profileName) {
                 addLineToResults("Easy creation of profile:" + profileName + " succeeded.");
@@ -850,7 +868,7 @@ public class MainActivity extends AppCompatActivity {
     {
         DWProfileSetConfig profileSetConfig = new DWProfileSetConfig(MainActivity.this);
 
-        profileSetConfig.execute(DataWedgeSettingsHolder.mSetConfigSettings, new DWProfileCommandBase.onProfileCommandResult() {
+        profileSetConfig.execute(DataWedgeSettingsHolder.mSetConfigSettingsScanner, new DWProfileCommandBase.onProfileCommandResult() {
             @Override
             public void result(String profileName, String action, String command, String result, String resultInfo, String commandidentifier) {
                 if(result.equalsIgnoreCase(DataWedgeConstants.COMMAND_RESULT_SUCCESS))
@@ -891,7 +909,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // we create and setup the profile
         mProfileProcessingStartDate = new Date();
-        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettings);
+        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettingsScanner);
         addLineToResults("Total time to setup profile.");
         addTotalTimeToResults();
         addLineToResults("Total time to fully create and setup profile in synchronous mode:");
@@ -910,7 +928,7 @@ public class MainActivity extends AppCompatActivity {
         addTotalTimeToResults();
         // we create and setup the profile
         mProfileProcessingStartDate = new Date();
-        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettings);
+        dwSynchronousMethods.setupDWProfile(DataWedgeSettingsHolder.mSetConfigSettingsScanner);
         addLineToResults("Total time to setup profile.");
         addTotalTimeToResults();
         addLineToResults("Total time to fully create and setup profile in synchronous mode:");

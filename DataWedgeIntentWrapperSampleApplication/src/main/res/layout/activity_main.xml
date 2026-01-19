@@ -154,7 +154,7 @@
         android:id="@+id/ll_profiles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/ll_activities"
         android:layout_weight="0.3"
         android:orientation="horizontal">
 
@@ -185,13 +185,43 @@
             android:text="Delete\nProfile"
             android:textSize="10sp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_activities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.3"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/button_openNewActivity"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Open\nActivity"
+            android:text="Open\nSecond Activity"
+            android:layout_weight="0.3"
             android:textSize="10sp"
+            android:visibility="visible" />
+
+    <Button
+        android:id="@+id/button_openRFIDActivity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Open RFID\nActivity"
+        android:textSize="10sp"
+        android:layout_weight="0.3"
+        android:visibility="visible" />
+
+        <Button
+            android:id="@+id/button_maOpenSwitchProfilesActivity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="Open Switch\nProfile Activity"
+            android:textSize="10sp"
+            android:layout_weight="0.3"
             android:visibility="visible" />
 
     </LinearLayout>
