@@ -30,7 +30,7 @@ dependencies {
     // The CriticalPermissionHelper is only used for the demo (not necessary for your implementation)
     implementation 'com.github.ltrudu:CriticalPermissionsHelper:0.1'
     // Add the DWIntentWrapper implementation to your build.gradle
-    //implementation 'com.github.ltrudu:DataWedgeIntentWrapper:14.4'
+    implementation 'com.github.ltrudu:DataWedgeIntentWrapper:15.0'
     // This one is for my developments only, use only if you plan to imrpove the wrapper
-    implementation project(path: ':datawedgeprofileintentswrapper')
+    //implementation project(path: ':datawedgeprofileintentswrapper')
 }
